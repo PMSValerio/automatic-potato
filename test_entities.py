@@ -2,12 +2,15 @@ import pygame
 
 from common import *
 from entity import Entity
+from graphics import Animation
 
 class Test1(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
         self.colour = (255, 0, 0)
+        self.graphics = Animation("assets/gfx/test.png", 32, 32, True, 5) # animation object
+        self.graphics.add_animation("idle", 0, 4)
     
     def update(self, delta):
         pressed = pygame.key.get_pressed()
@@ -23,15 +26,12 @@ class Test1(Entity):
         
         self.rect.x = self.pos.x
         self.rect.y = self.pos.y
-    
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.colour, self.rect)
 
 class Test2(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.OBSTACLE)
 
-        self.die_on_col = pos.x > WIDTH * SCALE / 2
+        self.die_on_col = pos.x > WIDTH / 2
         self.colour = ((0, 0, 0) if self.die_on_col else (100, 0, 0))
 
         self.rect.x = self.pos.x

@@ -20,9 +20,9 @@ class LevelState(GameState):
         from pygame import Vector2
         import test_entities
         services.service_locator.entity_manager.clear()
-        test_entities.Test1(Vector2(WIDTH / 2 * SCALE, HEIGHT / 2 * SCALE))
-        test_entities.Test2(Vector2(WIDTH / 2 * SCALE + SCALE * 3, HEIGHT / 2 * SCALE + SCALE * 3))
-        test_entities.Test2(Vector2(WIDTH / 2 * SCALE - SCALE * 3, HEIGHT / 2 * SCALE - SCALE * 3))
+        test_entities.Test1(Vector2(WIDTH / 2, HEIGHT / 2))
+        test_entities.Test2(Vector2(WIDTH / 2 + BLOCK * 3, HEIGHT / 2 + BLOCK * 3))
+        test_entities.Test2(Vector2(WIDTH / 2 - BLOCK * 3, HEIGHT / 2 - BLOCK * 3))
     
     def update(self, delta):
         import random
@@ -30,8 +30,8 @@ class LevelState(GameState):
         import test_entities
 
         if random.random() < 0.01:
-            xx = random.randrange(0, WIDTH * SCALE)
-            yy = random.randrange(0, HEIGHT * SCALE)
+            xx = random.randrange(0, WIDTH)
+            yy = random.randrange(0, HEIGHT)
             test_entities.Test2(Vector2(xx, yy))
 
         services.service_locator.entity_manager.update_all(delta)

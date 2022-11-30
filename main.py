@@ -10,7 +10,7 @@ def main():
 
     # set up pygame
     pg.init()
-    screen = pg.display.set_mode((WIDTH * SCALE, HEIGHT * SCALE))
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
     pg.display.set_caption("Auto Spud")
 
     # set up services

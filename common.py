@@ -1,9 +1,9 @@
 from enum import Enum
 
-WIDTH = 60
-HEIGHT = 40
+WIDTH = 960
+HEIGHT = 640
 
-SCALE = 16
+BLOCK = 32 # "cell" unit size
 
 # refresh rate
 FPS = 30
