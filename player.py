@@ -6,6 +6,7 @@ from common import *
 from services import service_locator
 from entity import Entity
 from fsm import FSM
+from player_commands import *
 
 class States(Enum):
     IDLE = 0
@@ -33,24 +34,25 @@ class Player(Entity):
         self.fsm.add_state(States.IDLE, self.idle, True)
         self.fsm.add_state(States.MOVING, self.moving)
 
-        self.action_map = {
+        self.key_map = {
             "move_left": pygame.K_a,
             "move_right": pygame.K_d,
             "move_up": pygame.K_w,
             "move_down": pygame.K_s,
         }
+        self.command_map = {
+            "move_left": MoveLeft(),
+            "move_right": MoveRight(),
+            "move_up": MoveUp(),
+            "move_down": MoveDown(),
+        }
     
     def update(self, delta):
         # TODO: change to use commands instead
         self.move_dir = Vector2(0, 0)
-        if service_locator.game_input.key_down(pygame.K_a):
-            self.add_to_move_dir(Directions.LEFT)
-        if service_locator.game_input.key_down(pygame.K_d):
-            self.add_to_move_dir(Directions.RIGHT)
-        if service_locator.game_input.key_down(pygame.K_w):
-            self.add_to_move_dir(Directions.UP)
-        if service_locator.game_input.key_down(pygame.K_s):
-            self.add_to_move_dir(Directions.DOWN)
+        for action in self.key_map.keys():
+            if self.check_action(action):
+                self.command_map[action].execute(self)
         if self.move_dir.length() > 0:
             self.move_dir = self.move_dir.normalize()
 
@@ -63,7 +65,8 @@ class Player(Entity):
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
-            return service_locator.game_input.key_pressed(self.action_map)
+            return service_locator.game_input.key_pressed(self.key_map[action])
+        return service_locator.game_input.key_down(self.key_map[action])
     
     def add_to_move_dir(self, new_dir):
         self.move_dir.x += new_dir.value[0]
