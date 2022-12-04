@@ -33,6 +33,7 @@ def main():
             if ev.type == pg.QUIT:
                 running = False
 
+        services.service_locator.game_input.update(delta_time)
         game_machine.current_state.update(delta_time)
         game_machine.current_state.draw(screen)
 

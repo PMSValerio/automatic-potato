@@ -8,6 +8,13 @@ BLOCK = 32 # "cell" unit size
 # refresh rate
 FPS = 30
 
+# movement directions
+class Directions(Enum):
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    UP = (0, -1)
+    DOWN = (0, 1)
+
 # collision layers
 class EntityLayers(Enum):
     NULL = -1

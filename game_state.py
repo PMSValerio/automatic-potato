@@ -18,11 +18,12 @@ class GameState:
 class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
-        import test_entities
+        import player
         services.service_locator.entity_manager.clear()
-        test_entities.Test1(Vector2(WIDTH / 2, HEIGHT / 2))
-        test_entities.Test2(Vector2(WIDTH / 2 + BLOCK * 3, HEIGHT / 2 + BLOCK * 3))
-        test_entities.Test2(Vector2(WIDTH / 2 - BLOCK * 3, HEIGHT / 2 - BLOCK * 3))
+        # test_entities.Test1(Vector2(WIDTH / 2, HEIGHT / 2))
+        # test_entities.Test2(Vector2(WIDTH / 2 + BLOCK * 3, HEIGHT / 2 + BLOCK * 3))
+        # test_entities.Test2(Vector2(WIDTH / 2 - BLOCK * 3, HEIGHT / 2 - BLOCK * 3))
+        player.Player(Vector2(WIDTH / 2, HEIGHT / 2), player.witch_stats)
     
     def update(self, delta):
         import random

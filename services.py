@@ -1,6 +1,7 @@
 import event_handler
 import entity_manager
 import group_space
+import game_input
 
 # holds and manages all relevant services/systems
 class Services:
@@ -20,6 +21,7 @@ class Services:
         self.event_handler : event_handler.EventHandler = event_handler.EventHandler.get()
         self.entity_manager : entity_manager.EntityManager = entity_manager.EntityManager.get()
         self.physics_engine : group_space.GroupSpace = group_space.GroupSpace.get()
+        self.game_input : game_input.GameInput = game_input.GameInput()
     
     def setup(self):
         self.entity_manager.init()
