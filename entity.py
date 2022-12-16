@@ -14,6 +14,7 @@ class Entity(Sprite):
         self.dir = Vector2(1, 0) # movement direction
 
         self.rect = Rect(0, 0, BLOCK, BLOCK) # bounding box
+        self.update_bbox()
 
         self.graphics = None
 

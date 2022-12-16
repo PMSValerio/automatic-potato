@@ -22,7 +22,8 @@ class GroupSpace:
             self.layers[layer] = pygame.sprite.Group()
         
         self.collisions = [] # list of pairs of layers that should be scanned for collisions
-        self.add_collision(EntityLayers.PLAYER, EntityLayers.OBSTACLE)
+        self.add_collision(EntityLayers.PLAYER, EntityLayers.ENEMY_ATTACK)
+        self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY)
     
     # add entity to space
     def add_entity(self, entity):

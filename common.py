@@ -19,4 +19,7 @@ class Directions(Enum):
 class EntityLayers(Enum):
     NULL = -1
     PLAYER = 0
-    OBSTACLE = 1
+    PLAYER_ATTACK = 1
+    ENEMY = 2
+    ENEMY_ATTACK = 3
+    OBSTACLE = 4

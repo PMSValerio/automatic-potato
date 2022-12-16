@@ -37,7 +37,7 @@ class Spritesheet(object):
 # simple animation class, plays a series of subimages in a spritesheet in a loop
 class Animation:
     def __init__(self, filename, frame_width, frame_height, loop = False, delay_ticks=0):
-        self.spritesheet = Spritesheet(filename) # get from image_loader
+        self.spritesheet = Spritesheet(filename) # TODO: get from image_loader (Flyweight pattern)
         self.frame_width = frame_width
         self.frame_height = frame_height
         self.loop = loop
