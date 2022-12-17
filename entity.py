@@ -27,7 +27,9 @@ class Entity(Sprite):
     # draw and update animation
     def draw(self, surface):
         if self.graphics is not None:
-            surface.blit(self.graphics.get_frame(), self.rect)
+            subimage = self.graphics.get_frame()
+            rect = subimage.get_rect(center=self.pos.xy)
+            surface.blit(subimage, rect)
 
 
     def die(self):
@@ -40,8 +42,7 @@ class Entity(Sprite):
 
     # update self.rect to match position on screen
     def update_bbox(self):
-        self.rect.x = self.pos.x
-        self.rect.y = self.pos.y
+        self.rect.center = self.pos.xy
     
     # change to a different animation
     def set_animation(self, anim_name):
