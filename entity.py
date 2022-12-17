@@ -3,7 +3,6 @@ from pygame.sprite import Sprite
 
 from common import *
 import services
-from graphics import Animation
 
 class Entity(Sprite):
     def __init__(self, pos : Vector2, layer = EntityLayers.NULL):

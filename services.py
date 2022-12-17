@@ -2,6 +2,7 @@ import event_handler
 import entity_manager
 import group_space
 import game_input
+import graphics_loader
 
 # holds and manages all relevant services/systems
 class Services:
@@ -22,6 +23,7 @@ class Services:
         self.entity_manager : entity_manager.EntityManager = entity_manager.EntityManager.get()
         self.physics_engine : group_space.GroupSpace = group_space.GroupSpace.get()
         self.game_input : game_input.GameInput = game_input.GameInput()
+        self.graphics_loader : graphics_loader.GraphicsLoader = graphics_loader.GraphicsLoader()
     
     def setup(self):
         self.entity_manager.init()

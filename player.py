@@ -5,7 +5,7 @@ from pygame import Vector2
 from common import *
 from services import service_locator
 from entity import Entity
-from graphics import Animation
+from animation import Animation
 
 from fsm import FSM
 from player_commands import *
@@ -59,12 +59,7 @@ class Player(Entity):
             "move_down": Directions.DOWN,
         }
 
-        self.graphics = Animation("assets/gfx/player.png", 32, 32, True, 5) # animation object
-        self.graphics.add_animation("idle_right", 0, 1)
-        self.graphics.add_animation("move_left", 1, 1)
-        self.graphics.add_animation("move_right", 2, 1)
-        self.graphics.add_animation("move_up", 3, 1)
-        self.graphics.add_animation("move_down", 4, 1)
+        self.graphics = Animation("assets/gfx/player.png", True, 5) # animation object
     
     def update(self, delta):
         # update move action
