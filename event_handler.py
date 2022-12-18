@@ -1,19 +1,8 @@
 
 
 class EventHandler:
-    __instance = None
-
-    def get():
-        if EventHandler.__instance is None:
-            EventHandler()
-        return EventHandler.__instance
 
     def __init__(self):
-        if EventHandler.__instance is not None:
-            raise Exception("Singleton class already initialised")
-        else:
-            EventHandler.__instance = self
-
         self.listeners = {}
     
     def subscribe(self, listener, event):

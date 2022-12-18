@@ -3,20 +3,7 @@ import pygame
 from common import *
 
 class GroupSpace:
-    __instance = None
-
-    def get():
-        if GroupSpace.__instance is None:
-            GroupSpace()
-        return GroupSpace.__instance
-
     def __init__(self):
-        if GroupSpace.__instance is not None:
-            raise Exception("Singleton class already initialised")
-        else:
-            GroupSpace.__instance = self
-        
-    def init(self):
         self.layers = {}
         for layer in EntityLayers:
             self.layers[layer] = pygame.sprite.Group()

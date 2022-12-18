@@ -4,6 +4,7 @@ from pygame import Vector2
 
 from common import *
 import services
+import player_data
 import game_state
 
 def main():
@@ -16,6 +17,9 @@ def main():
     # set up services
     services.service_locator = services.Services.get()
     services.service_locator.setup()
+
+    # set up player data
+    player_data.player_data = player_data.PlayerData.get()
 
     # game state machine initialisation
     states = {
