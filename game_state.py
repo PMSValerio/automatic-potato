@@ -63,8 +63,15 @@ class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
+        import player_data
+        import hud
+        # initialise player and set player type
+        # TODO: player type will later be set on the character select screen instead
         services.service_locator.entity_manager.clear()
-        player.Player(Vector2(WIDTH / 2, HEIGHT / 2), witch_stats)
+        player_data.player_data.select_player_type(witch_stats)
+        player.Player(Vector2(WIDTH / 2, HEIGHT / 2))
+
+        self.hud = hud.HUD()
     
     def update(self, delta):
         import random
@@ -84,6 +91,8 @@ class LevelState(GameState):
     def draw(self, surface):
         surface.fill((220, 220, 220))
         services.service_locator.entity_manager.draw_all(surface)
+
+        self.hud.draw(surface)
 
 
 class GameStateMachine:

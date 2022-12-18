@@ -1,5 +1,5 @@
 from common import *
-from services import service_locator
+import services
 
 # class holds all persistent player information, relevant in multiple game states (player stats, score, ...)
 class PlayerData:
@@ -25,7 +25,7 @@ class PlayerData:
     # update player score and notify all subscribed entities (ex: UI)
     def update_score(self, delta):
         self.score += delta
-        service_locator.event_handler.publish("new_score", self.score)
+        services.service_locator.event_handler.publish("new_score", self.score)
 
 # PlayerData is not included in services as it is not an engine specific system
 # TODO: make sure this ^ makes sense
