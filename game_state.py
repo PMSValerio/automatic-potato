@@ -15,15 +15,56 @@ class GameState:
         raise NotImplementedError
 
 
+class TitleState(GameState):
+    def __init__(self):
+        import pygame
+        self.timer_count = 0
+        self.timer = 0.04
+        self.click_font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
+        self.title_font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 48)
+        self.to_write = "Automatic Potato"
+        self.written = ""
+
+        self.click = self.click_font.render("Click to Start", True, (255, 255, 255))
+        self.click_rect = self.click.get_rect()
+        self.click_rect.center = (WIDTH / 2, HEIGHT * 0.8)
+        self.title = self.title_font.render("", True, (255, 255, 255))
+        self.title_rect = self.title.get_rect()
+
+        self.can_click = False
+    
+    def update(self, delta):
+        import pygame
+        self.timer_count += delta
+        if self.timer_count >= self.timer:
+            self.timer_count = 0
+            if self.to_write == "":
+                self.can_click = True
+            else:
+                self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
+                self.title = self.title_font.render(self.written, True, (255, 255, 255))
+                self.title_rect = self.title.get_rect()
+                self.title_rect.center = (WIDTH / 2, HEIGHT * 0.3)
+                if self.to_write == "":
+                    self.timer = 0.7
+        
+        if self.can_click:
+            if pygame.mouse.get_pressed()[0]:
+                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
+        
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+        surface.blit(self.title, self.title_rect)
+        if self.can_click:
+            surface.blit(self.click, self.click_rect)
+
+
 class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
         services.service_locator.entity_manager.clear()
-        # test_entities.Test1(Vector2(WIDTH / 2, HEIGHT / 2))
-        # test_entities.Test2(Vector2(WIDTH / 2 + BLOCK * 3, HEIGHT / 2 + BLOCK * 3))
-        # test_entities.Test2(Vector2(WIDTH / 2 - BLOCK * 3, HEIGHT / 2 - BLOCK * 3))
-        player.Player(Vector2(WIDTH / 2, HEIGHT / 2), player.witch_stats)
+        player.Player(Vector2(WIDTH / 2, HEIGHT / 2), witch_stats)
     
     def update(self, delta):
         import random

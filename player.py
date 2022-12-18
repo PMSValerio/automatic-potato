@@ -14,14 +14,6 @@ class States(Enum):
     IDLE = 0
     MOVING = 1
 
-class PlayerStats:
-    def __init__(self, max_health, base_speed):
-        self.max_health = max_health # max hp
-        self.speed = base_speed # pix/sec
-
-witch_stats = PlayerStats(10, 160)
-cat_stats = PlayerStats(8, 200)
-
 class Player(Entity):
     def __init__(self, pos, stats : PlayerStats):
         Entity.__init__(self, pos, EntityLayers.PLAYER)

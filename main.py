@@ -19,9 +19,10 @@ def main():
 
     # game state machine initialisation
     states = {
-        "level": game_state.LevelState()
+        GameStates.TITLE_SCREEN: game_state.TitleState(),
+        GameStates.LEVEL: game_state.LevelState()
     }
-    game_machine = game_state.GameStateMachine(states, states["level"])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.TITLE_SCREEN])
 
     # game loop
     clock = pg.time.Clock()
