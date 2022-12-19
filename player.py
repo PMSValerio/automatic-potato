@@ -27,6 +27,9 @@ class Player(Entity):
 
         self.stats = player_data.player_type
 
+        self.health = 0
+        self.change_health(self.stats.max_health)
+
         self.fsm = FSM()
         self.fsm.add_state(States.IDLE, self.idle, True)
         self.fsm.add_state(States.MOVING, self.moving)
@@ -76,6 +79,8 @@ class Player(Entity):
         self.fsm.update()
 
         self.update_bbox()
+
+        self.change_health(-delta)
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
@@ -85,6 +90,10 @@ class Player(Entity):
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]
         self.move_force.y += new_dir.value[1]
+    
+    def change_health(self, amount):
+        self.health += amount
+        service_locator.event_handler.publish("new_health", self.health)
 
     # --- || State Callbacks || ---
     

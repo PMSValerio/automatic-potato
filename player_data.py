@@ -18,6 +18,11 @@ class PlayerData:
         
         self.player_type : PlayerStats = None
         self.score = 0
+
+        # TODO: if there's time
+        # statistics that contribute to final score
+        # self.shots_fired = 0 # number of shots fired is discounted from score
+        # self.health_healed = 0 # amount of health player had to heal is discounted from score
     
     def select_player_type(self, ptype : PlayerStats):
         self.player_type = ptype

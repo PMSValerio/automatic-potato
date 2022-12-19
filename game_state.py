@@ -67,11 +67,10 @@ class LevelState(GameState):
         import hud
         # initialise player and set player type
         # TODO: player type will later be set on the character select screen instead
+        self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
         player_data.player_data.select_player_type(witch_stats)
         player.Player(Vector2(WIDTH / 2, HEIGHT / 2))
-
-        self.hud = hud.HUD()
     
     def update(self, delta):
         import random
