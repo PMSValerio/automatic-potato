@@ -34,13 +34,6 @@ class Player(Entity):
         self.fsm.add_state(States.IDLE, self.idle, True)
         self.fsm.add_state(States.MOVING, self.moving)
 
-        self.key_map = {
-            "move_left": pygame.K_a,
-            "move_right": pygame.K_d,
-            "move_up": pygame.K_w,
-            "move_down": pygame.K_s,
-            "shoot": pygame.K_p,
-        }
         self.command_map = {
             "move_left": MoveLeft(),
             "move_right": MoveRight(),
@@ -84,8 +77,8 @@ class Player(Entity):
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
-            return service_locator.game_input.key_pressed(self.key_map[action])
-        return service_locator.game_input.key_down(self.key_map[action])
+            return service_locator.game_input.key_pressed(player_data.key_map[action])
+        return service_locator.game_input.key_down(player_data.key_map[action])
     
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]

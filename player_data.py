@@ -1,3 +1,5 @@
+import pygame
+
 from common import *
 import services
 
@@ -17,6 +19,15 @@ class PlayerData:
             PlayerData.__instance = self
         
         self.player_type : PlayerStats = None
+
+        self.key_map = {
+            "move_left": pygame.K_a,
+            "move_right": pygame.K_d,
+            "move_up": pygame.K_w,
+            "move_down": pygame.K_s,
+            "shoot": pygame.K_p,
+        }
+
         self.score = 0
 
         # TODO: if there's time

@@ -24,9 +24,10 @@ def main():
     # game state machine initialisation
     states = {
         GameStates.TITLE_SCREEN: game_state.TitleState(),
+        GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
         GameStates.LEVEL: game_state.LevelState()
     }
-    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
 
     # game loop
     clock = pg.time.Clock()
@@ -34,11 +35,7 @@ def main():
     while running:
         delta_time = clock.tick(FPS) / 1000 # get time in seconds
 
-        for ev in pg.event.get():
-            if ev.type == pg.QUIT:
-                running = False
-
-        services.service_locator.game_input.update(delta_time)
+        running = services.service_locator.game_input.update(delta_time)
         game_machine.current_state.update(delta_time)
         game_machine.current_state.draw(screen)
 

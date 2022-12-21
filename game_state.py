@@ -1,5 +1,8 @@
+import pygame
+
 from common import *
 import services
+import player_data
 
 class GameState:
     def enter(self):
@@ -14,6 +17,7 @@ class GameState:
     def draw(self, surface):
         raise NotImplementedError
 
+# --- || Title Screen State || ---
 
 class TitleState(GameState):
     def __init__(self):
@@ -50,20 +54,52 @@ class TitleState(GameState):
         
         if self.can_click:
             if pygame.mouse.get_pressed()[0]:
-                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
-        
+                service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
+    
     def draw(self, surface):
         surface.fill((40, 40, 40))
         surface.blit(self.title, self.title_rect)
         if self.can_click:
             surface.blit(self.click, self.click_rect)
 
+# --- || Character Select Screen State || ---
+
+class CharacterSelectState(GameState):
+    def __init__(self):
+        self.state = -1 # -1: select character; 0 - n: select control keybind
+
+        self.selected_character = True # True if witch, False if cat
+        self.character_count = 2
+    
+    def update(self, delta):
+        if self.state <= -1:
+            if services.service_locator.game_input.key_pressed(pygame.K_DOWN):
+                self.state = 0
+            else:
+                move = 0
+                if services.service_locator.game_input.key_pressed(pygame.K_RIGHT):
+                    move = 1
+                elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
+                    move = -1
+                self.selected_character = min(self.selected_character + move, self.character_count)
+        elif self.state < len(player_data.player_data.key_map):
+            pressed = services.service_locator.game_input.get_last_pressed()
+            if pressed is not None:
+                action = list(player_data.player_data.key_map.keys())[self.state]
+                player_data.player_data.key_map[action] = pressed
+                print("%s: %s" % (action, pygame.key.name(pressed)))
+
+                self.state += 1
+
+    def draw(self, surface):
+        pass
+
+# --- || Game Level State || ---
 
 class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
-        import player_data
         import hud
         # initialise player and set player type
         # TODO: player type will later be set on the character select screen instead
