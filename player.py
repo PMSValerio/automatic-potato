@@ -2,7 +2,7 @@ from enum import Enum
 import pygame
 from pygame import Vector2
 
-# decode 
+# REMOVE
 from enemy import Troll
 from enemy import Spawner
 
@@ -21,6 +21,7 @@ class States(Enum):
 
 class Player(Entity):
     def __init__(self, pos):
+        # REMOVE
         self.troll = Troll()
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
@@ -124,5 +125,6 @@ class Player(Entity):
             self.graphics.play("move_right")
 
         if self.move_force.length() == 0:
+            # REMOVE
             Spawner.spawn_monster(self.troll)
             self.fsm.change_state(States.IDLE)

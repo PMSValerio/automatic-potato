@@ -26,7 +26,7 @@ class Enemy(Entity):
 
         self.fsm = FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
-        # self.fsm.add_state(EnemyStates.SEEK, self.seek)
+        self.fsm.add_state(EnemyStates.SEEK, self.seek)
         # self.fsm.add_state(EnemyStates.FLEE, self.flee)
         # self.fsm.add_state(EnemyStates.ATTACK, self.attack)
 
@@ -74,22 +74,24 @@ class Troll(Enemy):
         # TODO change this to call super with information from json
         pos = Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
 
-        super().__init__(pos, 100, 50, 50, 50)
+        super().__init__(pos, 100, 1, 50, 50)
         self._change_dir : int = 5
 
         self.graphics = Animation("assets/gfx/test.png", True, 5)
 
+
     def update(self, delta):
         self.pos += self._move_speed * self._move_dir
 
-        # self.fsm.update()
+        self.fsm.update()
         self.update_bbox()
 
-    def wandering(self):
+
+    def wandering(self, useless = False):
         print("wandering")
         # change direction after 5 updates
         if self._change_dir == 0:
-            self._move_dir = Vector2(random.randint(0, 1), random.randint(0, 1))
+            self._move_dir = Vector2(random.randint(-1, 1), random.randint(-1, 1))
             self._change_dir = 5
 
         self._change_dir -= 1
