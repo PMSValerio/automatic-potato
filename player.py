@@ -2,6 +2,10 @@ from enum import Enum
 import pygame
 from pygame import Vector2
 
+# decode 
+from enemy import Troll
+from enemy import Spawner
+
 from common import *
 from services import service_locator
 from player_data import player_data
@@ -17,6 +21,7 @@ class States(Enum):
 
 class Player(Entity):
     def __init__(self, pos):
+        self.troll = Troll()
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
         self.shoot_dir = Vector2(1, 0)
@@ -119,4 +124,5 @@ class Player(Entity):
             self.graphics.play("move_right")
 
         if self.move_force.length() == 0:
+            Spawner.spawn_monster(self.troll)
             self.fsm.change_state(States.IDLE)
