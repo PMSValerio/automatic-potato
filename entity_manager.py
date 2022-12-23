@@ -4,26 +4,15 @@ from common import *
 import services
 
 class EntityManager:
-    __instance = None
-
-    def get():
-        if EntityManager.__instance is None:
-            EntityManager()
-        return EntityManager.__instance
-
     def __init__(self):
-        if EntityManager.__instance is not None:
-            raise Exception("Singleton class already initialised")
-        else:
-            EntityManager.__instance = self
-
-    def init(self):
         self.entities = {}
         for layer in EntityLayers:
             self.entities[layer] = []
 
         self.remove_queue = [] # all entities are deleted at the end of the update at the same time
-        
+    
+    # initialisations that depend on other services
+    def setup(self):
         services.service_locator.event_handler.subscribe(self, "new_entity")
         services.service_locator.event_handler.subscribe(self, "kill_entity")
 

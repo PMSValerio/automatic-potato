@@ -15,6 +15,7 @@ class GraphicsLoader:
             except pygame.error as message:
                 print('Unable to load spritesheet image:', filename)
                 raise SystemExit(message)
+        return self.images[filename]
     
     # Load a specific image from a specific rectangle
     def image_at(self, filename, rectangle, colorkey = None):
@@ -22,10 +23,10 @@ class GraphicsLoader:
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         if colorkey == None:
-            image.set_colorkey(self.images[filename].get_colorkey(), pygame.RLEACCEL)
+            image.set_colorkey(self.load_image(filename).get_colorkey(), pygame.RLEACCEL)
         else:
             image.set_colorkey(colorkey, pygame.RLEACCEL)
-        image.blit(self.images[filename], (0, 0), rect)
+        image.blit(self.load_image(filename), (0, 0), rect)
         return image
     
     # Load a whole bunch of images and return them as a list

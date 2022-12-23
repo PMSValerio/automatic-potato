@@ -19,14 +19,13 @@ class Services:
         else:
             Services.__instance = self
     
-        self.event_handler : event_handler.EventHandler = event_handler.EventHandler.get()
-        self.entity_manager : entity_manager.EntityManager = entity_manager.EntityManager.get()
-        self.physics_engine : group_space.GroupSpace = group_space.GroupSpace.get()
+        self.event_handler : event_handler.EventHandler = event_handler.EventHandler()
+        self.entity_manager : entity_manager.EntityManager = entity_manager.EntityManager()
+        self.physics_engine : group_space.GroupSpace = group_space.GroupSpace()
         self.game_input : game_input.GameInput = game_input.GameInput()
         self.graphics_loader : graphics_loader.GraphicsLoader = graphics_loader.GraphicsLoader()
     
     def setup(self):
-        self.entity_manager.init()
-        self.physics_engine.init()
+        self.entity_manager.setup()
     
 service_locator : Services = None

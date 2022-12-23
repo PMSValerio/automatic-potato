@@ -4,6 +4,7 @@ from pygame import Vector2
 
 from common import *
 from services import service_locator
+from player_data import player_data
 from entity import Entity
 from animation import Animation
 
@@ -14,16 +15,8 @@ class States(Enum):
     IDLE = 0
     MOVING = 1
 
-class PlayerStats:
-    def __init__(self, max_health, base_speed):
-        self.max_health = max_health # max hp
-        self.speed = base_speed # pix/sec
-
-witch_stats = PlayerStats(10, 160)
-cat_stats = PlayerStats(8, 200)
-
 class Player(Entity):
-    def __init__(self, pos, stats : PlayerStats):
+    def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
         self.shoot_dir = Vector2(1, 0)
@@ -32,7 +25,10 @@ class Player(Entity):
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
 
-        self.stats = stats
+        self.stats = player_data.player_type
+
+        self.health = 0
+        self.change_health(self.stats.max_health)
 
         self.fsm = FSM()
         self.fsm.add_state(States.IDLE, self.idle, True)
@@ -83,6 +79,8 @@ class Player(Entity):
         self.fsm.update()
 
         self.update_bbox()
+
+        self.change_health(-delta)
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
@@ -92,6 +90,10 @@ class Player(Entity):
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]
         self.move_force.y += new_dir.value[1]
+    
+    def change_health(self, amount):
+        self.health += amount
+        service_locator.event_handler.publish("new_health", self.health)
 
     # --- || State Callbacks || ---
     
