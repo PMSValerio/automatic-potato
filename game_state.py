@@ -54,7 +54,7 @@ class TitleState(GameState):
         
         if self.can_click:
             if pygame.mouse.get_pressed()[0]:
-                service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
+                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
@@ -66,14 +66,32 @@ class TitleState(GameState):
 
 class CharacterSelectState(GameState):
     def __init__(self):
+        self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
+
         self.state = -1 # -1: select character; 0 - n: select control keybind
 
-        self.selected_character = True # True if witch, False if cat
-        self.character_count = 2
+        self.selected_skin = 0 # 0 if witch, 1 if cat
+        self.skin_count = 2
+
+        self.skin_labels = []
+        self.skin_labels.append("Witch")
+        self.skin_labels.append("Cat")
+
+        self.key_binds_labels = []
+        for action in player_data.player_data.key_map.keys():
+            self.key_binds_labels.append(action + ": <Press any key>")
+        
+        self.selected_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_selected.png")
+        self.chosen_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_chosen.png")
     
     def update(self, delta):
         if self.state <= -1:
-            if services.service_locator.game_input.key_pressed(pygame.K_DOWN):
+            if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
+                # TODO: probably change this
+                if self.selected_skin == 0:
+                    player_data.player_data.select_player_type(witch_stats)
+                else:
+                    player_data.player_data.select_player_type(cat_stats)
                 self.state = 0
             else:
                 move = 0
@@ -81,18 +99,51 @@ class CharacterSelectState(GameState):
                     move = 1
                 elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
                     move = -1
-                self.selected_character = min(self.selected_character + move, self.character_count)
+                self.selected_skin = max(0, min(self.selected_skin + move, self.skin_count - 1))
         elif self.state < len(player_data.player_data.key_map):
             pressed = services.service_locator.game_input.get_last_pressed()
             if pressed is not None:
                 action = list(player_data.player_data.key_map.keys())[self.state]
                 player_data.player_data.key_map[action] = pressed
-                print("%s: %s" % (action, pygame.key.name(pressed)))
+                self.key_binds_labels[self.state] = action + ": " + str(pygame.key.name(pressed))
 
                 self.state += 1
+        else:
+            if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
+                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
 
     def draw(self, surface):
-        pass
+        # TODO: improve code
+        surface.fill((40, 40, 40))
+        yline = HEIGHT * 0.25
+        skin_cursor_x = (self.selected_skin+1) * WIDTH/(self.skin_count+1)
+
+        # State specific drawing
+        if self.state <= -1:
+            surface.blit(self.selected_skin_panel, (skin_cursor_x-48, yline-48, 96, 96))
+            self.draw_text(surface, "Select with < > - Choose with ENTER", WIDTH * 0.5, HEIGHT * 0.1)
+        elif self.state < len(player_data.player_data.key_map):
+            surface.blit(self.chosen_skin_panel, (skin_cursor_x-48, yline-48, 96, 96))
+            self.draw_text(surface, "Control Mapping", WIDTH * 0.5, HEIGHT * 0.5)
+        else:
+            surface.blit(self.chosen_skin_panel, (skin_cursor_x-48, yline-48, 96, 96))
+            self.draw_text(surface, "Press ENTER to start", WIDTH * 0.5, HEIGHT * 0.9)
+
+        # Text drawing
+        for i, text in enumerate(self.skin_labels):
+            self.draw_text(surface, text, (i+1) * WIDTH/(self.skin_count+1), yline)
+        
+        yline = HEIGHT * 0.6
+        for keybind in self.key_binds_labels:
+            self.draw_text(surface, keybind, WIDTH * 0.5, yline)
+            yline += 32
+
+    # draw text centered on position
+    def draw_text(self, surface, text_string, centerx, centery, color = (255, 255, 255)):
+        rendered = self.font.render(text_string, True, color)
+        rect = rendered.get_rect()
+        rect.center = (centerx, centery)
+        surface.blit(rendered, rect)
 
 # --- || Game Level State || ---
 
@@ -105,7 +156,6 @@ class LevelState(GameState):
         # TODO: player type will later be set on the character select screen instead
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
-        player_data.player_data.select_player_type(witch_stats)
         player.Player(Vector2(WIDTH / 2, HEIGHT / 2))
     
     def update(self, delta):

@@ -9,7 +9,7 @@ class PlayerProjectile(Entity):
     def __init__(self, pos, direction):
         Entity.__init__(self, pos, EntityLayers.PLAYER_ATTACK)
 
-        self.speed = 240
+        self.speed = 280
         self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
 
         self.graphics = Animation("assets/gfx/spell.png", True)
