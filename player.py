@@ -15,6 +15,8 @@ class States(Enum):
     IDLE = 0
     MOVING = 1
 
+HEAL_RATE = 5 # when in healing zone, heal 5 per sec
+
 class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
@@ -69,10 +71,14 @@ class Player(Entity):
             self.command_map["shoot"].execute(self)
             self.shoot_timer = self.shoot_cooldown
 
+        if self.pos.distance_to(Vector2(WIDTH * 0.5, HEIGHT * 0.5)) <= HEAL_RANGE:
+            self.change_health(HEAL_RATE * delta)
+
         self.fsm.update()
 
         self.update_bbox()
 
+        # TODO: remove
         self.change_health(-delta)
     
     def check_action(self, action, just_pressed = False):
@@ -85,7 +91,7 @@ class Player(Entity):
         self.move_force.y += new_dir.value[1]
     
     def change_health(self, amount):
-        self.health += amount
+        self.health = max(0, min(self.health + amount, self.stats.max_health))
         service_locator.event_handler.publish("new_health", self.health)
 
     # --- || State Callbacks || ---

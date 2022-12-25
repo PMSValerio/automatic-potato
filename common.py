@@ -8,6 +8,9 @@ BLOCK = 32 # "cell" unit size
 # refresh rate
 FPS = 30
 
+# range of the healing are positioned on map center
+HEAL_RANGE = 48
+
 # game scenes
 class GameStates(Enum):
     TITLE_SCREEN = 0
