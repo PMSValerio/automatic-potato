@@ -15,8 +15,6 @@ class States(Enum):
     IDLE = 0
     MOVING = 1
 
-HEAL_RATE = 5 # when in healing zone, heal 5 per sec
-
 class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
@@ -71,7 +69,8 @@ class Player(Entity):
             self.command_map["shoot"].execute(self)
             self.shoot_timer = self.shoot_cooldown
 
-        if self.pos.distance_to(Vector2(WIDTH * 0.5, HEIGHT * 0.5)) <= HEAL_RANGE:
+        # check if in healing zone
+        if self.pos.distance_to(Vector2(TARGET_X, TARGET_Y)) <= HEAL_RANGE:
             self.change_health(HEAL_RATE * delta)
 
         self.fsm.update()
@@ -107,6 +106,9 @@ class Player(Entity):
     def moving(self, new = False):
 
         self.pos = self.pos + self.stats.speed * self.move_force
+        # clamp position inside map borders
+        self.pos.x = max(MAP_BORDER_LEFT, min(self.pos.x, MAP_BORDER_RIGHT))
+        self.pos.y = max(MAP_BORDER_UP, min(self.pos.y, MAP_BORDER_DOWN))
 
         if self.dir.y < 0:
             self.graphics.play("move_up")

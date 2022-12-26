@@ -8,8 +8,21 @@ BLOCK = 32 # "cell" unit size
 # refresh rate
 FPS = 30
 
+# coordinates of enemy target/healing area
+TARGET_X = WIDTH / 2
+TARGET_Y = HEIGHT / 2
+
 # range of the healing are positioned on map center
 HEAL_RANGE = 48
+
+# when in healing zone, player heals 5 hp per sec
+HEAL_RATE = 5
+
+# map border; player can only move inside these
+MAP_BORDER_LEFT = 128
+MAP_BORDER_RIGHT = WIDTH - 128
+MAP_BORDER_UP = 128
+MAP_BORDER_DOWN = HEIGHT - 128
 
 # game scenes
 class GameStates(Enum):
