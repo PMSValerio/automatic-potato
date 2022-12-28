@@ -1,5 +1,5 @@
 from common import *
-from player_projectile import Projectile
+from projectile import Projectile
 
 class MoveLeft:
     def execute(self, player):

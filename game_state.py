@@ -85,11 +85,6 @@ class CharacterSelectState(GameState):
     def update(self, delta):
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
-                # TODO: probably change this, so that different skin indexes aren't hardcoded
-                # if self.selected_skin == 0:
-                #     player_data.player_data.select_player_type(witch_stats)
-                # else:
-                #     player_data.player_data.select_player_type(cat_stats)
                 player_data.player_data.select_player_type(player_types[self.skin_labels[self.selected_skin]])
                 self.state = 0
             else:
@@ -150,12 +145,14 @@ class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
+        import pickups
         import hud
         # initialise player and set player type
         # TODO: player type will later be set on the character select screen instead
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT / 2))
+        pickups.WeaponPickup(Vector2(WIDTH * 0.7, HEIGHT * 0.5))
     
     def update(self, delta):
         import random

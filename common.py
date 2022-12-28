@@ -45,22 +45,24 @@ class EntityLayers(Enum):
     PLAYER_ATTACK = 1
     ENEMY = 2
     ENEMY_ATTACK = 3
-    OBSTACLE = 4
+    PICKUP = 4
 
 # player stats to define multiple player types
 class PlayerStats:
-    def __init__(self, max_health, base_speed):
+    def __init__(self, name, max_health, base_speed):
+        self.name = name
         self.max_health = max_health # max hp
         self.speed = base_speed # pix/sec
 
 player_types = {
-    "Witch": PlayerStats(10, 160),
-    "Cat": PlayerStats(8, 200)
+    "Witch": PlayerStats("Witch", 10, 160),
+    "Cat": PlayerStats("Cat", 8, 200)
 }
 
 # projectiles' types and stats
 class ProjectileStats:
-    def __init__(self, speed, power, cooldown, col_layer, anim_filepath):
+    def __init__(self, name, speed, power, cooldown, col_layer, anim_filepath):
+        self.name = name
         self.speed = speed # pix/sec
         self.power = power
         self.cooldown = cooldown # sec
@@ -68,11 +70,11 @@ class ProjectileStats:
         self.anim_filepath = anim_filepath
 
 projectile_types = {
-    "Spell": ProjectileStats(260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Pumpkin Bomb": ProjectileStats(200, 20, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Fish": ProjectileStats(300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Shark": ProjectileStats(180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 20, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
 
-    "Bone": ProjectileStats(180, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
+    "Bone": ProjectileStats("Bone", 180, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
     # TODO: boss projectile
 }

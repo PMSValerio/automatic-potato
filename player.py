@@ -19,9 +19,14 @@ class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
+        # weapon data
         self.projectile_type = projectile_types["Spell"]
         self.shoot_dir = Vector2(1, 0)
         self.shoot_timer = 0
+
+        # upgrade data
+        self.speed_modifier = 1 # multiplied to movement speed
+        self.invincible_timer = 0 # if > 0, player is invulnerable to enemy attacks
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
 
@@ -72,6 +77,9 @@ class Player(Entity):
         # check if in healing zone
         if self.pos.distance_to(Vector2(TARGET_X, TARGET_Y)) <= HEAL_RANGE:
             self.change_health(HEAL_RATE * delta)
+        
+        # update invincibility counter
+        self.invincible_timer = max(0, self.invincible_timer - delta)
 
         self.fsm.update()
 
@@ -105,7 +113,7 @@ class Player(Entity):
 
     def moving(self, new = False):
 
-        self.pos = self.pos + self.stats.speed * self.move_force
+        self.pos = self.pos + self.stats.speed * self.speed_modifier * self.move_force
         # clamp position inside map borders
         self.pos.x = max(MAP_BORDER_LEFT, min(self.pos.x, MAP_BORDER_RIGHT))
         self.pos.y = max(MAP_BORDER_UP, min(self.pos.y, MAP_BORDER_DOWN))
