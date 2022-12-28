@@ -38,15 +38,6 @@ class Directions(Enum):
     UP = (0, -1)
     DOWN = (0, 1)
 
-# player stats to define multiple player types
-class PlayerStats:
-    def __init__(self, max_health, base_speed):
-        self.max_health = max_health # max hp
-        self.speed = base_speed # pix/sec
-
-witch_stats = PlayerStats(10, 160)
-cat_stats = PlayerStats(8, 200)
-
 # collision layers
 class EntityLayers(Enum):
     NULL = -1
@@ -55,3 +46,33 @@ class EntityLayers(Enum):
     ENEMY = 2
     ENEMY_ATTACK = 3
     OBSTACLE = 4
+
+# player stats to define multiple player types
+class PlayerStats:
+    def __init__(self, max_health, base_speed):
+        self.max_health = max_health # max hp
+        self.speed = base_speed # pix/sec
+
+player_types = {
+    "Witch": PlayerStats(10, 160),
+    "Cat": PlayerStats(8, 200)
+}
+
+# projectiles' types and stats
+class ProjectileStats:
+    def __init__(self, speed, power, cooldown, col_layer, anim_filepath):
+        self.speed = speed # pix/sec
+        self.power = power
+        self.cooldown = cooldown # sec
+        self.col_layer = col_layer # collision layer (should be either PLAYER_ATTACK or ENEMY_ATTACK)
+        self.anim_filepath = anim_filepath
+
+projectile_types = {
+    "Spell": ProjectileStats(260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Pumpkin Bomb": ProjectileStats(200, 20, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Fish": ProjectileStats(300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Shark": ProjectileStats(180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+
+    "Bone": ProjectileStats(180, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
+    # TODO: boss projectile
+}

@@ -19,8 +19,8 @@ class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
+        self.projectile_type = projectile_types["Spell"]
         self.shoot_dir = Vector2(1, 0)
-        self.shoot_cooldown = 0.2 # sec
         self.shoot_timer = 0
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
@@ -67,7 +67,7 @@ class Player(Entity):
         shoot = self.check_action("shoot")
         if shoot and self.shoot_timer <= 0:
             self.command_map["shoot"].execute(self)
-            self.shoot_timer = self.shoot_cooldown
+            self.shoot_timer = self.projectile_type.cooldown
 
         # check if in healing zone
         if self.pos.distance_to(Vector2(TARGET_X, TARGET_Y)) <= HEAL_RANGE:

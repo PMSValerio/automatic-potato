@@ -5,17 +5,21 @@ from common import *
 from entity import Entity
 from animation import Animation
 
-class PlayerProjectile(Entity):
-    def __init__(self, pos, direction):
-        Entity.__init__(self, pos, EntityLayers.PLAYER_ATTACK)
+class Projectile(Entity):
+    def __init__(self, pos, direction, stats):
+        Entity.__init__(self, pos, stats.col_layer)
 
-        self.speed = 280
+        self.stats = stats
+
         self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
 
-        self.graphics = Animation("assets/gfx/spell.png", True)
+        self.graphics = Animation(self.stats.anim_filepath, True)
 
     def update(self, delta):
-        self.pos += self.dir * (self.speed * delta)
+        self.pos += self.dir * (self.stats.speed * delta)
+
+        if self.pos.x < 0 or self.pos.x >= WIDTH or self.pos.y < 0 or self.pos.y >= HEIGHT:
+            self.die()
         
         self.update_bbox()
 

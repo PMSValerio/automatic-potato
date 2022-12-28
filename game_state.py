@@ -73,9 +73,7 @@ class CharacterSelectState(GameState):
         self.selected_skin = 0 # 0 if witch, 1 if cat
         self.skin_count = 2
 
-        self.skin_labels = []
-        self.skin_labels.append("Witch")
-        self.skin_labels.append("Cat")
+        self.skin_labels = list(player_types.keys())
 
         self.key_binds_labels = []
         for action in player_data.player_data.key_map.keys():
@@ -87,11 +85,12 @@ class CharacterSelectState(GameState):
     def update(self, delta):
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
-                # TODO: probably change this
-                if self.selected_skin == 0:
-                    player_data.player_data.select_player_type(witch_stats)
-                else:
-                    player_data.player_data.select_player_type(cat_stats)
+                # TODO: probably change this, so that different skin indexes aren't hardcoded
+                # if self.selected_skin == 0:
+                #     player_data.player_data.select_player_type(witch_stats)
+                # else:
+                #     player_data.player_data.select_player_type(cat_stats)
+                player_data.player_data.select_player_type(player_types[self.skin_labels[self.selected_skin]])
                 self.state = 0
             else:
                 move = 0
