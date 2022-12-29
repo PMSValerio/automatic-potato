@@ -16,5 +16,7 @@ class EventHandler:
                 self.listeners[event].remove(listener)
     
     def publish(self, event, args = None):
+        if event not in self.listeners:
+            self.listeners[event] = [] 
         for listener in self.listeners[event]:
             listener.on_notify(event, args)

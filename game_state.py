@@ -145,11 +145,14 @@ class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
+        import boss
         import hud
         # initialise player and set player type
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
+
+        boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
     
     def update(self, delta):
         import random
@@ -159,7 +162,7 @@ class LevelState(GameState):
         if random.random() < 0.01:
             xx = random.randrange(0, WIDTH)
             yy = random.randrange(0, HEIGHT)
-            test_entities.Test2(Vector2(xx, yy))
+            # test_entities.Test2(Vector2(xx, yy))
 
         services.service_locator.entity_manager.update_all(delta)
 

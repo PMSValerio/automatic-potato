@@ -59,6 +59,10 @@ class GraphicsLoader:
         self.add_anim_strip(filename, "move_up", 3, 32, 32, 1)
         self.add_anim_strip(filename, "move_down", 4, 32, 32, 1)
 
+        filename = "assets/gfx/boss.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 160, 160, 1)
+
         filename = "assets/gfx/spell.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4)
