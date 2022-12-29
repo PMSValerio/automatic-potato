@@ -3,6 +3,7 @@ import pygame
 from common import *
 from player_data import player_data
 from entity import Entity
+from pickups import *
 
 class Test2(Entity):
     def __init__(self, pos):
@@ -22,3 +23,4 @@ class Test2(Entity):
     def collide(self, other):
         self.die()
         player_data.update_score(30)
+        SpeedPickup(self.pos.copy())

@@ -145,14 +145,11 @@ class LevelState(GameState):
     def enter(self):
         from pygame import Vector2
         import player
-        import pickups
         import hud
         # initialise player and set player type
-        # TODO: player type will later be set on the character select screen instead
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
-        player.Player(Vector2(WIDTH / 2, HEIGHT / 2))
-        pickups.WeaponPickup(Vector2(WIDTH * 0.7, HEIGHT * 0.5))
+        player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
     
     def update(self, delta):
         import random
