@@ -21,6 +21,8 @@ def main():
     # set up player data
     player_data.player_data = player_data.PlayerData.get()
 
+    # TODO: REMOVE
+    player_data.player_data.select_player_type(player_types["Witch"])
 
     # game state machine initialisation
     states = {
@@ -28,7 +30,8 @@ def main():
         GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
         GameStates.LEVEL: game_state.LevelState()
     }
-    game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
+    # game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
 
     # game loop
     clock = pg.time.Clock()

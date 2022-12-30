@@ -32,23 +32,55 @@ class Spawner():
 
 
 class Enemy(Entity):
-    def __init__(self, pos, health, move_speed, attack_speed, strength):
-        Entity.__init__(self, pos, EntityLayers.ENEMY)
+    def __init__(self, health, move_speed, attack_speed, strength):
+        init_spawn = self._fetch_spawn_pos()
+
+        Entity.__init__(self, init_spawn[0], EntityLayers.ENEMY)
         
         self._health = health
         self._move_speed = move_speed
         self._attack_speed = attack_speed
         self._strength = strength
 
-        self._move_dir : Vector2 = Vector2(0, 0)
+        self._move_dir : Vector2 = init_spawn[1]
 
         self.fsm = FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
         self.fsm.add_state(EnemyStates.SEEK, self.seek)
         self.fsm.add_state(EnemyStates.FLEE, self.flee)
         self.fsm.add_state(EnemyStates.ATTACK, self.attack)
+    
 
+    def _fetch_spawn_pos(self):
+        x = random.randint(0, WIDTH)
+        y = random.randint(0, HEIGHT)
+
+        side = random.choice(["MAP_BORDER_DOWN", "MAP_BORDER_UP", "MAP_BORDER_RIGHT", "MAP_BORDER_LEFT"])
+        
+        # depending on the initial position, the move direction is towards the center of the map
+        if side == "MAP_BORDER_DOWN":
+            init_pos = Vector2(x, HEIGHT + 10)
+            move_dir = Vector2(0, -1)
+        
+        elif side == "MAP_BORDER_UP":
+            init_pos = Vector2(x, -10)
+            move_dir = Vector2(0, 1)
+        
+        elif side == "MAP_BORDER_LEFT":
+            init_pos = Vector2(-10, y)
+            move_dir = Vector2(1, 0)
+        
+        elif side == "MAP_BORDER_RIGHT":
+            init_pos = Vector2(WIDTH + 10, y)
+            move_dir = Vector2(-1, 0)
+
+        return (init_pos, move_dir)
+
+    
     def update(self, delta): 
+        raise NotImplementedError
+
+    def damage(self, value):
         raise NotImplementedError
 
     def attack(self): 
@@ -70,15 +102,13 @@ class Enemy(Entity):
 class Troll(Enemy):
     def __init__(self):
         # TODO change this to call super with information from json
-        pos = Vector2(random.randint(0, WIDTH), random.randint(0, HEIGHT))
-
-        super().__init__(pos, 30, 1, 50, 50)
+        super().__init__(health = 30, move_speed = 1, attack_speed = 50, strength = 50)
+        
         self._change_dir : int = 5
-
         self.graphics = Animation("assets/gfx/test.png", True, 5)
 
     def update(self, delta):
-        self.pos += self._move_speed * self._move_dir * delta
+        self.pos += self._move_speed * self._move_dir
 
         self.fsm.update()
         self.update_bbox()
@@ -91,14 +121,21 @@ class Troll(Enemy):
             self._change_dir = 5
 
         self._change_dir -= 1
-        # if player nearby ... change state 32
+        # if player nearby ... change state
+
+    def seek(self, new = False):
+        # move towards the center of the map 
+        # common.py TARGET_X and TARGET_Y 
+        pass 
 
     def collide(self, other):
         if other.col_layer == EntityLayers.PLAYER_ATTACK:
-            self._health -= 10
+            self.damage(other.stats.power)
 
-            if self._health == 0:
-                self.die()
+    def damage(self, value):
+        self._health = max(0, self._health - value)
+        if self._health == 0:
+            self.die()
 
     def clone(self):
         return Troll()

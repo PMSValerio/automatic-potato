@@ -151,12 +151,16 @@ class LevelState(GameState):
         import player
         import boss
         import hud
+        import enemy
+
         # initialise player and set player type
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
         boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+        self.troll = enemy.Troll()
+
 
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
@@ -165,6 +169,7 @@ class LevelState(GameState):
         import random
         from pygame import Vector2
         import test_entities
+        import enemy
 
         if random.random() < 0.01:
             xx = random.randrange(0, WIDTH)
@@ -172,6 +177,7 @@ class LevelState(GameState):
             # test_entities.Test2(Vector2(xx, yy))
 
         services.service_locator.entity_manager.update_all(delta)
+        enemy.Spawner.spawn_monster(self.troll)
 
         return True
 
