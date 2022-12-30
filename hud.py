@@ -22,6 +22,10 @@ class HUD:
         self.health_wid = 0 # width of the healthbar in pixels
 
         self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
+
+        self.potions = self.font.render("x0", True, (255, 255, 255))
+        self.potions_rect = self.potions.get_rect()
+
         self.score = self.font.render("SCORE: %s" % self.player_score, True, (255, 255, 255))
         self.score_rect = self.score.get_rect()
 
@@ -40,6 +44,11 @@ class HUD:
         surface.blit(self.healthbar_back, (HUD_OFFSET, HUD_OFFSET, 128, 32))
         scaled = pygame.transform.scale(self.healthbar_fore, (self.health_wid, 32))
         surface.blit(scaled, (HUD_OFFSET, HUD_OFFSET, self.health_wid, 32))
+
+        self.potions = self.font.render("x%s" % self.potions_left, True, (255, 255, 255))
+        self.potions_rect = self.potions.get_rect()
+        self.potions_rect.center = (WIDTH * 0.5, HUD_OFFSET * 1.5)
+        surface.blit(self.potions, self.potions_rect)
 
         self.score = self.font.render("SCORE: %s" % self.player_score, True, (255, 255, 255))
         self.score_rect = self.score.get_rect()

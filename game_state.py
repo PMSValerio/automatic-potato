@@ -151,6 +151,7 @@ class LevelState(GameState):
         import player
         import boss
         import hud
+        import player_data
         # initialise player and set player type
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
@@ -165,6 +166,8 @@ class LevelState(GameState):
         services.service_locator.event_handler.subscribe(self, Events.NEW_HEALTH)
         services.service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
+
+        player_data.player_data.update_potions(100)
 
         self.end_timer = 1.5 # sec; used when game finishes
         self.ending = False
