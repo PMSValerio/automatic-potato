@@ -83,8 +83,6 @@ class Player(Entity):
 
         self.fsm.update()
 
-        self.update_bbox()
-
         # TODO: remove
         self.change_health(-delta)
     

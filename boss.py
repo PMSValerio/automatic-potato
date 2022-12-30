@@ -42,8 +42,6 @@ class Boss(Entity):
             self.shoot()
         else:
             self.shoot_timer -= delta
-
-        self.update_bbox()
     
     def collide(self, other):
         if other.col_layer == EntityLayers.PLAYER_ATTACK:
@@ -75,4 +73,4 @@ class BossShields(Entity):
         self.rect.width = 64
     
     def update(self, delta):
-        self.update_bbox()
+        pass

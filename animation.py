@@ -27,24 +27,22 @@ class Animation:
     def toggle_pause(self, pause):
         self.paused = pause
     
-    # updates and returns the next frame in the animation
+    # update frame to next
+    def update_frame(self):
+        if not self.paused:
+            if self.tick_cnt >= self.delay_ticks:
+                self.tick_cnt = 0
+                if self.ix + 1 >= len(self.animations[self.current_anim]): # if last frame
+                    if self.loop:
+                        self.ix = 0
+                else: # only increment if not last frame
+                    self.ix += 1
+            else:
+                self.tick_cnt += 1
+
+    # returns the next frame in the animation
     def get_frame(self):
-        frame = self.animations[self.current_anim][self.ix]
-
-        if self.paused: # do not update frame if paused
-            return frame
-
-        if self.tick_cnt >= self.delay_ticks:
-            self.tick_cnt = 0
-            if self.ix + 1 >= len(self.animations[self.current_anim]): # if last frame
-                if self.loop:
-                    self.ix = 0
-            else: # only increment if not last frame
-                self.ix += 1
-        else:
-            self.tick_cnt += 1
-        
-        return frame
+        return self.animations[self.current_anim][self.ix]
     
     def is_last_frame(self):
         return self.ix == len(self.animations[self.current_anim]) - 1
