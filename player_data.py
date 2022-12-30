@@ -30,6 +30,7 @@ class PlayerData:
 
         self.score = 0
 
+        self.win = False
         # TODO: if there's time
         # statistics that contribute to final score
         # self.shots_fired = 0 # number of shots fired is discounted from score

@@ -44,6 +44,7 @@ class GameStates(Enum):
     CHARACTER_SELECT = 1
     LEVEL = 2
     END_RESULTS = 3
+    GAME_OVER = 4
 
 # movement directions
 class Directions(Enum):
