@@ -25,9 +25,14 @@ class Player(Entity):
         self.troll = Troll()
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
+        # weapon data
+        self.projectile_type = projectile_types["Spell"]
         self.shoot_dir = Vector2(1, 0)
-        self.shoot_cooldown = 0.2 # sec
         self.shoot_timer = 0
+
+        # upgrade data
+        self.speed_modifier = 1 # multiplied to movement speed
+        self.invincible_timer = 0 # if > 0, player is invulnerable to enemy attacks
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
 
@@ -40,13 +45,6 @@ class Player(Entity):
         self.fsm.add_state(States.IDLE, self.idle, True)
         self.fsm.add_state(States.MOVING, self.moving)
 
-        self.key_map = {
-            "move_left": pygame.K_a,
-            "move_right": pygame.K_d,
-            "move_up": pygame.K_w,
-            "move_down": pygame.K_s,
-            "shoot": pygame.K_p,
-        }
         self.command_map = {
             "move_left": MoveLeft(),
             "move_right": MoveRight(),
@@ -80,26 +78,34 @@ class Player(Entity):
         shoot = self.check_action("shoot")
         if shoot and self.shoot_timer <= 0:
             self.command_map["shoot"].execute(self)
-            self.shoot_timer = self.shoot_cooldown
+            self.shoot_timer = self.projectile_type.cooldown
+
+        # check if in healing zone
+        if self.pos.distance_to(Vector2(TARGET_X, TARGET_Y)) <= HEAL_RANGE:
+            self.change_health(HEAL_RATE * delta)
+        
+        # update invincibility counter
+        self.invincible_timer = max(0, self.invincible_timer - delta)
 
         self.fsm.update()
 
         self.update_bbox()
 
+        # TODO: remove
         self.change_health(-delta)
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
-            return service_locator.game_input.key_pressed(self.key_map[action])
-        return service_locator.game_input.key_down(self.key_map[action])
+            return service_locator.game_input.key_pressed(player_data.key_map[action])
+        return service_locator.game_input.key_down(player_data.key_map[action])
     
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]
         self.move_force.y += new_dir.value[1]
     
     def change_health(self, amount):
-        self.health += amount
-        service_locator.event_handler.publish("new_health", self.health)
+        self.health = max(0, min(self.health + amount, self.stats.max_health))
+        service_locator.event_handler.publish(Events.NEW_HEALTH, self.health)
 
     # --- || State Callbacks || ---
     
@@ -113,7 +119,10 @@ class Player(Entity):
 
     def moving(self, new = False):
 
-        self.pos = self.pos + self.stats.speed * self.move_force
+        self.pos = self.pos + self.stats.speed * self.speed_modifier * self.move_force
+        # clamp position inside map borders
+        self.pos.x = max(MAP_BORDER_LEFT, min(self.pos.x, MAP_BORDER_RIGHT))
+        self.pos.y = max(MAP_BORDER_UP, min(self.pos.y, MAP_BORDER_DOWN))
 
         if self.dir.y < 0:
             self.graphics.play("move_up")

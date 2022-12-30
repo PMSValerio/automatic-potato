@@ -13,8 +13,8 @@ class EntityManager:
     
     # initialisations that depend on other services
     def setup(self):
-        services.service_locator.event_handler.subscribe(self, "new_entity")
-        services.service_locator.event_handler.subscribe(self, "kill_entity")
+        services.service_locator.event_handler.subscribe(self, Events.NEW_ENTITY)
+        services.service_locator.event_handler.subscribe(self, Events.KILL_ENTITY)
 
     # add entity to register
     def add_entity(self, entity):
@@ -68,7 +68,7 @@ class EntityManager:
     
     # event callback
     def on_notify(self, event, arg):
-        if event == "new_entity":
+        if event == Events.NEW_ENTITY:
             self.add_entity(arg)
-        elif event == "kill_entity":
+        elif event == Events.KILL_ENTITY:
             self.remove_entity_request(arg)

@@ -1,5 +1,5 @@
 from common import *
-from player_projectile import PlayerProjectile
+from projectile import Projectile
 
 class MoveLeft:
     def execute(self, player):
@@ -19,4 +19,4 @@ class MoveDown:
 
 class Shoot:
     def execute(self, player):
-        PlayerProjectile(player.pos.copy(), player.shoot_dir.copy())
+        Projectile(player.pos.copy(), player.shoot_dir.copy(), player.projectile_type)

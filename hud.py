@@ -25,9 +25,9 @@ class HUD:
         self.score = self.score_font.render("SCORE: %s" % self.player_score, True, (255, 255, 255))
         self.score_rect = self.score.get_rect()
 
-        service_locator.event_handler.subscribe(self, "new_health")
-        service_locator.event_handler.subscribe(self, "new_score")
-        service_locator.event_handler.subscribe(self, "new_potions_left")
+        service_locator.event_handler.subscribe(self, Events.NEW_HEALTH)
+        service_locator.event_handler.subscribe(self, Events.NEW_SCORE)
+        service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
     
     # TODO:
     def draw(self, surface):
@@ -42,10 +42,10 @@ class HUD:
         surface.blit(self.score, self.score_rect)
 
     def on_notify(self, event, arg):
-        if event == "new_health":
+        if event == Events.NEW_HEALTH:
             self.player_health = arg
             self.health_wid = max(0, (128 * self.player_health) / player_data.player_type.max_health)
-        elif event == "new_score":
+        elif event == Events.NEW_SCORE:
             self.player_score = arg
-        elif event == "new_potions_left":
+        elif event == Events.NEW_POTIONS_LEFT:
             self.potions_left = arg

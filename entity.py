@@ -19,7 +19,7 @@ class Entity(Sprite):
 
         self.col_layer = layer # layer used by physics engine
 
-        services.service_locator.event_handler.publish("new_entity", self)
+        services.service_locator.event_handler.publish(Events.NEW_ENTITY, self)
     
     def update(self, delta):
         raise NotImplementedError
@@ -33,7 +33,7 @@ class Entity(Sprite):
 
 
     def die(self):
-        services.service_locator.event_handler.publish("kill_entity", self)
+        services.service_locator.event_handler.publish(Events.KILL_ENTITY, self)
     
     # called by physics engine if collision
     def collide(self, other):

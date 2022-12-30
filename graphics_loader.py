@@ -51,6 +51,8 @@ class GraphicsLoader:
     
     # initialise all animation strips used in the game
     def init_anim_strips(self):
+        # --Entities--
+
         filename = "assets/gfx/player.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "idle_right", 0, 32, 32, 1)
@@ -59,6 +61,12 @@ class GraphicsLoader:
         self.add_anim_strip(filename, "move_up", 3, 32, 32, 1)
         self.add_anim_strip(filename, "move_down", 4, 32, 32, 1)
 
+        filename = "assets/gfx/boss.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 160, 160, 1)
+
+        # --Projectiles--
+
         filename = "assets/gfx/spell.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4)
@@ -66,3 +74,13 @@ class GraphicsLoader:
         filename = "assets/gfx/test.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4)
+        
+        filename = "assets/gfx/boss_bullet.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1)
+
+        # --Pickups--
+
+        filename = "assets/gfx/speed_pickup.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1)

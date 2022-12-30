@@ -1,3 +1,5 @@
+import pygame
+
 from common import *
 import services
 
@@ -17,6 +19,15 @@ class PlayerData:
             PlayerData.__instance = self
         
         self.player_type : PlayerStats = None
+
+        self.key_map = {
+            "move_left": pygame.K_a,
+            "move_right": pygame.K_d,
+            "move_up": pygame.K_w,
+            "move_down": pygame.K_s,
+            "shoot": pygame.K_p,
+        }
+
         self.score = 0
 
         # TODO: if there's time
@@ -30,8 +41,6 @@ class PlayerData:
     # update player score and notify all subscribed entities (ex: UI)
     def update_score(self, delta):
         self.score += delta
-        services.service_locator.event_handler.publish("new_score", self.score)
+        services.service_locator.event_handler.publish(Events.NEW_SCORE, self.score)
 
-# PlayerData is not included in services as it is not an engine specific system
-# TODO: make sure this ^ makes sense
 player_data : PlayerData = None
