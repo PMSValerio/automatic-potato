@@ -11,6 +11,7 @@ class GroupSpace:
         self.collisions = [] # list of pairs of layers that should be scanned for collisions
         self.add_collision(EntityLayers.PLAYER, EntityLayers.ENEMY_ATTACK)
         self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY)
+        self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY_ATTACK)
         self.add_collision(EntityLayers.PLAYER, EntityLayers.PICKUP)
     
     # add entity to space

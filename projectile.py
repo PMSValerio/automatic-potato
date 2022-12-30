@@ -25,3 +25,11 @@ class Projectile(Entity):
 
     def collide(self, other):
         self.die()
+
+class Spud(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Spud"])
+
+    def collide(self, other):
+        if other.col_layer == EntityLayers.PLAYER:
+            Projectile.collide(self, other)

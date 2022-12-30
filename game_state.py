@@ -153,6 +153,9 @@ class LevelState(GameState):
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
         boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+
+        services.service_locator.event_handler.subscribe(self, "lose_game")
+        services.service_locator.event_handler.subscribe(self, "boss_defeated")
     
     def update(self, delta):
         import random
@@ -174,6 +177,12 @@ class LevelState(GameState):
         services.service_locator.entity_manager.draw_all(surface)
 
         self.hud.draw(surface)
+    
+    def on_notify(self, event, arg = None):
+        if event == "lose_game":
+            print("lose game")
+        elif event == "boss_defeated":
+            print("boss was defeated")
 
 
 class GameStateMachine:

@@ -76,5 +76,5 @@ projectile_types = {
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
 
     "Bone": ProjectileStats("Bone", 180, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
-    # TODO: boss projectile
+    "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/boss_bullet.png")
 }
