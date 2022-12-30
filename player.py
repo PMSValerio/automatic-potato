@@ -99,7 +99,7 @@ class Player(Entity):
     
     def change_health(self, amount):
         self.health = max(0, min(self.health + amount, self.stats.max_health))
-        service_locator.event_handler.publish("new_health", self.health)
+        service_locator.event_handler.publish(Events.NEW_HEALTH, self.health)
 
     # --- || State Callbacks || ---
     

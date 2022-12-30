@@ -36,7 +36,7 @@ def main():
         delta_time = clock.tick(FPS) / 1000 # get time in seconds
 
         running = services.service_locator.game_input.update(delta_time)
-        game_machine.current_state.update(delta_time)
+        running = running and game_machine.current_state.update(delta_time)
         game_machine.current_state.draw(screen)
 
         pg.display.update()

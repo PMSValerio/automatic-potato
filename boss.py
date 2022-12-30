@@ -61,10 +61,10 @@ class Boss(Entity):
     def damage(self, value):
         self.health = max(0, self.health - value)
         if self.health == 0:
-            service_locator.event_handler.publish("boss_defeated")
+            service_locator.event_handler.publish(Events.BOSS_DEFEATED)
     
     def on_target_reached(self):
-        service_locator.event_handler.publish("lose_game")
+        service_locator.event_handler.publish(Events.BOSS_REACH_TARGET)
 
 
 class BossShields(Entity):

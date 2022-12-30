@@ -41,8 +41,6 @@ class PlayerData:
     # update player score and notify all subscribed entities (ex: UI)
     def update_score(self, delta):
         self.score += delta
-        services.service_locator.event_handler.publish("new_score", self.score)
+        services.service_locator.event_handler.publish(Events.NEW_SCORE, self.score)
 
-# PlayerData is not included in services as it is not an engine specific system
-# TODO: make sure this ^ makes sense
 player_data : PlayerData = None

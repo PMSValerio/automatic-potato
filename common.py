@@ -24,6 +24,17 @@ MAP_BORDER_RIGHT = WIDTH - 128
 MAP_BORDER_UP = 128
 MAP_BORDER_DOWN = HEIGHT - 128
 
+# all game events
+class Events(Enum):
+    NEW_GAME_STATE = 0 # receives game state id
+    NEW_ENTITY = 1 # receives Entity object
+    KILL_ENTITY = 2 # receives Entity object
+    NEW_HEALTH = 3 # receives new health value
+    NEW_SCORE = 4 # receives new score value
+    NEW_POTIONS_LEFT = 5 # receives new potions left value
+    BOSS_DEFEATED = 6
+    BOSS_REACH_TARGET = 7
+
 # game scenes
 class GameStates(Enum):
     TITLE_SCREEN = 0

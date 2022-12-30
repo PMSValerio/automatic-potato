@@ -8,7 +8,7 @@ class GameState:
     def enter(self):
         pass
 
-    def update(self, delta):
+    def update(self, delta) -> bool:
         raise NotImplementedError
 
     def exit(self):
@@ -37,7 +37,7 @@ class TitleState(GameState):
 
         self.can_click = False
     
-    def update(self, delta):
+    def update(self, delta) -> bool:
         import pygame
         self.timer_count += delta
         if self.timer_count >= self.timer:
@@ -54,7 +54,9 @@ class TitleState(GameState):
         
         if self.can_click:
             if pygame.mouse.get_pressed()[0]:
-                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
+        
+        return True
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
@@ -82,7 +84,7 @@ class CharacterSelectState(GameState):
         self.selected_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_selected.png")
         self.chosen_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_chosen.png")
     
-    def update(self, delta):
+    def update(self, delta) -> bool:
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
                 player_data.player_data.select_player_type(player_types[self.skin_labels[self.selected_skin]])
@@ -104,7 +106,9 @@ class CharacterSelectState(GameState):
                 self.state += 1
         else:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
-                services.service_locator.event_handler.publish("new_game_state", GameStates.LEVEL)
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
+        
+        return True
 
     def draw(self, surface):
         # TODO: improve code
@@ -154,10 +158,10 @@ class LevelState(GameState):
 
         boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
 
-        services.service_locator.event_handler.subscribe(self, "lose_game")
-        services.service_locator.event_handler.subscribe(self, "boss_defeated")
+        services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
+        services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
     
-    def update(self, delta):
+    def update(self, delta) -> bool:
         import random
         from pygame import Vector2
         import test_entities
@@ -169,6 +173,8 @@ class LevelState(GameState):
 
         services.service_locator.entity_manager.update_all(delta)
 
+        return True
+
     def exit(self):
         services.service_locator.entity_manager.clear()
     
@@ -179,9 +185,9 @@ class LevelState(GameState):
         self.hud.draw(surface)
     
     def on_notify(self, event, arg = None):
-        if event == "lose_game":
+        if event == Events.BOSS_REACH_TARGET:
             print("lose game")
-        elif event == "boss_defeated":
+        elif event == Events.BOSS_DEFEATED:
             print("boss was defeated")
 
 
@@ -192,10 +198,10 @@ class GameStateMachine:
 
         self.states = states
 
-        services.service_locator.event_handler.subscribe(self, "new_game_state")
+        services.service_locator.event_handler.subscribe(self, Events.NEW_GAME_STATE)
     
     def on_notify(self, event, arg):
-        if event == "new_game_state":
+        if event == Events.NEW_GAME_STATE:
             if arg in self.states:
                 self.current_state.exit()
                 self.current_state = self.states[arg]
