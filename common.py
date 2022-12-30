@@ -24,7 +24,7 @@ MAP_BORDER_RIGHT = WIDTH - 128
 MAP_BORDER_UP = 128
 MAP_BORDER_DOWN = HEIGHT - 128
 
-# all game events
+# all game events, some should be published along with an argument
 class Events(Enum):
     NEW_GAME_STATE = 0 # receives game state id
     NEW_ENTITY = 1 # receives Entity object
@@ -34,6 +34,7 @@ class Events(Enum):
     NEW_POTIONS_LEFT = 5 # receives new potions left value
     BOSS_DEFEATED = 6
     BOSS_REACH_TARGET = 7
+    DECREASE_POTION = 8 # receives the amount of potions destroyed/stolen
 
 # game scenes
 class GameStates(Enum):
