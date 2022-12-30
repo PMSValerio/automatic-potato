@@ -46,6 +46,7 @@ class EntityLayers(Enum):
     ENEMY = 2
     ENEMY_ATTACK = 3
     PICKUP = 4
+    OBSTACLE = 5
 
 # player stats to define multiple player types
 class PlayerStats:
@@ -71,7 +72,7 @@ class ProjectileStats:
 
 projectile_types = {
     "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 20, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
     "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
 

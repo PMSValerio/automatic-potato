@@ -22,10 +22,15 @@ class Boss(Entity):
 
         self.shoot_timer = 0
 
+        self.left_shield = BossShields(Vector2(self.pos.x - 80, self.pos.y))
+        self.right_shield = BossShields(Vector2(self.pos.x + 80, self.pos.y))
+
         self.graphics = Animation("assets/gfx/boss.png")
     
     def update(self, delta):
         self.pos.y -= SPEED * delta
+        self.right_shield.pos.y = self.pos.y
+        self.left_shield.pos.y = self.pos.y
 
         # check if already reached centre
         if abs(self.pos.y - TARGET_Y) < TARGET_DIST_THRESHOLD:
@@ -45,10 +50,10 @@ class Boss(Entity):
             self.damage(other.stats.power)
     
     def shoot(self):
-        deltax = 32
+        deltax = 64
         ran = random.random()
         if ran < 0.33:
-            deltax = -32
+            deltax = -64
         elif ran < 0.67:
             deltax = 0
         Spud(Vector2(self.pos.x + deltax, self.pos.y), Vector2(0, -1))
@@ -61,3 +66,13 @@ class Boss(Entity):
     def on_target_reached(self):
         service_locator.event_handler.publish("lose_game")
 
+
+class BossShields(Entity):
+    def __init__(self, pos):
+        Entity.__init__(self, pos, EntityLayers.OBSTACLE)
+
+        self.rect.height = 160
+        self.rect.width = 64
+    
+    def update(self, delta):
+        self.update_bbox()
