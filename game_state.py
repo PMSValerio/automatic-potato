@@ -159,6 +159,8 @@ class LevelState(GameState):
 
         boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
 
+        services.service_locator.enemy_handler.iron_league()
+
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
     

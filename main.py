@@ -30,6 +30,8 @@ def main():
         GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
         GameStates.LEVEL: game_state.LevelState()
     }
+
+    
     # game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
     game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
 
@@ -41,7 +43,6 @@ def main():
 
         running = services.service_locator.game_input.update(delta_time)
         running = running and game_machine.current_state.update(delta_time)
-        services.service_locator.enemy_handler.update(delta_time)
         game_machine.current_state.draw(screen)
 
         pg.display.update()

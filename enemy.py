@@ -59,19 +59,19 @@ class Enemy(entity.Entity):
         
         # depending on the initial position, the move direction is towards the center of the map
         if side == "MAP_BORDER_DOWN":
-            init_pos = Vector2(x, HEIGHT + 10)
+            init_pos = Vector2(x, HEIGHT + 5)
             move_dir = Vector2(0, -1)
         
         elif side == "MAP_BORDER_UP":
-            init_pos = Vector2(x, -10)
+            init_pos = Vector2(x, -5)
             move_dir = Vector2(0, 1)
         
         elif side == "MAP_BORDER_LEFT":
-            init_pos = Vector2(-10, y)
+            init_pos = Vector2(-5, y)
             move_dir = Vector2(1, 0)
         
         elif side == "MAP_BORDER_RIGHT":
-            init_pos = Vector2(WIDTH + 10, y)
+            init_pos = Vector2(WIDTH + 5, y)
             move_dir = Vector2(-1, 0)
 
         return (init_pos, move_dir)
@@ -102,23 +102,22 @@ class Enemy(entity.Entity):
 class Troll(Enemy):
     def __init__(self):
         # TODO change this to call super with information from json
-        super().__init__(health = 30, move_speed = 1, attack_speed = 50, strength = 50)
+        super().__init__(health = 30, move_speed = 30, attack_speed = 50, strength = 50)
         
-        self._change_dir : int = 5
+        self._change_dir : int = 15
         self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
 
     def update(self, delta):
-        self.pos += self._move_speed * self._move_dir
+        self.pos += self._move_speed * self._move_dir * delta
 
         self.fsm.update()
         self.update_bbox()
 
-    def wandering(self, useless = False):
-        print("wandering")
-        # change direction after 5 updates
+    def wandering(self, new = False):
+        # change direction after 15 updates
         if self._change_dir == 0:
             self._move_dir = Vector2(random.randint(-1, 1), random.randint(-1, 1))
-            self._change_dir = 5
+            self._change_dir = 15
 
         self._change_dir -= 1
         # if player nearby ... change state
