@@ -28,8 +28,9 @@ def main():
         GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
         GameStates.LEVEL: game_state.LevelState(),
         GameStates.GAME_OVER: game_state.GameOverState(),
+        GameStates.END_RESULTS: game_state.ResultsState(),
     }
-    game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.END_RESULTS])
 
     # game loop
     clock = pg.time.Clock()
