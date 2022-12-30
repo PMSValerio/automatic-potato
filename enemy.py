@@ -1,13 +1,13 @@
 from pygame import Vector2
 from common import *
-from entity import Entity
-from animation import Animation
-from enum import Enum
-from fsm import FSM
+import entity
+import animation
+import fsm
+import enum
 
 import random
 
-class EnemyStates(Enum):
+class EnemyStates(enum.Enum):
     WANDERING = 0
     SEEK = 1
     FLEE = 2
@@ -31,11 +31,11 @@ class Spawner():
         return prototype.clone()
 
 
-class Enemy(Entity):
+class Enemy(entity.Entity):
     def __init__(self, health, move_speed, attack_speed, strength):
         init_spawn = self._fetch_spawn_pos()
 
-        Entity.__init__(self, init_spawn[0], EntityLayers.ENEMY)
+        entity.Entity.__init__(self, init_spawn[0], EntityLayers.ENEMY)
         
         self._health = health
         self._move_speed = move_speed
@@ -44,7 +44,7 @@ class Enemy(Entity):
 
         self._move_dir : Vector2 = init_spawn[1]
 
-        self.fsm = FSM()
+        self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
         self.fsm.add_state(EnemyStates.SEEK, self.seek)
         self.fsm.add_state(EnemyStates.FLEE, self.flee)
@@ -105,7 +105,7 @@ class Troll(Enemy):
         super().__init__(health = 30, move_speed = 1, attack_speed = 50, strength = 50)
         
         self._change_dir : int = 5
-        self.graphics = Animation("assets/gfx/test.png", True, 5)
+        self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
 
     def update(self, delta):
         self.pos += self._move_speed * self._move_dir

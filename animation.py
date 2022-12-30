@@ -1,6 +1,5 @@
 import pygame
-
-from services import service_locator
+import services
 
 # simple animation class, plays a series of subimages in a spritesheet in a loop
 class Animation:
@@ -8,7 +7,7 @@ class Animation:
         self.loop = loop
         self.delay_ticks = delay_ticks
 
-        self.animations = service_locator.graphics_loader.get_file_strips(filename)
+        self.animations = services.service_locator.graphics_loader.get_file_strips(filename)
         
         self.ix = 0
         self.current_anim = list(self.animations.keys())[0]

@@ -1,29 +1,55 @@
-from pygame import Vector2
 from common import *
-from entity import Entity
-from enum import Enum
-from enemy import Troll, Spawner
+import enum
+import enemy
+import fsm 
 
-import random
+class EnemyWaves(enum.Enum):
+    IRON = 0 
+    SILVER = 1
+    GOLD = 2
+    PLAT = 3
 
-from fsm import FSM
-
-class EnemyManager: 
+class EnemyHandler: 
     __instance = None
     
     def get():
-        if not EnemyManager.__instance:
-            EnemyManager()
-        return EnemyManager.__instance 
+        if not EnemyHandler.__instance:
+            EnemyHandler()
+        return EnemyHandler.__instance 
 
     
     def __init__(self):
-        if EnemyManager.__instance:
+        if EnemyHandler.__instance:
             raise Exception("Enemy Manager class already initialised")
         else:
-            EnemyManager.__instance = self
+            EnemyHandler.__instance = self
 
-            self._troll_instance = Troll()
-            # self._ghost_instance = Ghost()
-            # self._pumpkin_instance = Pumpkin()
-            # self._skeleton_instance = Skeleton()
+    def setup(self):
+
+        self.fsm = fsm.FSM()
+        self.fsm.add_state(EnemyWaves.IRON, self.iron, True)
+        self.fsm.add_state(EnemyWaves.SILVER, self.silver)
+        self.fsm.add_state(EnemyWaves.GOLD, self.gold)
+        self.fsm.add_state(EnemyWaves.PLAT, self.plat)
+
+        self._troll_instance = enemy.Troll()
+        # self._ghost_instance = Ghost()
+        # self._pumpkin_instance = Pumpkin()
+        # self._skeleton_instance = Skeleton()
+
+    def update(self, delta):
+        self.fsm.update()
+
+    def iron(self, delta):
+        print("spawning")
+        for i in range(0, 10):
+            enemy.Spawner.spawn_monster(self._troll_instance)
+
+    def silver(self, delta):
+        pass 
+
+    def gold(self, delta):
+        pass 
+
+    def plat(self, delta):
+        pass 

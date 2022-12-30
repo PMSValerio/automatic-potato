@@ -3,6 +3,7 @@ import entity_manager
 import group_space
 import game_input
 import graphics_loader
+import enemy_handler
 
 # holds and manages all relevant services/systems
 class Services:
@@ -24,8 +25,10 @@ class Services:
         self.physics_engine : group_space.GroupSpace = group_space.GroupSpace()
         self.game_input : game_input.GameInput = game_input.GameInput()
         self.graphics_loader : graphics_loader.GraphicsLoader = graphics_loader.GraphicsLoader()
-    
+        self.enemy_handler : enemy_handler.EnemyHandler = enemy_handler.EnemyHandler()
+
     def setup(self):
         self.entity_manager.setup()
+        self.enemy_handler.setup()
     
 service_locator : Services = None
