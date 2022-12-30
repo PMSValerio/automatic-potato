@@ -82,9 +82,6 @@ class Player(Entity):
         self.invincible_timer = max(0, self.invincible_timer - delta)
 
         self.fsm.update()
-
-        # TODO: remove
-        self.change_health(-delta)
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:
