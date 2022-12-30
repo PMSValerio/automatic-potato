@@ -160,6 +160,9 @@ class LevelState(GameState):
 
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
+
+        self.pause_timer = 1.5 # sec; used when game finishes
+        self.paused = False
     
     def update(self, delta) -> bool:
         import random
@@ -171,7 +174,12 @@ class LevelState(GameState):
             yy = random.randrange(0, HEIGHT)
             # test_entities.Test2(Vector2(xx, yy))
 
-        services.service_locator.entity_manager.update_all(delta)
+        if services.service_locator.game_input.key_pressed(pygame.K_ESCAPE):
+            self.paused = not self.paused
+            services.service_locator.event_handler.publish(Events.PAUSE_UNPAUSE, self.paused)
+
+        if not self.paused:
+            services.service_locator.entity_manager.update_all(delta)
 
         return True
 

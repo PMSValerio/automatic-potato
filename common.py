@@ -36,6 +36,8 @@ class Events(Enum):
     BOSS_REACH_TARGET = 7
     DECREASE_POTION = 8 # receives the amount of potions destroyed/stolen
 
+    PAUSE_UNPAUSE = 9 # receives new pause state
+
 # game scenes
 class GameStates(Enum):
     TITLE_SCREEN = 0
