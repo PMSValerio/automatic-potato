@@ -1,0 +1,27 @@
+{
+    "Pumpkin": {
+      "health": 25,
+      "move_speed": 50,
+      "attack_speed": 5,
+      "strength": 20
+    },
+    "Skeleton": {
+        "health": 25,
+        "move_speed": 50,
+        "attack_speed": 5,
+        "strength": 20
+    },
+    "Ghost": {
+        "health": 25,
+        "move_speed": 50,
+        "attack_speed": 5,
+        "strength": 20
+    },  
+    "Troll": {
+        "health": 25,
+        "move_speed": 50,
+        "attack_speed": 5,
+        "strength": 20
+    }
+  }
+  

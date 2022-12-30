@@ -124,6 +124,3 @@ class Player(Entity):
             self.graphics.play("move_left")
         elif self.dir.x > 0:
             self.graphics.play("move_right")
-
-        if self.move_force.length() == 0:
-            self.fsm.change_state(States.IDLE)

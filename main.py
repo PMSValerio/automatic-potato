@@ -21,6 +21,7 @@ def main():
     # set up player data
     player_data.player_data = player_data.PlayerData.get()
 
+
     # game state machine initialisation
     states = {
         GameStates.TITLE_SCREEN: game_state.TitleState(),
