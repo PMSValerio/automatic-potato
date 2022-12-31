@@ -163,7 +163,7 @@ class Troll(Enemy):
 
         if self.pos.distance_to(player_data.player_data.get_player_pos()) < 30:
             print("seeking")
-            self.fsm.change_state(self.seek)
+            self.fsm.change_state(EnemyStates.SEEK)
 
     def seek(self, new = False):
         distance = self.pos.distance_to(self.player_pos)
