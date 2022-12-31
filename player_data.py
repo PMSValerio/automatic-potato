@@ -40,6 +40,12 @@ class PlayerData:
     def select_player_type(self, ptype : PlayerStats):
         self.player_type = ptype
 
+    def update_position(self, position):
+        self.pos = position
+
+    def get_player_pos(self):
+        return self.pos
+
     # update player score and notify all subscribed entities (ex: UI)
     def update_score(self, delta):
         self.score += delta

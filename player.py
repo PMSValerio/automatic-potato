@@ -30,7 +30,9 @@ class Player(Entity):
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
 
+
         self.stats = player_data.player_type
+        self.data = player_data
 
         self.health = 0
         self.change_health(self.stats.max_health)
@@ -66,6 +68,8 @@ class Player(Entity):
             self.dir = self.move_force.normalize()
             self.move_force = self.dir * delta
         
+        self.data.update_position(self.pos)
+
         # update shoot action
         if self.shoot_timer > 0:
             self.shoot_timer -= delta
@@ -80,7 +84,7 @@ class Player(Entity):
         
         # update invincibility counter
         self.invincible_timer = max(0, self.invincible_timer - delta)
-
+        
         self.fsm.update()
     
     def check_action(self, action, just_pressed = False):

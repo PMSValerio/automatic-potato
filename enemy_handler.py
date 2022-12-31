@@ -59,10 +59,10 @@ class EnemyHandler:
             pass
 
     def iron_league(self, new = False):
-        league = EnemyWaves.IRON
-        
-        trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
-        self.wave_enemies += len(trolls)
+        # league = EnemyWaves.IRON
+        enemy.Spawner.spawn_monster(self._troll_instance)
+        # trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
+        # self.wave_enemies += len(trolls)
         
 
     def silver_league(self):
