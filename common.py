@@ -63,6 +63,7 @@ class EntityLayers(Enum):
     PICKUP = 4
     OBSTACLE = 5
 
+
 # player stats to define multiple player types
 class PlayerStats:
     def __init__(self, name, max_health, base_speed):
@@ -70,10 +71,12 @@ class PlayerStats:
         self.max_health = max_health # max hp
         self.speed = base_speed # pix/sec
 
+
 player_types = {
     "Witch": PlayerStats("Witch", 10, 160),
     "Cat": PlayerStats("Cat", 8, 200)
 }
+
 
 # projectiles' types and stats
 class ProjectileStats:
@@ -84,6 +87,7 @@ class ProjectileStats:
         self.cooldown = cooldown # sec
         self.col_layer = col_layer # collision layer (should be either PLAYER_ATTACK or ENEMY_ATTACK)
         self.anim_filepath = anim_filepath
+
 
 projectile_types = {
     "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
