@@ -54,13 +54,13 @@ class EnemyHandler:
         if event == Events.KILL_ENTITY and entity.col_layer == EntityLayers.ENEMY:
             self.wave_enemies -= 1
         
-        if self.wave_enemies == 0: 
-            self.iron_league()
-            pass
+            if self.wave_enemies == 0: 
+                self.iron_league()
 
     def iron_league(self, new = False):
         # league = EnemyWaves.IRON
         enemy.Spawner.spawn_monster(self._troll_instance)
+        self.wave_enemies = 1
         # trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
         # self.wave_enemies += len(trolls)
         

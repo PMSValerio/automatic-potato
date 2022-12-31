@@ -9,12 +9,17 @@ import random
 import player_data
 import numpy
 
+class EnemyTypes(enum.Enum):
+    TROLL = 0
+    PUMPKIN = 1
+    SKELETON = 2
+    GHOST = 3
+
 class EnemyStates(enum.Enum):
     WANDERING = 0
     SEEK = 1
     FLEE = 2
     ATTACK = 3
-
 
 class Spawner():
     __instance = None
@@ -35,10 +40,13 @@ class Spawner():
 
 
 class Enemy(entity.Entity):
+    import json
+    # def __init__(self, type : EnemyTypes):
     def __init__(self, health, move_speed, attack_speed, strength, value):
-
         entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
         
+        self.stats = self.load_stats(type)
+
         self.health = health
         self.move_speed = move_speed
         self.attack_speed = attack_speed
@@ -83,6 +91,17 @@ class Enemy(entity.Entity):
 
         return self.init_pos
 
+    def load_stats(self, type : EnemyTypes):
+        # will use the EnemyData class to access its dictionary, containing
+        # all the information about a certain type of enemy 
+        # and then loads the data to create said enemey (use EnemyType enum)
+
+        # self.health = health
+        # self.move_speed = move_speed
+        # self.attack_speed = attack_speed
+        # self.strength = strength
+        # self.value = value
+        pass 
 
     def get_random_direction(self):
         return Vector2(random.randint(-1, 1), random.randint(-1, 1))
@@ -92,15 +111,15 @@ class Enemy(entity.Entity):
         new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
 
         # guarantee that new position is within map boundaries 
-        while new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
+        while new_pos == self.pos or \
+              new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
                 new_pos.y >= max(new_pos.y, HEIGHT) or new_pos.y <= min(new_pos.y, 0):
 
             # while it's not, generate a new one
             new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
 
         return new_pos
-        
-
+    
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
@@ -140,7 +159,7 @@ class Enemy(entity.Entity):
 class Troll(Enemy):
     def __init__(self):
         # TODO change this to call super with information from json
-        super().__init__(health = 30, move_speed = 20, attack_speed = 50, strength = 50, value = 10)
+        super().__init__(health = 30, move_speed = 30, attack_speed = 50, strength = 50, value = 10)
         
         self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
         self.wander_pos = super().get_wandering_position() 
@@ -148,11 +167,12 @@ class Troll(Enemy):
     def update(self, delta):
         super().update(delta)
 
-        self.player_pos = player_data.player_data.get_player_pos()
         self.pos += self.move_speed * self.move_dir * delta
 
 
     def wandering(self, new = False):
+        self.player_pos = player_data.player_data.get_player_pos()
+
         # get direction to wandering position
         direction = (self.wander_pos - self.pos)
         self.move_dir = direction / numpy.linalg.norm(direction)
@@ -161,22 +181,39 @@ class Troll(Enemy):
         if self.pos.distance_to(self.wander_pos) < 1: 
             self.wander_pos = super().get_wandering_position() 
 
-        if self.pos.distance_to(player_data.player_data.get_player_pos()) < 30:
-            print("seeking")
+        if self.pos.distance_to(self.target_pos) < 300: 
+            print("from wandering to seek")
             self.fsm.change_state(EnemyStates.SEEK)
 
+        if self.pos.distance_to(self.player_pos) < 100:
+            print("from wandering to attack")
+            self.fsm.change_state(EnemyStates.ATTACK)
+
     def seek(self, new = False):
-        distance = self.pos.distance_to(self.player_pos)
-        direction = (self.player_pos - self.pos) 
+        self.player_pos = player_data.player_data.get_player_pos()
+        # change move speed to go faster 
 
+        # get direction to the center of the map 
+        direction = (self.target_pos - self.pos) 
         self.move_dir = direction / numpy.linalg.norm(direction)
-        print(distance)
-        
-        # if player nearby ... change state
-        # move towards the center of the map 
-        # common.py TARGET_X and TARGET_Y 
-        pass 
 
+        # if the player is close, change to attack 
+        if self.pos.distance_to(self.player_pos) < 30:
+            print("from seek to attack")
+            self.fsm.change_state(EnemyStates.ATTACK)
+
+    def attack(self, new = False):
+        self.player_pos = player_data.player_data.get_player_pos()
+        # change to attack speed 
+
+        # get direction to the player's position
+        direction = (self.player_pos - self.pos) 
+        self.move_dir = direction / numpy.linalg.norm(direction)
+
+        if self.pos.distance_to(self.player_pos) >= 10:
+            print("from seek to attack")
+            self.fsm.change_state(EnemyStates.SEEK)
+        
 
     def collide(self, other):
         super().collide(other)

@@ -152,7 +152,6 @@ class LevelState(GameState):
         import boss
         import hud
         import player_data
-
         # initialise player and set player type
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
