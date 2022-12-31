@@ -217,7 +217,7 @@ class LevelState(GameState):
             if self.end_game < 0:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.GAME_OVER)
             else:
-                print("end")
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
     
     def on_notify(self, event, arg = None):
         # win conditions
@@ -266,7 +266,8 @@ class GameOverState(GameState):
                 self.title_rect.center = (WIDTH * 0.5, HEIGHT * 0.5)
         
         if self.can_click:
-            print("end")
+            if services.service_locator.game_input.any_down():
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
         
         return True
     
@@ -340,13 +341,20 @@ class ResultsState(GameState):
         self.total_rect.centery = current_y + y_step * 2
 
     def update(self, delta):
-        if self.timer_count >= self.timer:
+        if self.timer_count >= self.timer and self.timer > 0:
             self.timer_count = 0
             self.state += 1
             if self.state == len(self.measures):
                 self.timer = 0.6
+            elif self.state == len(self.measures) + 1:
+                self.timer = 0.2
+                # TODO: animation?
         else:
             self.timer_count += delta
+        
+        if self.state >= len(self.measures) + 2:
+            if services.service_locator.game_input.any_down():
+                return False
         
         return True
     
