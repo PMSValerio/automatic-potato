@@ -21,10 +21,19 @@ class Entity(Sprite):
 
         services.service_locator.event_handler.publish(Events.NEW_ENTITY, self)
     
+    # this function is to be called by the entity manager ONLY, custom code should go in update()
+    def _update(self, delta):
+        self.update(delta)
+
+        self.update_bbox()
+
+        if self.graphics is not None:
+            self.graphics.update_frame()
+
     def update(self, delta):
         raise NotImplementedError
     
-    # draw and update animation
+    # draw animation
     def draw(self, surface):
         if self.graphics is not None:
             subimage = self.graphics.get_frame()

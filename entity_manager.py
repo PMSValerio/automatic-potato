@@ -45,7 +45,7 @@ class EntityManager:
         # update all entities
         for entity in all_entities:
             last_pos = entity.pos.copy()
-            entity.update(delta)
+            entity._update(delta)
             services.service_locator.physics_engine.update_entity(entity, last_pos)
         
         # update physics

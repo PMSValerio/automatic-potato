@@ -151,7 +151,8 @@ class LevelState(GameState):
         import player
         import boss
         import hud
-
+        import player_data
+        
         # initialise player and set player type
         self.hud = hud.HUD()
         services.service_locator.entity_manager.clear()
@@ -161,20 +162,41 @@ class LevelState(GameState):
 
         services.service_locator.enemy_handler.iron_league()
 
+        # win conditions
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
+
+        # lose conditions
+        services.service_locator.event_handler.subscribe(self, Events.NEW_HEALTH)
+        services.service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
+
+        player_data.player_data.update_potions(100)
+
+        self.end_timer = 1.5 # sec; used when game finishes
+        self.ending = False
+        self.paused = False
+
+        self.end_game = 0 # 0: game still running; -1: lose; 1: win
     
     def update(self, delta) -> bool:
         import random
         from pygame import Vector2
         import test_entities
 
+        if self.end_game != 0:
+            self.finish_game(delta)
+
         if random.random() < 0.01:
             xx = random.randrange(0, WIDTH)
             yy = random.randrange(0, HEIGHT)
             # test_entities.Test2(Vector2(xx, yy))
 
-        services.service_locator.entity_manager.update_all(delta)
+        if not self.ending and services.service_locator.game_input.key_pressed(pygame.K_ESCAPE):
+            self.paused = not self.paused
+            services.service_locator.event_handler.publish(Events.PAUSE_UNPAUSE, self.paused)
+
+        if not self.paused and not self.ending:
+            services.service_locator.entity_manager.update_all(delta)
 
         return True
 
@@ -187,11 +209,72 @@ class LevelState(GameState):
 
         self.hud.draw(surface)
     
+    def finish_game(self, delta):
+        import player_data
+        if not self.ending and self.end_game > 0: # if win, add win bonus
+            player_data.player_data.win = True
+        self.end_timer -= delta
+        self.ending = True
+
+        if self.end_timer <= 0:
+            if self.end_game < 0:
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.GAME_OVER)
+            else:
+                print("end")
+    
     def on_notify(self, event, arg = None):
-        if event == Events.BOSS_REACH_TARGET:
-            print("lose game")
-        elif event == Events.BOSS_DEFEATED:
+        # win conditions
+        if event == Events.BOSS_DEFEATED:
+            self.end_game = 1
             print("boss was defeated")
+        # lose conditions
+        elif event == Events.NEW_HEALTH:
+            if arg <= 0:
+                self.end_game = -1
+                print("player died")
+        elif event == Events.NEW_POTIONS_LEFT:
+            if arg <= 0:
+                self.end_game = -1
+                print("all potions destroyed")
+        elif event == Events.BOSS_REACH_TARGET:
+            self.end_game = -1
+            print("boss destroyed target")
+
+
+class GameOverState(GameState):
+    def __init__(self):
+        import pygame
+        self.timer_count = 0
+        self.timer = 0.1
+        self.title_font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 32)
+        self.to_write = "--GAME OVER--"
+        self.written = ""
+
+        self.title = self.title_font.render("", True, (255, 255, 255))
+        self.title_rect = self.title.get_rect()
+
+        self.can_click = False
+    
+    def update(self, delta) -> bool:
+        self.timer_count += delta
+        if self.timer_count >= self.timer:
+            self.timer_count = 0
+            if self.to_write == "":
+                self.can_click = True
+            else:
+                self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
+                self.title = self.title_font.render(self.written, True, (255, 255, 255) if self.to_write != "" else (200, 0, 0))
+                self.title_rect = self.title.get_rect()
+                self.title_rect.center = (WIDTH * 0.5, HEIGHT * 0.5)
+        
+        if self.can_click:
+            print("end")
+        
+        return True
+    
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+        surface.blit(self.title, self.title_rect)
 
 
 class GameStateMachine:

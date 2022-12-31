@@ -28,7 +28,8 @@ def main():
     states = {
         GameStates.TITLE_SCREEN: game_state.TitleState(),
         GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
-        GameStates.LEVEL: game_state.LevelState()
+        GameStates.LEVEL: game_state.LevelState(),
+        GameStates.GAME_OVER: game_state.GameOverState(),
     }
 
     

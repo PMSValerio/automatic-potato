@@ -29,7 +29,9 @@ class PlayerData:
         }
 
         self.score = 0
+        self.potions_left = 0
 
+        self.win = False
         # TODO: if there's time
         # statistics that contribute to final score
         # self.shots_fired = 0 # number of shots fired is discounted from score
@@ -42,5 +44,9 @@ class PlayerData:
     def update_score(self, delta):
         self.score += delta
         services.service_locator.event_handler.publish(Events.NEW_SCORE, self.score)
+    
+    def update_potions(self, delta):
+        self.potions_left += delta
+        services.service_locator.event_handler.publish(Events.NEW_POTIONS_LEFT, self.potions_left)
 
 player_data : PlayerData = None

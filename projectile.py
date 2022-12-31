@@ -20,8 +20,6 @@ class Projectile(Entity):
 
         if self.pos.x < 0 or self.pos.x >= WIDTH or self.pos.y < 0 or self.pos.y >= HEIGHT:
             self.die()
-        
-        self.update_bbox()
 
     def collide(self, other):
         self.die()
