@@ -4,28 +4,17 @@ from common import *
 import services
 
 class EntityManager:
-    __instance = None
-
-    def get():
-        if EntityManager.__instance is None:
-            EntityManager()
-        return EntityManager.__instance
-
     def __init__(self):
-        if EntityManager.__instance is not None:
-            raise Exception("Singleton class already initialised")
-        else:
-            EntityManager.__instance = self
-
-    def init(self):
         self.entities = {}
         for layer in EntityLayers:
             self.entities[layer] = []
 
         self.remove_queue = [] # all entities are deleted at the end of the update at the same time
-        
-        services.service_locator.event_handler.subscribe(self, "new_entity")
-        services.service_locator.event_handler.subscribe(self, "kill_entity")
+    
+    # initialisations that depend on other services
+    def setup(self):
+        services.service_locator.event_handler.subscribe(self, Events.NEW_ENTITY)
+        services.service_locator.event_handler.subscribe(self, Events.KILL_ENTITY)
 
     # add entity to register
     def add_entity(self, entity):
@@ -46,8 +35,8 @@ class EntityManager:
                 self.entities[entity.col_layer].remove(entity)
     
     # return all entities in a list
-    def get_all(self):
-        return [entity for layer in self.entities for entity in self.entities[layer]]
+    def get_all(self, exclude = []):
+        return [entity for layer in self.entities for entity in self.entities[layer] if layer not in exclude]
     
     # call update on all entities, update physics and finally remove those on queue
     def update_all(self, delta):
@@ -56,7 +45,7 @@ class EntityManager:
         # update all entities
         for entity in all_entities:
             last_pos = entity.pos.copy()
-            entity.update(delta)
+            entity._update(delta)
             services.service_locator.physics_engine.update_entity(entity, last_pos)
         
         # update physics
@@ -68,7 +57,12 @@ class EntityManager:
     
     # call draw on all entities
     def draw_all(self, surface):
-        for entity in self.get_all():
+        all_entities = self.get_all([EntityLayers.VFX])
+        all_entities.sort(key = lambda e : e.pos.y) # sort according to y coordinate, so that entities located above on the screen will be drawn first
+        for entity in all_entities:
+            entity.draw(surface)
+        # visual effects are to be drawn above all other entities regardless of their y coordinate
+        for entity in self.entities[EntityLayers.VFX]:
             entity.draw(surface)
     
     # remove all entities
@@ -79,7 +73,7 @@ class EntityManager:
     
     # event callback
     def on_notify(self, event, arg):
-        if event == "new_entity":
+        if event == Events.NEW_ENTITY:
             self.add_entity(arg)
-        elif event == "kill_entity":
+        elif event == Events.KILL_ENTITY:
             self.remove_entity_request(arg)

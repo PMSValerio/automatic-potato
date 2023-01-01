@@ -3,27 +3,20 @@ import pygame
 from common import *
 
 class GroupSpace:
-    __instance = None
-
-    def get():
-        if GroupSpace.__instance is None:
-            GroupSpace()
-        return GroupSpace.__instance
-
     def __init__(self):
-        if GroupSpace.__instance is not None:
-            raise Exception("Singleton class already initialised")
-        else:
-            GroupSpace.__instance = self
-        
-    def init(self):
         self.layers = {}
         for layer in EntityLayers:
             self.layers[layer] = pygame.sprite.Group()
         
         self.collisions = [] # list of pairs of layers that should be scanned for collisions
         self.add_collision(EntityLayers.PLAYER, EntityLayers.ENEMY_ATTACK)
+        self.add_collision(EntityLayers.PLAYER, EntityLayers.ENEMY_MELEE)
         self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY)
+        self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY_ATTACK)
+        self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.ENEMY_MELEE)
+        self.add_collision(EntityLayers.PLAYER, EntityLayers.PICKUP)
+        self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.OBSTACLE)
+        self.add_collision(EntityLayers.ENEMY_ATTACK, EntityLayers.OBSTACLE)
     
     # add entity to space
     def add_entity(self, entity):
@@ -48,8 +41,9 @@ class GroupSpace:
             col_dict = pygame.sprite.groupcollide(self.layers[pair[0]], self.layers[pair[1]], False, False)
             for e1 in col_dict.keys():
                 for e2 in col_dict[e1]:
-                    e1.collide(e2)
-                    e2.collide(e1)
+                    if e1.collision_on and e2.collision_on:
+                        e1.collide(e2)
+                        e2.collide(e1)
     
     # clear all entities
     def clear(self):

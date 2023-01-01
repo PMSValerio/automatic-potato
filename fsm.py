@@ -22,4 +22,5 @@ class FSM:
             key_list = list(self.state_handlers.keys())
             self.state = self.next if self.next in key_list else key_list[0] # the if is just a sanity check
 
-        self.state_handlers[self.state](transition)
+        if self.state_handlers[self.state] is not None:
+            self.state_handlers[self.state](transition)

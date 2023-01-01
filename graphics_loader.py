@@ -15,6 +15,7 @@ class GraphicsLoader:
             except pygame.error as message:
                 print('Unable to load spritesheet image:', filename)
                 raise SystemExit(message)
+        return self.images[filename]
     
     # Load a specific image from a specific rectangle
     def image_at(self, filename, rectangle, colorkey = None):
@@ -22,10 +23,10 @@ class GraphicsLoader:
         rect = pygame.Rect(rectangle)
         image = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         if colorkey == None:
-            image.set_colorkey(self.images[filename].get_colorkey(), pygame.RLEACCEL)
+            image.set_colorkey(self.load_image(filename).get_colorkey(), pygame.RLEACCEL)
         else:
             image.set_colorkey(colorkey, pygame.RLEACCEL)
-        image.blit(self.images[filename], (0, 0), rect)
+        image.blit(self.load_image(filename), (0, 0), rect)
         return image
     
     # Load a whole bunch of images and return them as a list
@@ -50,6 +51,8 @@ class GraphicsLoader:
     
     # initialise all animation strips used in the game
     def init_anim_strips(self):
+        # --Entities--
+
         filename = "assets/gfx/player.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "idle_right", 0, 32, 32, 1)
@@ -58,6 +61,32 @@ class GraphicsLoader:
         self.add_anim_strip(filename, "move_up", 3, 32, 32, 1)
         self.add_anim_strip(filename, "move_down", 4, 32, 32, 1)
 
+        filename = "assets/gfx/boss.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 160, 160, 1)
+
+        # --Projectiles--
+
         filename = "assets/gfx/spell.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4)
+
+        filename = "assets/gfx/test.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4)
+        
+        filename = "assets/gfx/boss_bullet.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1)
+
+        # --Pickups--
+
+        filename = "assets/gfx/speed_pickup.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1)
+
+        # --VFX--
+
+        filename = "assets/gfx/vfx/spell_hit.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4)
