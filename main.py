@@ -19,9 +19,6 @@ def main():
     # set up player data
     player_data.player_data = player_data.PlayerData.get()
 
-    # TODO: REMOVE
-    player_data.player_data.select_player_type(player_types["Witch"])
-
     # game state machine initialisation
     states = {
         GameStates.TITLE_SCREEN: game_state.TitleState(),
@@ -29,11 +26,12 @@ def main():
         GameStates.LEVEL: game_state.LevelState(),
         GameStates.GAME_OVER: game_state.GameOverState(),
         GameStates.END_RESULTS: game_state.ResultsState(),
+        GameStates.SCOREBOARD: game_state.ScoreboardState(),
     }
 
     
     # game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
-    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.SCOREBOARD])
 
     # game loop
     clock = pg.time.Clock()
@@ -46,7 +44,9 @@ def main():
         game_machine.current_state.draw(screen)
 
         pg.display.update()
-    
+
+    game_machine.close()
+
     pg.quit()
 
 

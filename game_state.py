@@ -146,19 +146,10 @@ class CharacterSelectState(GameState):
 # --- || Game Level State || ---
 
 class LevelState(GameState):
-    def enter(self):
-        from pygame import Vector2
-        import player
-        import boss
+    def __init__(self):
         import hud
-        import player_data
-        # initialise player and set player type
-        self.hud = hud.HUD()
-        services.service_locator.entity_manager.clear()
-        player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
-        services.service_locator.enemy_handler.iron_league()
+        self.hud = hud.HUD()
 
         # win conditions
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
@@ -168,13 +159,26 @@ class LevelState(GameState):
         services.service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
 
-        player_data.player_data.update_potions(100)
-
         self.end_timer = 1.5 # sec; used when game finishes
         self.ending = False
         self.paused = False
 
         self.end_game = 0 # 0: game still running; -1: lose; 1: win
+
+    def enter(self):
+        from pygame import Vector2
+        import player
+        import boss
+        import player_data
+        # initialise player and set player type
+        
+        services.service_locator.entity_manager.clear()
+        player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
+
+        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+        services.service_locator.enemy_handler.iron_league()
+
+        player_data.player_data.update_potions(100)
     
     def update(self, delta) -> bool:
         import random
@@ -381,6 +385,30 @@ class ResultsState(GameState):
 
         return rendered, rect
 
+class ScoreboardState(GameState):
+    def __init__(self):
+        self.scoreboard = {}
+
+        # whether player made it to top ten
+        self.is_on_board = False
+
+    def enter(self):
+        import json
+        with open("json/scoreboard.json") as fin:
+            self.scoreboard = json.load(fin, parse_int=int)
+        print(self.scoreboard)
+    
+    def exit(self):
+        import json
+        with open("json/scoreboard.json", mode = "w") as fout:
+            json.dump(self.scoreboard, fout)
+    
+    def update(self, delta):
+        return True
+    
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
         self.current_state : GameState = init_state
@@ -389,6 +417,10 @@ class GameStateMachine:
         self.states = states
 
         services.service_locator.event_handler.subscribe(self, Events.NEW_GAME_STATE)
+    
+    # perform any necessary clean-up, mainly, call the exit method on current state
+    def close(self):
+        self.current_state.exit()
     
     def on_notify(self, event, arg):
         if event == Events.NEW_GAME_STATE:
