@@ -1,5 +1,4 @@
 from enum import Enum
-import pygame
 from pygame import Vector2
 
 from common import *

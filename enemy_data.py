@@ -27,5 +27,3 @@ class EnemyData():
         with open("./json/enemy.json") as f:         
             self.data = json.load(f, object_pairs_hook=lambda pairs: {int(k) if k.isdigit() else k: v for k, v in pairs}, parse_int=int)
 
-    def get_data(self):
-        return self.data

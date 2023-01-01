@@ -1,13 +1,11 @@
 from pygame import Vector2
 from common import *
 import entity
-import animation
 import fsm
 import enum
-import math
 import random
 import player_data
-import numpy
+import enemy_data
 
 class EnemyTypes(enum.Enum):
     TROLL = 0
@@ -40,21 +38,15 @@ class Spawner():
 
 
 class Enemy(entity.Entity):
-    # def __init__(self, type : EnemyTypes):
-    def __init__(self, health, move_speed, attack_speed, strength, value):
+    def __init__(self, type : EnemyTypes):
         entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
         
-        self.stats = self.load_stats(type)
-
-        self.health = health
-        self.move_speed = move_speed
-        self.attack_speed = attack_speed
-        self.strength = strength
-        self.value = value
+        self.load_stats(type)
 
         self.move_dir : Vector2 = Vector2(0, 0)
         self.target_pos = (TARGET_X, TARGET_Y)
 
+        # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
         self.fsm.add_state(EnemyStates.SEEK, self.seek)
@@ -90,20 +82,39 @@ class Enemy(entity.Entity):
 
         return self.init_pos
 
-    def load_stats(self, type : EnemyTypes):
-        # will use the EnemyData class to access its dictionary, containing
-        # all the information about a certain type of enemy 
-        # and then loads the data to create said enemey (use EnemyType enum)
 
-        # self.health = health
-        # self.move_speed = move_speed
-        # self.attack_speed = attack_speed
-        # self.strength = strength
-        # self.value = value
-        pass 
+    def load_stats(self, type : EnemyTypes):
+        # access the EnemyData dictionary that has the information loaded from the enemy.json file
+        # check if the enemy type requested exists in the dictionary, raise KeyError if not
+        
+        data = enemy_data.EnemyData.get().data
+
+        # initialize instance properties with the provided data
+        if type.value in data: 
+            data = data[type.value]
+
+            # moving speeds for the different states
+            self.wandering_speed = data["wandering_speed"]
+            self.seek_speed = data["seek_speed"]
+            self.attack_speed = data["attack_speed"]
+
+            # distances needed to change states 
+            self.seek_distance = data["seek_distance"]
+            self.attack_distance = data["attack_distance"]
+
+            # stats
+            self.health = data["health"]
+            self.armor = data["armor"]
+            self.strength = data["strength"]
+            self.score_value = data["score_value"]
+
+        else: 
+            raise KeyError("Type {} of enemy does not exist.".format(type))
+
 
     def get_random_direction(self):
         return Vector2(random.randint(-1, 1), random.randint(-1, 1))
+
 
     # calculate a random roaming position relatively close to the current position
     def get_wandering_position(self):
@@ -119,25 +130,29 @@ class Enemy(entity.Entity):
 
         return new_pos
     
+
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
+
 
     def collide(self, other):
         # there are different types of players, which means that the damage is not always equal
         # damage accordingly to the power of each player 
 
-        # TODO: decrease damage based on enemy defense capacity 
+        # decrease damage based on the enemy's armor
         if other.col_layer == EntityLayers.PLAYER_ATTACK:
-            self.damage(other.stats.power)
+            self.damage(other.stats.power - self.armor)
+
 
     def damage(self, value):
+        # each mob will independently increase the player's score based on their own score value
         self.health = max(0, self.health - value)
 
         if self.health == 0:
             self.die()
+            player_data.player_data.update_score(self.score_value)
 
-        # each mob will then increase the player's score based on how difficult they are to kill
 
     def attack(self): 
         raise NotImplementedError
@@ -153,76 +168,3 @@ class Enemy(entity.Entity):
 
     def clone(self):
         raise NotImplementedError
-
-
-class Troll(Enemy):
-    def __init__(self):
-        # TODO change this to call super with information from json
-        super().__init__(health = 30, move_speed = 30, attack_speed = 50, strength = 50, value = 10)
-        
-        self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
-        self.wander_pos = super().get_wandering_position() 
-
-    def update(self, delta):
-        super().update(delta)
-
-        self.pos += self.move_speed * self.move_dir * delta
-
-
-    def wandering(self, new = False):
-        self.player_pos = player_data.player_data.get_player_pos()
-
-        # get direction to wandering position
-        direction = (self.wander_pos - self.pos)
-        self.move_dir = direction / numpy.linalg.norm(direction)
-        
-        # reached wandering position, recalculate
-        if self.pos.distance_to(self.wander_pos) < 1: 
-            self.wander_pos = super().get_wandering_position() 
-
-        # check how much time elapsed between generating the mob and 
-        # rn to see if it's necessary to force change to seek 
-
-        if self.pos.distance_to(self.target_pos) < 300: 
-            print("from wandering to seek")
-            self.fsm.change_state(EnemyStates.SEEK)
-
-        if self.pos.distance_to(self.player_pos) < 100:
-            print("from wandering to attack")
-            self.fsm.change_state(EnemyStates.ATTACK)
-
-    def seek(self, new = False):
-        self.player_pos = player_data.player_data.get_player_pos()
-        # change move speed to go faster 
-
-        # get direction to the center of the map 
-        direction = (self.target_pos - self.pos) 
-        self.move_dir = direction / numpy.linalg.norm(direction)
-
-        # if the player is close, change to attack 
-        if self.pos.distance_to(self.player_pos) < 30:
-            print("from seek to attack")
-            self.fsm.change_state(EnemyStates.ATTACK)
-
-    def attack(self, new = False):
-        self.player_pos = player_data.player_data.get_player_pos()
-        # change to attack speed 
-
-        # get direction to the player's position
-        direction = (self.player_pos - self.pos) 
-        self.move_dir = direction / numpy.linalg.norm(direction)
-
-        if self.pos.distance_to(self.player_pos) >= 10:
-            print("from seek to attack")
-            self.fsm.change_state(EnemyStates.SEEK)
-        
-
-    def collide(self, other):
-        super().collide(other)
-        player_data.player_data.update_score(20)
-
-    def damage(self, value):
-        super().damage(value)
-
-    def clone(self):
-        return Troll()

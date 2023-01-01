@@ -1,4 +1,3 @@
-import pygame
 import services
 
 # simple animation class, plays a series of subimages in a spritesheet in a loop

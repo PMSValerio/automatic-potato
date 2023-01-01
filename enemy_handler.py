@@ -1,7 +1,7 @@
 from common import *
 import enum
 import enemy
-import fsm 
+import enemy_troll
 import services 
 import random
 
@@ -40,7 +40,7 @@ class EnemyHandler:
 
         }
 
-        self._troll_instance = enemy.Troll()
+        self._troll_instance = enemy_troll.Troll()
         # self._ghost_instance = Ghost()
         # self._pumpkin_instance = Pumpkin()
         # self._skeleton_instance = Skeleton()

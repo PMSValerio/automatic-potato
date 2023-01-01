@@ -1,6 +1,5 @@
 import random
 import pygame as pg
-from pygame import Vector2
 
 from common import *
 import services

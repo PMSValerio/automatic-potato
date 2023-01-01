@@ -1,27 +1,53 @@
 {
     "0" : {
-        "health": 25,
-        "move_speed": 50,
-        "attack_speed": 5,
-        "strength": 20
+        "wandering_speed": 30,
+        "seek_speed": 50,
+        "attack_speed": 70,
+        "seek_distance": 350,
+        "attack_distance": 150,
+        "health": 30,
+        "armor": 0,
+        "strength": 20,
+        "score_value": 10
     },
     "1": {
-      "health": 25,
-      "move_speed": 50,
-      "attack_speed": 5,
-      "strength": 20
+        "wandering_speed": 30,
+        "seek_speed": 50,
+        "attack_speed": 70,
+        "seek_distance": 350,
+        "attack_distance": 150,
+        "health": 30,
+        "armor": 0,
+        "strength": 20,
+        "score_value": 10
     },
     "2": {
-        "health": 25,
-        "move_speed": 50,
-        "attack_speed": 5,
-        "strength": 20
+        "wandering_speed": 30,
+        "seek_speed": 50,
+        "attack_speed": 70,
+        "seek_distance": 350,
+        "attack_distance": 150,
+        "health": 30,
+        "armor": 0,
+        "strength": 20,
+        "score_value": 10
     },
     "3": {
-        "health": 25,
-        "move_speed": 50,
-        "attack_speed": 5,
-        "strength": 20
+        "wandering_speed": 30,
+        "seek_speed": 50,
+        "attack_speed": 70,
+        "seek_distance": 350,
+        "attack_distance": 150,
+        "health": 30,
+        "armor": 0,
+        "strength": 20,
+        "score_value": 10
+    }, 
+    "type": {
+        "0": "Troll",
+        "1": "Pumpkin", 
+        "2": "Skeleton",
+        "3": "Ghost"
     }
   }
   
