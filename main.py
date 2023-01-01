@@ -1,6 +1,5 @@
 import random
 import pygame as pg
-
 from common import *
 import services
 import player_data

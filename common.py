@@ -95,6 +95,6 @@ projectile_types = {
     "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
 
-    "Bone": ProjectileStats("Bone", 180, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
+    "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
     "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/boss_bullet.png")
 }

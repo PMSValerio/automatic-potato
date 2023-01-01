@@ -8,7 +8,8 @@
         "health": 30,
         "armor": 0,
         "strength": 20,
-        "score_value": 10
+        "score_value": 10,
+        "projectile_type": "None"
     },
     "1": {
         "wandering_speed": 30,
@@ -19,7 +20,8 @@
         "health": 30,
         "armor": 0,
         "strength": 20,
-        "score_value": 10
+        "score_value": 10,
+        "projectile_type": "Pumpkin Bomb"
     },
     "2": {
         "wandering_speed": 30,
@@ -29,8 +31,9 @@
         "attack_distance": 150,
         "health": 30,
         "armor": 0,
-        "strength": 20,
-        "score_value": 10
+        "strength": 0,
+        "score_value": 10,
+        "projectile_type": "Bone"
     },
     "3": {
         "wandering_speed": 30,
@@ -41,7 +44,8 @@
         "health": 30,
         "armor": 0,
         "strength": 20,
-        "score_value": 10
+        "score_value": 10, 
+        "projectile_type": "None"
     }, 
     "type": {
         "0": "Troll",

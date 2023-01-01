@@ -11,7 +11,11 @@ class Projectile(Entity):
 
         self.stats = stats
 
-        self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
+        if self.stats.col_layer == EntityLayers.PLAYER_ATTACK:
+            self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
+        
+        else: 
+            self.dir = direction 
 
         self.graphics = Animation(self.stats.anim_filepath, True)
 
@@ -23,6 +27,7 @@ class Projectile(Entity):
 
     def collide(self, other):
         self.die()
+
 
 class Spud(Projectile):
     def __init__(self, pos, direction):

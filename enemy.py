@@ -18,6 +18,7 @@ class EnemyStates(enum.Enum):
     SEEK = 1
     FLEE = 2
     ATTACK = 3
+    SHOOTING = 4
 
 class Spawner():
     __instance = None
@@ -46,13 +47,16 @@ class Enemy(entity.Entity):
         self.move_dir : Vector2 = Vector2(0, 0)
         self.target_pos = (TARGET_X, TARGET_Y)
 
+        self.shoot_dir = Vector2(1, 0)
+        self.shoot_timer = 0
+
         # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
         self.fsm.add_state(EnemyStates.SEEK, self.seek)
-        self.fsm.add_state(EnemyStates.FLEE, self.flee)
         self.fsm.add_state(EnemyStates.ATTACK, self.attack)
-    
+        self.fsm.add_state(EnemyStates.FLEE, self.flee)
+        self.fsm.add_state(EnemyStates.SHOOTING, self.shooting)
 
     def _random_spawn_pos(self):
         # generate a random x and y 
@@ -108,6 +112,9 @@ class Enemy(entity.Entity):
             self.strength = data["strength"]
             self.score_value = data["score_value"]
 
+            # projectile 
+            self.projectile_type = projectile_types[data["projectile_type"]]
+
         else: 
             raise KeyError("Type {} of enemy does not exist.".format(type))
 
@@ -130,6 +137,10 @@ class Enemy(entity.Entity):
 
         return new_pos
     
+    
+    def get_flee_position(self):
+        return self._random_spawn_pos()
+
 
     def update(self, delta): 
         self.fsm.update()
@@ -164,6 +175,9 @@ class Enemy(entity.Entity):
         raise NotImplementedError
 
     def wandering(self): 
+        raise NotImplementedError
+
+    def shooting(self):
         raise NotImplementedError
 
     def clone(self):
