@@ -1,10 +1,8 @@
 import enemy
 import animation
-import numpy
 import player_data
 import projectile
 from common import * 
-import entity
 
 class SkeletonProjectile():
     def shoot(self, skely):
@@ -37,12 +35,11 @@ class Skeleton(enemy.Enemy):
 
 
     def wandering(self, new = False):
+        self.move_speed = self.wandering_speed
         self.player_pos = player_data.player_data.get_player_pos()
 
         # get direction to wandering position
-        # TODO: make enemy function to get move dir based on target
-        direction = (self.wander_pos - self.pos)
-        self.move_dir = direction / numpy.linalg.norm(direction)
+        super().update_move_dir(self.wander_pos)
         
         # reached wandering position, recalculate
         if self.pos.distance_to(self.wander_pos) < 1: 
@@ -52,10 +49,12 @@ class Skeleton(enemy.Enemy):
         # rn to see if it's necessary to force change to seek 
 
         elif self.pos.distance_to(self.target_pos) < self.seek_distance: 
+            # TODO remove
             print("from wandering to seek")
             self.fsm.change_state(enemy.EnemyStates.SEEK)
 
         elif self.pos.distance_to(self.player_pos) < self.attack_distance:
+            # TODO remove
             print("from wandering to attack")
             self.fsm.change_state(enemy.EnemyStates.ATTACK)
 
@@ -66,16 +65,16 @@ class Skeleton(enemy.Enemy):
         # change move speed to go faster 
 
         # get direction to the center of the map 
-        direction = (self.target_pos - self.pos) 
-        # self.move_dir = direction / numpy.linalg.norm(direction)
-        self.move_dir = direction.normalize()
+        super().update_move_dir(self.target_pos)
 
         # if the player is close, change to attack 
         if self.pos.distance_to(self.player_pos) < self.pos.distance_to(self.target_pos):
+            # TODO remove
             print("from seek to attack")
             self.fsm.change_state(enemy.EnemyStates.ATTACK)
 
         elif self.pos.distance_to(self.target_pos) < 1: 
+            # TODO remove
             print("from seek to flee")
             self.fsm.change_state(enemy.EnemyStates.FLEE)
 
@@ -86,9 +85,7 @@ class Skeleton(enemy.Enemy):
         # change to attack speed 
 
         # get direction to the player's position
-        direction = (self.player_pos - self.pos) 
-        # self.move_dir = direction / numpy.linalg.norm(direction)
-        self.move_dir = direction.normalize()
+        super().update_move_dir(self.player_pos)
 
         if self.pos.distance_to(self.player_pos) < 90: 
             self.shoot = True
@@ -96,12 +93,14 @@ class Skeleton(enemy.Enemy):
             return
 
         elif self.pos.distance_to(self.player_pos) > self.pos.distance_to(self.target_pos):
+            # TODO remove
             print("from attack to seek")
             self.shoot = False
             self.fsm.change_state(enemy.EnemyStates.SEEK)
 
         # reached center of the map  
         elif self.pos.distance_to(self.target_pos) < 1: 
+            # TODO remove
             print("from attack to flee")
             self.shoot = False
             self.fsm.change_state(enemy.EnemyStates.FLEE)
@@ -109,12 +108,10 @@ class Skeleton(enemy.Enemy):
 
     def flee(self, new = False):
         direction = (self.flee_pos - self.pos)
-        # self.move_dir = direction / numpy.linalg.norm(direction)
         self.move_dir = direction.normalize()
 
         # if the enemy is able to escape with potion, deduct score value from player's score
-        distance = self.pos.distance_to(self.flee_pos)
-        if self.pos.distance_to(self.init_pos) < 1: 
+        if self.pos.distance_to(self.flee_pos) < 1: 
             self.die()
             player_data.player_data.update_score(-self.score_value)
 

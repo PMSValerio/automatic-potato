@@ -6,6 +6,7 @@ import enum
 import random
 import player_data
 import enemy_data
+import numpy 
 
 class EnemyTypes(enum.Enum):
     TROLL = 0
@@ -138,6 +139,11 @@ class Enemy(entity.Entity):
         return new_pos
     
     
+    def update_move_dir(self, target_position):
+        direction = (target_position - self.pos)
+        self.move_dir = direction / numpy.linalg.norm(direction)
+    
+
     def get_flee_position(self):
         return self._random_spawn_pos()
 
