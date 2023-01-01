@@ -28,6 +28,7 @@ def main():
         GameStates.CHARACTER_SELECT: game_state.CharacterSelectState(),
         GameStates.LEVEL: game_state.LevelState(),
         GameStates.GAME_OVER: game_state.GameOverState(),
+        GameStates.END_RESULTS: game_state.ResultsState(),
     }
 
     

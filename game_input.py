@@ -22,6 +22,9 @@ class GameInput:
     def _stable(self):
         return self.last_keys is not None and self.curr_keys is not None
     
+    def any_down(self):
+        return any(self.curr_keys)
+
     def key_down(self, key_code):
         return self._stable() and self.curr_keys[key_code]
     

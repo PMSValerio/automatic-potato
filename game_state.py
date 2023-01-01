@@ -218,7 +218,7 @@ class LevelState(GameState):
             if self.end_game < 0:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.GAME_OVER)
             else:
-                print("end")
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
     
     def on_notify(self, event, arg = None):
         # win conditions
@@ -238,6 +238,7 @@ class LevelState(GameState):
             self.end_game = -1
             print("boss destroyed target")
 
+# --- || Game Over State || ---
 
 class GameOverState(GameState):
     def __init__(self):
@@ -266,7 +267,8 @@ class GameOverState(GameState):
                 self.title_rect.center = (WIDTH * 0.5, HEIGHT * 0.5)
         
         if self.can_click:
-            print("end")
+            if services.service_locator.game_input.any_down():
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
         
         return True
     
@@ -274,6 +276,110 @@ class GameOverState(GameState):
         surface.fill((40, 40, 40))
         surface.blit(self.title, self.title_rect)
 
+# --- || Results Screen || ---
+
+class ResultsState(GameState):
+    def __init__(self):
+        import player_data
+
+        self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
+
+        self.timer_count = 0
+        self.timer = 0.4
+
+        xoffset1 = 32
+        xoffset2 = WIDTH * 0.45
+        yoffset = WIDTH * 0.2
+        current_y = yoffset
+        y_step = 32
+
+        self.state = -1
+
+        self.font_big = pygame.font.Font("assets/font/Pokemon Classic.ttf", 24)
+        self.title = self.font_big.render("FINAL RESULTS", True, (255, 255, 255))
+        self.title_rect = self.title.get_rect()
+        self.title_rect.left = xoffset1
+        self.title_rect.top = xoffset1
+
+        # measures to be accounted to score
+        self.measures_value = [
+            player_data.player_data.potions_left,
+            player_data.player_data.score,
+            1
+        ]
+        self.measures = [
+            "Potions Remaining: " + str(player_data.player_data.potions_left),
+            "Score: " + str(player_data.player_data.score),
+            "WIN BONUS" if player_data.player_data.win else "LOSE PENALTY"
+        ]
+        # these values are multiplied to their corresponding measures
+        self.weights = [
+            5,
+            1,
+            100 if player_data.player_data.win else -100
+        ]
+
+        self.rendered = []
+
+        for measure in self.measures:
+            rendered, rect = self.get_rendered_text(measure)
+            rect.left = xoffset1
+            rect.centery = current_y
+            self.rendered.append((rendered, rect))
+            current_y += y_step
+        current_y = yoffset
+        for weight in self.weights:
+            rendered, rect = self.get_rendered_text("x" + str(weight))
+            rect.right = xoffset2
+            rect.centery = current_y
+            self.rendered.append((rendered, rect))
+            current_y += y_step
+        
+        total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
+        self.total = self.font_big.render("TOTAL: " + str(total), True, (255, 255, 255))
+        self.total_rect = self.total.get_rect()
+        self.total_rect.left = xoffset1
+        self.total_rect.centery = current_y + y_step * 2
+
+    def update(self, delta):
+        if self.timer_count >= self.timer and self.timer > 0:
+            self.timer_count = 0
+            self.state += 1
+            if self.state == len(self.measures):
+                self.timer = 0.6
+            elif self.state == len(self.measures) + 1:
+                self.timer = 0.2
+                # TODO: animation?
+        else:
+            self.timer_count += delta
+        
+        if self.state >= len(self.measures) + 2:
+            if services.service_locator.game_input.any_down():
+                return False
+        
+        return True
+    
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+
+        surface.blit(self.title, self.title_rect)
+
+        # vv cursed code vv
+        for i in range(len(self.measures)):
+            if i > self.state:
+                break
+            surface.blit(self.rendered[i][0], self.rendered[i][1])
+            surface.blit(self.rendered[i + len(self.measures)][0], self.rendered[i + len(self.measures)][1])
+
+        
+        if self.state > len(self.measures):
+            surface.blit(self.total, self.total_rect)
+
+    def get_rendered_text(self, text_string, color = (255, 255, 255)):
+        rendered = self.font.render(text_string, True, color)
+        rect = rendered.get_rect()
+
+        return rendered, rect
 
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
