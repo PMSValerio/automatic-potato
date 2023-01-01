@@ -12,7 +12,7 @@ class Projectile(Entity):
 
         self.stats = stats
 
-        self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
+        self.dir = direction
 
         self.graphics = Animation(self.stats.anim_filepath, True)
 
