@@ -84,3 +84,9 @@ class GraphicsLoader:
         filename = "assets/gfx/speed_pickup.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 1)
+
+        # --VFX--
+
+        filename = "assets/gfx/vfx/spell_hit.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4)

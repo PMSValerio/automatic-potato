@@ -4,7 +4,7 @@ from pygame import Vector2
 from common import *
 from services import service_locator
 from player_data import player_data
-from entity import Entity
+from entity import Entity, Effects
 from animation import Animation
 
 from fsm import FSM
@@ -85,6 +85,11 @@ class Player(Entity):
         self.invincible_timer = max(0, self.invincible_timer - delta)
         
         self.fsm.update()
+    
+    def collide(self, other):
+        if other.col_layer == EntityLayers.ENEMY_ATTACK:
+            self.change_health(-other.stats.power)
+            self.play_effect(Effects.FLASH)
     
     def check_action(self, action, just_pressed = False):
         if just_pressed:

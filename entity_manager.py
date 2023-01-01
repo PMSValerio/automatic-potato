@@ -35,8 +35,8 @@ class EntityManager:
                 self.entities[entity.col_layer].remove(entity)
     
     # return all entities in a list
-    def get_all(self):
-        return [entity for layer in self.entities for entity in self.entities[layer]]
+    def get_all(self, exclude = []):
+        return [entity for layer in self.entities for entity in self.entities[layer] if layer not in exclude]
     
     # call update on all entities, update physics and finally remove those on queue
     def update_all(self, delta):
@@ -57,7 +57,12 @@ class EntityManager:
     
     # call draw on all entities
     def draw_all(self, surface):
-        for entity in self.get_all():
+        all_entities = self.get_all([EntityLayers.VFX])
+        all_entities.sort(key = lambda e : e.pos.y) # sort according to y coordinate, so that entities located above on the screen will be drawn first
+        for entity in all_entities:
+            entity.draw(surface)
+        # visual effects are to be drawn above all other entities regardless of their y coordinate
+        for entity in self.entities[EntityLayers.VFX]:
             entity.draw(surface)
     
     # remove all entities

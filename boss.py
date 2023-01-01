@@ -54,7 +54,7 @@ class Boss(Entity):
             deltax = -64
         elif ran < 0.67:
             deltax = 0
-        Spud(Vector2(self.pos.x + deltax, self.pos.y), Vector2(0, -1))
+        Spud(Vector2(self.pos.x + deltax, self.pos.y - BLOCK * 0.5), Vector2(0, -1))
     
     def damage(self, value):
         self.health = max(0, self.health - value)
