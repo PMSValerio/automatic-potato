@@ -87,6 +87,9 @@ class Player(Entity):
         self.fsm.update()
     
     def collide(self, other):
+        if other.col_layer == EntityLayers.ENEMY_MELEE:
+            self.change_health(-other.strength)
+            
         if other.col_layer == EntityLayers.ENEMY_ATTACK:
             self.change_health(-other.stats.power)
             self.play_effect(Effects.FLASH)

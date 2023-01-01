@@ -2,7 +2,8 @@ import enemy
 import animation
 import player_data
 import projectile
-from common import * 
+from common import *
+import entity
 
 class SkeletonProjectile():
     def shoot(self, skely):
@@ -51,15 +52,15 @@ class Skeleton(enemy.Enemy):
         elif self.pos.distance_to(self.target_pos) < self.seek_distance: 
             # TODO remove
             print("from wandering to seek")
-            self.fsm.change_state(enemy.EnemyStates.SEEK)
+            self.fsm.change_state(enemy.EnemyStates.SEEKING)
 
         elif self.pos.distance_to(self.player_pos) < self.attack_distance:
             # TODO remove
             print("from wandering to attack")
-            self.fsm.change_state(enemy.EnemyStates.ATTACK)
+            self.fsm.change_state(enemy.EnemyStates.ATTACKING)
 
 
-    def seek(self, new = False):
+    def seeking(self, new = False):
         self.move_speed = self.seek_speed
         self.player_pos = player_data.player_data.get_player_pos()
         # change move speed to go faster 
@@ -71,15 +72,15 @@ class Skeleton(enemy.Enemy):
         if self.pos.distance_to(self.player_pos) < self.pos.distance_to(self.target_pos):
             # TODO remove
             print("from seek to attack")
-            self.fsm.change_state(enemy.EnemyStates.ATTACK)
+            self.fsm.change_state(enemy.EnemyStates.ATTACKING)
 
         elif self.pos.distance_to(self.target_pos) < 1: 
             # TODO remove
             print("from seek to flee")
-            self.fsm.change_state(enemy.EnemyStates.FLEE)
+            self.fsm.change_state(enemy.EnemyStates.FLEEING)
 
 
-    def attack(self, new = False):
+    def attacking(self, new = False):
         self.move_speed = self.attack_speed 
         self.player_pos = player_data.player_data.get_player_pos()
         # change to attack speed 
@@ -96,24 +97,36 @@ class Skeleton(enemy.Enemy):
             # TODO remove
             print("from attack to seek")
             self.shoot = False
-            self.fsm.change_state(enemy.EnemyStates.SEEK)
+            self.fsm.change_state(enemy.EnemyStates.SEEKING)
 
         # reached center of the map  
         elif self.pos.distance_to(self.target_pos) < 1: 
             # TODO remove
             print("from attack to flee")
             self.shoot = False
-            self.fsm.change_state(enemy.EnemyStates.FLEE)
+            self.fsm.change_state(enemy.EnemyStates.FLEEING)
             
 
-    def flee(self, new = False):
+    def fleeing(self, new = False):
         direction = (self.flee_pos - self.pos)
         self.move_dir = direction.normalize()
 
         # if the enemy is able to escape with potion, deduct score value from player's score
         if self.pos.distance_to(self.flee_pos) < 1: 
             self.die()
+            player_data.player_data.update_potions(-1)
             player_data.player_data.update_score(-self.score_value)
+            
+
+    def dying(self, new):
+        print("die")
+        if new: 
+            self.play_effect(entity.Effects.FADE)
+            self.move_speed = 0
+        
+        if self.effect_end:
+            player_data.player_data.update_score(self.score_value)  
+            self.die()
 
 
     def collide(self, other):
@@ -122,6 +135,7 @@ class Skeleton(enemy.Enemy):
 
     def damage(self, value):
         super().damage(value)
+
 
     def clone(self):
         return Skeleton()

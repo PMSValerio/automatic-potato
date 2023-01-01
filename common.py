@@ -60,10 +60,11 @@ class EntityLayers(Enum):
     PLAYER_ATTACK = 1
     ENEMY = 2
     ENEMY_ATTACK = 3
-    PICKUP = 4
-    OBSTACLE = 5
+    ENEMY_MELEE = 4
+    PICKUP = 5
+    OBSTACLE = 6
 
-    VFX = 6 # special layer
+    VFX = 7 # special layer
 
 # player stats to define multiple player types
 class PlayerStats:

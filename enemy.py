@@ -16,10 +16,10 @@ class EnemyTypes(enum.Enum):
 
 class EnemyStates(enum.Enum):
     WANDERING = 0
-    SEEK = 1
-    FLEE = 2
-    ATTACK = 3
-    SHOOTING = 4
+    SEEKING = 1
+    FLEEING = 2
+    ATTACKING = 3
+    DYING = 4
 
 class Spawner():
     __instance = None
@@ -54,10 +54,10 @@ class Enemy(entity.Entity):
         # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
-        self.fsm.add_state(EnemyStates.SEEK, self.seek)
-        self.fsm.add_state(EnemyStates.ATTACK, self.attack)
-        self.fsm.add_state(EnemyStates.FLEE, self.flee)
-        self.fsm.add_state(EnemyStates.SHOOTING, self.shooting)
+        self.fsm.add_state(EnemyStates.SEEKING, self.seeking)
+        self.fsm.add_state(EnemyStates.ATTACKING, self.attacking)
+        self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
+        self.fsm.add_state(EnemyStates.DYING, self.dying)
 
     def _random_spawn_pos(self):
         # generate a random x and y 
@@ -165,25 +165,24 @@ class Enemy(entity.Entity):
     def damage(self, value):
         # each mob will independently increase the player's score based on their own score value
         self.health = max(0, self.health - value)
-
+        
         if self.health == 0:
-            self.die()
-            player_data.player_data.update_score(self.score_value)
+            self.fsm.change_state(EnemyStates.DYING)
 
 
-    def attack(self): 
+    def attacking(self): 
         raise NotImplementedError
 
-    def seek(self): 
+    def seeking(self): 
         raise NotImplementedError
 
-    def flee(self): 
+    def fleeing(self): 
         raise NotImplementedError
 
     def wandering(self): 
         raise NotImplementedError
 
-    def shooting(self):
+    def dying(self):
         raise NotImplementedError
 
     def clone(self):
