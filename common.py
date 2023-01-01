@@ -63,6 +63,8 @@ class EntityLayers(Enum):
     PICKUP = 4
     OBSTACLE = 5
 
+    VFX = 6 # special layer
+
 # player stats to define multiple player types
 class PlayerStats:
     def __init__(self, name, max_health, base_speed):
@@ -77,16 +79,17 @@ player_types = {
 
 # projectiles' types and stats
 class ProjectileStats:
-    def __init__(self, name, speed, power, cooldown, col_layer, anim_filepath):
+    def __init__(self, name, speed, power, cooldown, col_layer, anim_filepath, hit_filepath = None):
         self.name = name
         self.speed = speed # pix/sec
         self.power = power
         self.cooldown = cooldown # sec
         self.col_layer = col_layer # collision layer (should be either PLAYER_ATTACK or ENEMY_ATTACK)
         self.anim_filepath = anim_filepath
+        self.hit_effect = hit_filepath # animation to be played on collision
 
 projectile_types = {
-    "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png", "assets/gfx/vfx/spell_hit.png"),
     "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
     "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),

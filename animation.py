@@ -15,6 +15,8 @@ class Animation:
         self.paused = False
 
         self.tick_cnt = 0
+
+        self.end = False # becomes true when the last frame was reached
     
     # set a new animation
     def play(self, animation, delay_ticks=0):
@@ -29,6 +31,7 @@ class Animation:
     
     # update frame to next
     def update_frame(self):
+        self.end = False
         if not self.paused:
             if self.tick_cnt >= self.delay_ticks:
                 self.tick_cnt = 0
@@ -39,6 +42,8 @@ class Animation:
                     self.ix += 1
             else:
                 self.tick_cnt += 1
+        if self.ix == len(self.animations[self.current_anim]) - 1:
+            self.end = True
 
     # returns the next frame in the animation
     def get_frame(self):

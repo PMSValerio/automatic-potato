@@ -4,6 +4,7 @@ from pygame import Vector2
 from common import *
 from entity import Entity
 from animation import Animation
+from vfx import VisualEffect
 
 class Projectile(Entity):
     def __init__(self, pos, direction, stats):
@@ -23,6 +24,8 @@ class Projectile(Entity):
 
     def collide(self, other):
         self.die()
+        if self.stats.hit_effect is not None:
+            VisualEffect(self.pos.copy(), self.stats.hit_effect)
 
 class Spud(Projectile):
     def __init__(self, pos, direction):
