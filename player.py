@@ -58,14 +58,18 @@ class Player(Entity):
     
     def update(self, delta):
         # update move action
-        self.move_force = Vector2(0, 0)
+        self.move_force.xy = (0, 0)
+        new_shoot_dir = Vector2(0, 0)
         for action in ["move_left", "move_right", "move_up", "move_down"]:
             if self.check_action(action):
                 self.command_map[action].execute(self)
-                self.shoot_dir.xy = self.dir_map[action].value
+                new_shoot_dir.x += self.dir_map[action].value[0]
+                new_shoot_dir.y += self.dir_map[action].value[1]
         if self.move_force.length() > 0:
             self.dir = self.move_force.normalize()
             self.move_force = self.dir * delta
+        if new_shoot_dir.length() > 0:
+            self.shoot_dir = new_shoot_dir.normalize()
         
         self.data.update_position(self.pos)
 

@@ -12,11 +12,7 @@ class Projectile(Entity):
 
         self.stats = stats
 
-        if self.stats.col_layer == EntityLayers.PLAYER_ATTACK:
-            self.dir = Vector2(direction.x, 0) if direction.x != 0 else Vector2(0, direction.y)
-        
-        else: 
-            self.dir = direction 
+        self.dir = direction
 
         self.graphics = Animation(self.stats.anim_filepath, True)
 
