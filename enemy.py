@@ -4,7 +4,6 @@ import entity
 import fsm
 import enum
 import random
-import player_data
 import enemy_data
 import numpy 
 
@@ -139,8 +138,11 @@ class Enemy(entity.Entity):
         return new_pos
     
     
-    def update_move_dir(self, target_position):
-        direction = (target_position - self.pos)
+    def update_move_dir(self, target_position, invert = False):
+        if invert:
+            direction = (self.pos - target_position)
+        else:
+            direction = (target_position - self.pos)
         self.move_dir = direction / numpy.linalg.norm(direction)
     
 

@@ -1,3 +1,4 @@
+from pygame import Vector2
 import enemy
 import animation
 import player_data
@@ -32,7 +33,6 @@ class Skeleton(enemy.Enemy):
             self.shoot_timer = self.projectile_type.cooldown
         
         self.pos += self.move_speed * self.move_dir * delta
-
 
 
     def wandering(self, new = False):
@@ -81,17 +81,23 @@ class Skeleton(enemy.Enemy):
 
 
     def attacking(self, new = False):
+        # change to attack speed 
         self.move_speed = self.attack_speed 
         self.player_pos = player_data.player_data.get_player_pos()
-        # change to attack speed 
 
         # get direction to the player's position
-        super().update_move_dir(self.player_pos)
+        if self.pos.distance_to(self.player_pos) >= 50: 
+            super().update_move_dir(self.player_pos)
+
+        elif self.pos.distance_to(self.player_pos) < 30: 
+            super().update_move_dir(self.player_pos, invert = True)
+
+        else: 
+            self.move_speed = 0
 
         if self.pos.distance_to(self.player_pos) < 90: 
             self.shoot = True
             self.shoot_dir = self.move_dir
-            return
 
         elif self.pos.distance_to(self.player_pos) > self.pos.distance_to(self.target_pos):
             # TODO remove
@@ -99,13 +105,6 @@ class Skeleton(enemy.Enemy):
             self.shoot = False
             self.fsm.change_state(enemy.EnemyStates.SEEKING)
 
-        # reached center of the map  
-        elif self.pos.distance_to(self.target_pos) < 1: 
-            # TODO remove
-            print("from attack to flee")
-            self.shoot = False
-            self.fsm.change_state(enemy.EnemyStates.FLEEING)
-            
 
     def fleeing(self, new = False):
         direction = (self.flee_pos - self.pos)
