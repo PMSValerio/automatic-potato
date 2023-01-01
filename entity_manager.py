@@ -57,7 +57,9 @@ class EntityManager:
     
     # call draw on all entities
     def draw_all(self, surface):
-        for entity in self.get_all():
+        all_entities = self.get_all()
+        all_entities.sort(key = lambda e : e.pos.y) # sort according to y coordinate, so that entities located above on the screen will be drawn first
+        for entity in all_entities:
             entity.draw(surface)
     
     # remove all entities

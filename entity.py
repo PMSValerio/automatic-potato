@@ -18,6 +18,7 @@ class Entity(Sprite):
         self.graphics = None
 
         self.col_layer = layer # layer used by physics engine
+        self.collision_on = True # if false, physics manager will not consider this entity in collisions
 
         services.service_locator.event_handler.publish(Events.NEW_ENTITY, self)
     
@@ -56,3 +57,7 @@ class Entity(Sprite):
     # change to a different animation
     def set_animation(self, anim_name):
         self.graphics.play(anim_name)
+    
+    # toggle collision detection on or off
+    def enable_collision(en = True):
+        self.collision_on = en

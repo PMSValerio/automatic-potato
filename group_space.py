@@ -39,8 +39,9 @@ class GroupSpace:
             col_dict = pygame.sprite.groupcollide(self.layers[pair[0]], self.layers[pair[1]], False, False)
             for e1 in col_dict.keys():
                 for e2 in col_dict[e1]:
-                    e1.collide(e2)
-                    e2.collide(e1)
+                    if e1.collision_on and e2.collision_on:
+                        e1.collide(e2)
+                        e2.collide(e1)
     
     # clear all entities
     def clear(self):
