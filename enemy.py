@@ -40,7 +40,6 @@ class Spawner():
 
 
 class Enemy(entity.Entity):
-    import json
     # def __init__(self, type : EnemyTypes):
     def __init__(self, health, move_speed, attack_speed, strength, value):
         entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
@@ -180,6 +179,9 @@ class Troll(Enemy):
         # reached wandering position, recalculate
         if self.pos.distance_to(self.wander_pos) < 1: 
             self.wander_pos = super().get_wandering_position() 
+
+        # check how much time elapsed between generating the mob and 
+        # rn to see if it's necessary to force change to seek 
 
         if self.pos.distance_to(self.target_pos) < 300: 
             print("from wandering to seek")
