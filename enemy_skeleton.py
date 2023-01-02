@@ -17,21 +17,24 @@ class Skeleton(enemy.Enemy):
         
         self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
         self.wander_pos = super().get_wandering_position() 
+        self.flee_pos = super().get_flee_position()
         self.move_speed = self.wandering_speed
         self.shoot = False
-        self.flee_pos = super().get_flee_position()
 
 
     def update(self, delta):
         super().update(delta)
 
+        # update shoot timer 
         if self.shoot_timer > 0:
             self.shoot_timer -= delta
         
+        # shoot if activated and cooldown 
         if self.shoot and self.shoot_timer <= 0:
             SkeletonProjectile().shoot(self)
             self.shoot_timer = self.projectile_type.cooldown
         
+        # update position
         self.pos += self.move_speed * self.move_dir * delta
 
 
@@ -46,37 +49,29 @@ class Skeleton(enemy.Enemy):
         if self.pos.distance_to(self.wander_pos) < 1: 
             self.wander_pos = super().get_wandering_position() 
 
-        # check how much time elapsed between generating the mob and 
-        # rn to see if it's necessary to force change to seek 
-
+        # if within center range, change to seeking state
         elif self.pos.distance_to(self.target_pos) < self.seek_distance: 
-            # TODO remove
-            print("from wandering to seek")
             self.fsm.change_state(enemy.EnemyStates.SEEKING)
-
+        
+        # if within attack range, change to seeking state
         elif self.pos.distance_to(self.player_pos) < self.attack_distance:
-            # TODO remove
-            print("from wandering to attack")
             self.fsm.change_state(enemy.EnemyStates.ATTACKING)
 
 
     def seeking(self, new = False):
+        # change move speed to seek: go faster 
         self.move_speed = self.seek_speed
         self.player_pos = player_data.player_data.get_player_pos()
-        # change move speed to go faster 
 
         # get direction to the center of the map 
         super().update_move_dir(self.target_pos)
 
         # if the player is close, change to attack 
         if self.pos.distance_to(self.player_pos) < self.pos.distance_to(self.target_pos):
-            # TODO remove
-            print("from seek to attack")
             self.fsm.change_state(enemy.EnemyStates.ATTACKING)
 
+        # if reached the center of the map, change state to feeling
         elif self.pos.distance_to(self.target_pos) < 1: 
-            # TODO remove
-            print("from seek to flee")
             self.fsm.change_state(enemy.EnemyStates.FLEEING)
 
 
@@ -85,32 +80,34 @@ class Skeleton(enemy.Enemy):
         self.move_speed = self.attack_speed 
         self.player_pos = player_data.player_data.get_player_pos()
 
-        # get direction to the player's position
-        if self.pos.distance_to(self.player_pos) >= 50: 
-            super().update_move_dir(self.player_pos)
-
-        elif self.pos.distance_to(self.player_pos) < 30: 
-            super().update_move_dir(self.player_pos, invert = True)
-
-        else: 
+        # check distance to player
+        # if within attack range, stop and shoot towards the player
+        if self.pos.distance_to(self.player_pos) < self.attack_range: 
             self.move_speed = 0
-
-        if self.pos.distance_to(self.player_pos) < 90: 
             self.shoot = True
             self.shoot_dir = self.move_dir
 
+        # if the target (center) is closer than the player, give up on the chase and start seeking 
         elif self.pos.distance_to(self.player_pos) > self.pos.distance_to(self.target_pos):
-            # TODO remove
-            print("from attack to seek")
             self.shoot = False
             self.fsm.change_state(enemy.EnemyStates.SEEKING)
 
+        # if the player is not close enough, move closer to them 
+        elif self.pos.distance_to(self.player_pos) >= self.attack_range: 
+            self.shoot = False
+            super().update_move_dir(self.player_pos)
+
 
     def fleeing(self, new = False):
+        # change to attack speed 
+        self.move_speed = self.flee_speed 
         direction = (self.flee_pos - self.pos)
         self.move_dir = direction.normalize()
 
-        # if the enemy is able to escape with potion, deduct score value from player's score
+        # a random feeling goal position was assigned when the instance was created
+        # move towards that position and ignore everything else
+        # if the enemy is able to escape with potion, i.e not die in the process,
+        # deduct score value from player's score and update potion number to -1 
         if self.pos.distance_to(self.flee_pos) < 1: 
             self.die()
             player_data.player_data.update_potions(-1)
@@ -118,7 +115,7 @@ class Skeleton(enemy.Enemy):
             
 
     def dying(self, new):
-        print("die")
+        # when entering this state for the first time, move speed to 0 and play effect
         if new: 
             self.play_effect(entity.Effects.FADE)
             self.move_speed = 0

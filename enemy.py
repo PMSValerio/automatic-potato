@@ -101,10 +101,12 @@ class Enemy(entity.Entity):
             self.wandering_speed = data["wandering_speed"]
             self.seek_speed = data["seek_speed"]
             self.attack_speed = data["attack_speed"]
+            self.flee_speed = data["flee_speed"]
 
             # distances needed to change states 
             self.seek_distance = data["seek_distance"]
             self.attack_distance = data["attack_distance"]
+            self.attack_range = data["attack_range"]
 
             # stats
             self.health = data["health"]
@@ -138,13 +140,15 @@ class Enemy(entity.Entity):
         return new_pos
     
     
-    def update_move_dir(self, target_position, invert = False):
-        if invert:
-            direction = (self.pos - target_position)
-        else:
-            direction = (target_position - self.pos)
-        self.move_dir = direction / numpy.linalg.norm(direction)
-    
+    def update_move_dir(self, target_position):
+        direction = (target_position - self.pos)
+        norm = numpy.linalg.norm(direction) 
+
+        # sanity check 
+        if norm != 0:
+            self.move_dir = direction / norm
+        else: 
+            self.move_dir = 0
 
     def get_flee_position(self):
         return self._random_spawn_pos()
