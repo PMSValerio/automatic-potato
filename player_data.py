@@ -28,7 +28,7 @@ class PlayerData:
             "shoot": pygame.K_p,
         }
 
-        self.score = 0
+        self.score = 250
         self.potions_left = 0
 
         self.win = False

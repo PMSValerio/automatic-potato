@@ -260,7 +260,7 @@ class GameOverState(GameState):
                 self.title.set_text(self.written)
         
         if self.can_click:
-            if services.service_locator.game_input.any_down():
+            if services.service_locator.game_input.any_pressed():
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
         
         return True
@@ -309,6 +309,7 @@ class ResultsState(GameState):
         
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
+        player_data.player_data.score = total # update score with final result
 
     def update(self, delta):
         if self.timer_count >= self.timer and self.timer > 0:
@@ -323,8 +324,8 @@ class ResultsState(GameState):
             self.timer_count += delta
         
         if self.state >= len(self.measures) + 2:
-            if services.service_locator.game_input.any_down():
-                return False
+            if services.service_locator.game_input.any_pressed():
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.SCOREBOARD)
         
         return True
     
@@ -357,25 +358,90 @@ class ScoreboardState(GameState):
     def __init__(self):
         self.scoreboard = {}
 
-        # whether player made it to top ten
-        self.is_on_board = False
+        # player's place on scoreboard, -1 if below 10th
+        self.player_index = -1
+        self.editing = False
+
+        self.title = TextLabel("SCOREBOARD", WIDTH * 0.5, BLOCK, Align.BEGIN, Align.CENTER, 48)
+        self.record = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 24)
+
+        self.column1 = WIDTH * 0.2
+        self.column2 = WIDTH * 0.6
+        self.yoffset = BLOCK * 6
+        self.y_step = 80
+
+        self.characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?- "
+        self.selected_char = 0 # selected symbol
+        self.name_cursor = 0 # position in the three letter name
+
+        self.new_entry_panel = services.service_locator.graphics_loader.load_image("assets/gfx/score_panel.png")
 
     def enter(self):
         import json
-        with open("json/scoreboard.json") as fin:
+        with open("data/scoreboard.json") as fin:
             self.scoreboard = json.load(fin, parse_int=int)
-        print(self.scoreboard)
+        
+        score = player_data.player_data.score
+        player_in_table = False
+        entry = ["xxx", -1] # default, should never need to be used
+        for i in range(len(self.scoreboard)):
+            if player_in_table:
+                new_entry = self.scoreboard[str(i)]
+                self.scoreboard[str(i)] = entry
+                entry = new_entry
+            else:
+                entry = self.scoreboard[str(i)]
+                if score > entry[1]: # player beat this score
+                    self.scoreboard[str(i)] = ["---", score]
+                    player_in_table = True
+                    self.player_index = i
+                    self.editing = True
     
     def exit(self):
         import json
-        with open("json/scoreboard.json", mode = "w") as fout:
+        with open("data/scoreboard.json", mode = "w") as fout:
             json.dump(self.scoreboard, fout)
     
     def update(self, delta):
+        if not self.editing and services.service_locator.game_input.any_pressed():
+            return False
+        
+        if self.player_index > 0 and self.editing: # select name
+            old_name = self.scoreboard[str(self.player_index)][0]
+
+            # select letter
+            if services.service_locator.game_input.key_pressed(pygame.K_DOWN):
+                self.selected_char = (self.selected_char + 1) % len(self.characters)
+            elif services.service_locator.game_input.key_pressed(pygame.K_UP):
+                self.selected_char = self.selected_char -1 if self.selected_char > 0 else len(self.characters) - 1
+            # change cursor position
+            elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
+                self.name_cursor = max(0, self.name_cursor - 1)
+                self.selected_char = self.characters.find(old_name[self.name_cursor])
+            elif services.service_locator.game_input.key_pressed(pygame.K_RIGHT):
+                self.name_cursor = min(2, self.name_cursor + 1)
+                self.selected_char = self.characters.find(old_name[self.name_cursor])
+            
+            old_name = self.scoreboard[str(self.player_index)][0]
+            old_name = old_name[:self.name_cursor] + self.characters[self.selected_char] + old_name[self.name_cursor + 1:]
+            self.scoreboard[str(self.player_index)][0] = old_name
+
         return True
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
+        self.title.draw(surface)
+
+        ix = 0
+        half_len = len(self.scoreboard) / 2
+        for rank, stats in self.scoreboard.items():
+            self.record.set_text(stats[0] + ": " + str(stats[1]), self.column1 if ix < half_len else self.column2, self.yoffset + self.y_step * (ix % half_len))
+            if ix == self.player_index and self.editing:
+                rect = self.new_entry_panel.get_rect()
+                rect.center = self.record.rect.center
+                surface.blit(self.new_entry_panel, rect)
+            self.record.draw(surface)
+            ix += 1
 
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
