@@ -3,6 +3,7 @@ import entity_manager
 import group_space
 import game_input
 import graphics_loader
+import sound_mixer
 import enemy_handler
 import enemy_data
 
@@ -26,6 +27,7 @@ class Services:
         self.physics_engine : group_space.GroupSpace = group_space.GroupSpace()
         self.game_input : game_input.GameInput = game_input.GameInput()
         self.graphics_loader : graphics_loader.GraphicsLoader = graphics_loader.GraphicsLoader()
+        self.sound_mixer : sound_mixer.SoundMixer = sound_mixer.SoundMixer()
         self.enemy_handler : enemy_handler.EnemyHandler = enemy_handler.EnemyHandler()
         self.enemy_data : enemy_data.EnemyData = enemy_data.EnemyData()
 

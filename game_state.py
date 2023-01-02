@@ -33,6 +33,9 @@ class TitleState(GameState):
 
         self.can_click = False
     
+    def enter(self):
+        services.service_locator.sound_mixer.play_music(Music.TITLE)
+    
     def update(self, delta) -> bool:
         import pygame
         self.timer_count += delta
@@ -78,6 +81,9 @@ class CharacterSelectState(GameState):
 
         self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.CENTER, 16)
     
+    def enter(self):
+        services.service_locator.sound_mixer.play_music(Music.TITLE)
+    
     def update(self, delta) -> bool:
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
@@ -105,7 +111,6 @@ class CharacterSelectState(GameState):
         return True
 
     def draw(self, surface):
-        # TODO: improve code
         surface.fill((40, 40, 40))
         yline = HEIGHT * 0.25
         skin_cursor_x = (self.selected_skin+1) * WIDTH/(self.skin_count+1)
@@ -171,6 +176,8 @@ class LevelState(GameState):
         services.service_locator.enemy_handler.iron_league()
 
         player_data.player_data.update_potions(100)
+
+        services.service_locator.sound_mixer.play_music(Music.LEVEL)
     
     def update(self, delta) -> bool:
         import random
@@ -249,6 +256,9 @@ class GameOverState(GameState):
 
         self.can_click = False
     
+    def enter(self):
+        services.service_locator.sound_mixer.stop_music()
+    
     def update(self, delta) -> bool:
         self.timer_count += delta
         if self.timer_count >= self.timer:
@@ -310,6 +320,10 @@ class ResultsState(GameState):
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
+
+
+    def enter(self):
+        services.service_locator.sound_mixer.stop_music()
 
     def update(self, delta):
         if self.timer_count >= self.timer and self.timer > 0:
@@ -398,6 +412,8 @@ class ScoreboardState(GameState):
                     player_in_table = True
                     self.player_index = i
                     self.editing = True
+        
+        services.service_locator.sound_mixer.stop_music()
     
     def exit(self):
         import json

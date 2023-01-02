@@ -102,3 +102,9 @@ projectile_types = {
     "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
     "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/boss_bullet.png")
 }
+
+
+class Music(Enum):
+    TITLE = ""
+    LEVEL = ""
+    BOSS = ""
