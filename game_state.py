@@ -364,6 +364,7 @@ class ScoreboardState(GameState):
 
         self.title = TextLabel("SCOREBOARD", WIDTH * 0.5, BLOCK, Align.BEGIN, Align.CENTER, 48)
         self.record = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 24)
+        self.footnote = TextLabel("Edit name with arrow keys, confirm with ENTER", WIDTH * 0.5, HEIGHT - BLOCK, Align.CENTER, Align.CENTER, 16)
 
         self.column1 = WIDTH * 0.2
         self.column2 = WIDTH * 0.6
@@ -375,6 +376,7 @@ class ScoreboardState(GameState):
         self.name_cursor = 0 # position in the three letter name
 
         self.new_entry_panel = services.service_locator.graphics_loader.load_image("assets/gfx/score_panel.png")
+        self.cursor_texture = services.service_locator.graphics_loader.load_image("assets/gfx/cursor.png")
 
     def enter(self):
         import json
@@ -421,7 +423,11 @@ class ScoreboardState(GameState):
             elif services.service_locator.game_input.key_pressed(pygame.K_RIGHT):
                 self.name_cursor = min(2, self.name_cursor + 1)
                 self.selected_char = self.characters.find(old_name[self.name_cursor])
+            # confirm name
+            elif services.service_locator.game_input.key_pressed(pygame.K_RETURN):
+                self.editing = False
             
+            # update name
             old_name = self.scoreboard[str(self.player_index)][0]
             old_name = old_name[:self.name_cursor] + self.characters[self.selected_char] + old_name[self.name_cursor + 1:]
             self.scoreboard[str(self.player_index)][0] = old_name
@@ -440,6 +446,13 @@ class ScoreboardState(GameState):
                 rect = self.new_entry_panel.get_rect()
                 rect.center = self.record.rect.center
                 surface.blit(self.new_entry_panel, rect)
+
+                rect = self.cursor_texture.get_rect()
+                rect.top = self.record.rect.top + 16
+                rect.left = self.record.rect.left + (24 * self.name_cursor)
+                surface.blit(self.cursor_texture, rect)
+
+                self.footnote.draw(surface)
             self.record.draw(surface)
             ix += 1
 
