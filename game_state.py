@@ -300,6 +300,13 @@ class ResultsState(GameState):
 
         self.title = TextLabel("FINAL RESULTS", self.xoffset1, self.xoffset1, Align.BEGIN, Align.BEGIN, 24)
 
+        self.measures_value = []
+        self.measures = []
+        self.weights = []
+
+        self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
+    
+    def enter(self):
         # measures to be accounted to score
         self.measures_value = [
             player_data.player_data.potions_left,
@@ -318,8 +325,6 @@ class ResultsState(GameState):
             100 if player_data.player_data.win else -100
         ]
 
-        self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
-        
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
@@ -421,7 +426,7 @@ class ScoreboardState(GameState):
         if not self.editing and services.service_locator.game_input.any_pressed():
             return False
         
-        if self.player_index > 0 and self.editing: # select name
+        if self.player_index >= 0 and self.editing: # select name
             old_name = self.scoreboard[str(self.player_index)][0]
 
             # select letter
