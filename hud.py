@@ -1,6 +1,7 @@
 import pygame
 
 from common import *
+from gui_utils import *
 from services import service_locator
 from player_data import player_data
 
@@ -21,43 +22,31 @@ class HUD:
         self.healthbar_fore = service_locator.graphics_loader.image_at("assets/gfx/healthbar.png", (0, 32, 128, 32))
         self.health_wid = 0 # width of the healthbar in pixels
 
-        self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
+        self.potions = TextLabel("x0", WIDTH * 0.5, HUD_OFFSET * 1.5, Align.CENTER, Align.CENTER, 16)
 
-        self.potions = self.font.render("x0", True, (255, 255, 255))
-        self.potions_rect = self.potions.get_rect()
-
-        self.score = self.font.render("SCORE: %s" % self.player_score, True, (255, 255, 255))
-        self.score_rect = self.score.get_rect()
+        self.score = TextLabel("SCORE: " + str(self.player_score), WIDTH * 0.7, HUD_OFFSET * 1.5, Align.BEGIN, Align.BEGIN, 16)
 
         self.paused = False
-        self.pause_label = self.font.render("--GAME PAUSED--", True, (255, 255, 255))
-        self.pause_rect = self.pause_label.get_rect()
-        self.pause_rect.center = (WIDTH * 0.5, HEIGHT * 0.9)
+        self.pause_label = TextLabel("--GAME PAUSED--", WIDTH * 0.5, HEIGHT * 0.9, Align.CENTER, Align.CENTER, 16)
 
         service_locator.event_handler.subscribe(self, Events.NEW_HEALTH)
         service_locator.event_handler.subscribe(self, Events.NEW_SCORE)
         service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
         service_locator.event_handler.subscribe(self, Events.PAUSE_UNPAUSE)
     
-    # TODO:
     def draw(self, surface):
         surface.blit(self.healthbar_back, (HUD_OFFSET, HUD_OFFSET, 128, 32))
         scaled = pygame.transform.scale(self.healthbar_fore, (self.health_wid, 32))
         surface.blit(scaled, (HUD_OFFSET, HUD_OFFSET, self.health_wid, 32))
 
-        self.potions = self.font.render("x%s" % self.potions_left, True, (255, 255, 255))
-        self.potions_rect = self.potions.get_rect()
-        self.potions_rect.center = (WIDTH * 0.5, HUD_OFFSET * 1.5)
-        surface.blit(self.potions, self.potions_rect)
+        self.potions.set_text("x" + str(self.potions_left))
+        self.potions.draw(surface)
 
-        self.score = self.font.render("SCORE: %s" % self.player_score, True, (255, 255, 255))
-        self.score_rect = self.score.get_rect()
-        self.score_rect.left = WIDTH * 0.7
-        self.score_rect.top = HUD_OFFSET * 1.5
-        surface.blit(self.score, self.score_rect)
+        self.score.set_text("SCORE: " + str(self.player_score))
+        self.score.draw(surface)
 
         if self.paused:
-            surface.blit(self.pause_label, self.pause_rect)
+            self.pause_label.draw(surface)
 
     def on_notify(self, event, arg):
         if event == Events.NEW_HEALTH:

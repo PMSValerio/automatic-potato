@@ -23,14 +23,20 @@ class GameInput:
         return self.last_keys is not None and self.curr_keys is not None
     
     def any_down(self):
-        return any(self.curr_keys)
+        return self._stable() and any(self.curr_keys)
 
     def key_down(self, key_code):
         return self._stable() and self.curr_keys[key_code]
     
+    def any_pressed(self):
+        return self._stable() and any([t[0] and not t[1] for t in zip(self.curr_keys, self.last_keys)])
+    
     def key_pressed(self, key_code):
         return self._stable() and not self.last_keys[key_code] and self.curr_keys[key_code]
     
+    def any_released(self):
+        return self._stable() and any([not t[0] and t[1] for t in zip(self.curr_keys, self.last_keys)])
+
     def key_released(self, key_code):
         return self._stable() and self.last_keys[key_code] and not self.curr_keys[key_code]
     

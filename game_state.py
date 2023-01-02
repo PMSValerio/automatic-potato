@@ -1,6 +1,7 @@
 import pygame
 
 from common import *
+from gui_utils import *
 import services
 import player_data
 
@@ -24,16 +25,11 @@ class TitleState(GameState):
         import pygame
         self.timer_count = 0
         self.timer = 0.04
-        self.click_font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
-        self.title_font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 48)
         self.to_write = "Automatic Potato"
         self.written = ""
 
-        self.click = self.click_font.render("Click to Start", True, (255, 255, 255))
-        self.click_rect = self.click.get_rect()
-        self.click_rect.center = (WIDTH / 2, HEIGHT * 0.8)
-        self.title = self.title_font.render("", True, (255, 255, 255))
-        self.title_rect = self.title.get_rect()
+        self.click_text = TextLabel("Click to Start", WIDTH * 0.5, HEIGHT * 0.8, Align.CENTER, Align.CENTER, 16)
+        self.title_text = TextLabel("", WIDTH * 0.5, HEIGHT * 0.3, Align.CENTER, Align.CENTER, 48)
 
         self.can_click = False
     
@@ -46,9 +42,7 @@ class TitleState(GameState):
                 self.can_click = True
             else:
                 self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
-                self.title = self.title_font.render(self.written, True, (255, 255, 255))
-                self.title_rect = self.title.get_rect()
-                self.title_rect.center = (WIDTH / 2, HEIGHT * 0.3)
+                self.title_text.set_text(self.written)
                 if self.to_write == "":
                     self.timer = 0.7
         
@@ -60,16 +54,14 @@ class TitleState(GameState):
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
-        surface.blit(self.title, self.title_rect)
+        self.title_text.draw(surface)
         if self.can_click:
-            surface.blit(self.click, self.click_rect)
+            self.click_text.draw(surface)
 
 # --- || Character Select Screen State || ---
 
 class CharacterSelectState(GameState):
     def __init__(self):
-        self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
-
         self.state = -1 # -1: select character; 0 - n: select control keybind
 
         self.selected_skin = 0 # 0 if witch, 1 if cat
@@ -83,6 +75,8 @@ class CharacterSelectState(GameState):
         
         self.selected_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_selected.png")
         self.chosen_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_chosen.png")
+
+        self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.CENTER, 16)
     
     def update(self, delta) -> bool:
         if self.state <= -1:
@@ -137,28 +131,17 @@ class CharacterSelectState(GameState):
             yline += 32
 
     # draw text centered on position
-    def draw_text(self, surface, text_string, centerx, centery, color = (255, 255, 255)):
-        rendered = self.font.render(text_string, True, color)
-        rect = rendered.get_rect()
-        rect.center = (centerx, centery)
-        surface.blit(rendered, rect)
+    def draw_text(self, surface, text_string, centerx, centery):
+        self.text_label.set_text(text_string, centerx, centery)
+        self.text_label.draw(surface)
 
 # --- || Game Level State || ---
 
 class LevelState(GameState):
-    def enter(self):
-        from pygame import Vector2
-        import player
-        import boss
+    def __init__(self):
         import hud
-        import player_data
-        # initialise player and set player type
-        self.hud = hud.HUD()
-        services.service_locator.entity_manager.clear()
-        player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
-        services.service_locator.enemy_handler.iron_league()
+        self.hud = hud.HUD()
 
         # win conditions
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
@@ -168,13 +151,26 @@ class LevelState(GameState):
         services.service_locator.event_handler.subscribe(self, Events.NEW_POTIONS_LEFT)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
 
-        player_data.player_data.update_potions(100)
-
         self.end_timer = 1.5 # sec; used when game finishes
         self.ending = False
         self.paused = False
 
         self.end_game = 0 # 0: game still running; -1: lose; 1: win
+
+    def enter(self):
+        from pygame import Vector2
+        import player
+        import boss
+        import player_data
+        # initialise player and set player type
+        
+        services.service_locator.entity_manager.clear()
+        player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
+
+        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+        services.service_locator.enemy_handler.iron_league()
+
+        player_data.player_data.update_potions(100)
     
     def update(self, delta) -> bool:
         import random
@@ -249,8 +245,7 @@ class GameOverState(GameState):
         self.to_write = "--GAME OVER--"
         self.written = ""
 
-        self.title = self.title_font.render("", True, (255, 255, 255))
-        self.title_rect = self.title.get_rect()
+        self.title = TextLabel("", WIDTH * 0.5, HEIGHT * 0.5, Align.CENTER, Align.CENTER, 32)
 
         self.can_click = False
     
@@ -262,19 +257,17 @@ class GameOverState(GameState):
                 self.can_click = True
             else:
                 self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
-                self.title = self.title_font.render(self.written, True, (255, 255, 255) if self.to_write != "" else (200, 0, 0))
-                self.title_rect = self.title.get_rect()
-                self.title_rect.center = (WIDTH * 0.5, HEIGHT * 0.5)
+                self.title.set_text(self.written)
         
         if self.can_click:
-            if services.service_locator.game_input.any_down():
+            if services.service_locator.game_input.any_pressed():
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
         
         return True
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
-        surface.blit(self.title, self.title_rect)
+        self.title.draw(surface)
 
 # --- || Results Screen || ---
 
@@ -282,24 +275,17 @@ class ResultsState(GameState):
     def __init__(self):
         import player_data
 
-        self.font = pygame.font.Font("assets/font/Pokemon Classic.ttf", 16)
-
         self.timer_count = 0
         self.timer = 0.4
 
-        xoffset1 = 32
-        xoffset2 = WIDTH * 0.45
-        yoffset = WIDTH * 0.2
-        current_y = yoffset
-        y_step = 32
+        self.xoffset1 = 32
+        self.xoffset2 = WIDTH * 0.45
+        self.yoffset = WIDTH * 0.2
+        self.y_step = 32
 
         self.state = -1
 
-        self.font_big = pygame.font.Font("assets/font/Pokemon Classic.ttf", 24)
-        self.title = self.font_big.render("FINAL RESULTS", True, (255, 255, 255))
-        self.title_rect = self.title.get_rect()
-        self.title_rect.left = xoffset1
-        self.title_rect.top = xoffset1
+        self.title = TextLabel("FINAL RESULTS", self.xoffset1, self.xoffset1, Align.BEGIN, Align.BEGIN, 24)
 
         # measures to be accounted to score
         self.measures_value = [
@@ -319,27 +305,11 @@ class ResultsState(GameState):
             100 if player_data.player_data.win else -100
         ]
 
-        self.rendered = []
-
-        for measure in self.measures:
-            rendered, rect = self.get_rendered_text(measure)
-            rect.left = xoffset1
-            rect.centery = current_y
-            self.rendered.append((rendered, rect))
-            current_y += y_step
-        current_y = yoffset
-        for weight in self.weights:
-            rendered, rect = self.get_rendered_text("x" + str(weight))
-            rect.right = xoffset2
-            rect.centery = current_y
-            self.rendered.append((rendered, rect))
-            current_y += y_step
+        self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
         
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
-        self.total = self.font_big.render("TOTAL: " + str(total), True, (255, 255, 255))
-        self.total_rect = self.total.get_rect()
-        self.total_rect.left = xoffset1
-        self.total_rect.centery = current_y + y_step * 2
+        self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
+        player_data.player_data.score = total # update score with final result
 
     def update(self, delta):
         if self.timer_count >= self.timer and self.timer > 0:
@@ -354,32 +324,137 @@ class ResultsState(GameState):
             self.timer_count += delta
         
         if self.state >= len(self.measures) + 2:
-            if services.service_locator.game_input.any_down():
-                return False
+            if services.service_locator.game_input.any_pressed():
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.SCOREBOARD)
         
         return True
     
     def draw(self, surface):
         surface.fill((40, 40, 40))
 
-        surface.blit(self.title, self.title_rect)
+        self.title.draw(surface)
+
+        current_y = self.yoffset
 
         # vv cursed code vv
         for i in range(len(self.measures)):
             if i > self.state:
                 break
-            surface.blit(self.rendered[i][0], self.rendered[i][1])
-            surface.blit(self.rendered[i + len(self.measures)][0], self.rendered[i + len(self.measures)][1])
+            self.list_item.set_text(self.measures[i], self.xoffset1, current_y)
+            self.list_item.draw(surface)
+
+            self.list_item.set_text(("x" if i < len(self.measures) - 1 else "") + str(self.weights[i]), self.xoffset2, current_y)
+            self.list_item.draw(surface)
+
+            current_y += self.y_step
 
         
         if self.state > len(self.measures):
-            surface.blit(self.total, self.total_rect)
+            self.total.draw(surface)
 
-    def get_rendered_text(self, text_string, color = (255, 255, 255)):
-        rendered = self.font.render(text_string, True, color)
-        rect = rendered.get_rect()
+# --- || Scoreboard State || ---
 
-        return rendered, rect
+class ScoreboardState(GameState):
+    def __init__(self):
+        self.scoreboard = {}
+
+        # player's place on scoreboard, -1 if below 10th
+        self.player_index = -1
+        self.editing = False
+
+        self.title = TextLabel("SCOREBOARD", WIDTH * 0.5, BLOCK, Align.BEGIN, Align.CENTER, 48)
+        self.record = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 24)
+        self.footnote = TextLabel("Edit name with arrow keys, confirm with ENTER", WIDTH * 0.5, HEIGHT - BLOCK, Align.CENTER, Align.CENTER, 16)
+
+        self.column1 = WIDTH * 0.2
+        self.column2 = WIDTH * 0.6
+        self.yoffset = BLOCK * 6
+        self.y_step = 80
+
+        self.characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?- "
+        self.selected_char = 0 # selected symbol
+        self.name_cursor = 0 # position in the three letter name
+
+        self.new_entry_panel = services.service_locator.graphics_loader.load_image("assets/gfx/score_panel.png")
+        self.cursor_texture = services.service_locator.graphics_loader.load_image("assets/gfx/cursor.png")
+
+    def enter(self):
+        import json
+        with open("data/scoreboard.json") as fin:
+            self.scoreboard = json.load(fin, parse_int=int)
+        
+        score = player_data.player_data.score
+        player_in_table = False
+        entry = ["xxx", -1] # default, should never need to be used
+        for i in range(len(self.scoreboard)):
+            if player_in_table:
+                new_entry = self.scoreboard[str(i)]
+                self.scoreboard[str(i)] = entry
+                entry = new_entry
+            else:
+                entry = self.scoreboard[str(i)]
+                if score > entry[1]: # player beat this score
+                    self.scoreboard[str(i)] = ["---", score]
+                    player_in_table = True
+                    self.player_index = i
+                    self.editing = True
+    
+    def exit(self):
+        import json
+        with open("data/scoreboard.json", mode = "w") as fout:
+            json.dump(self.scoreboard, fout)
+    
+    def update(self, delta):
+        if not self.editing and services.service_locator.game_input.any_pressed():
+            return False
+        
+        if self.player_index > 0 and self.editing: # select name
+            old_name = self.scoreboard[str(self.player_index)][0]
+
+            # select letter
+            if services.service_locator.game_input.key_pressed(pygame.K_DOWN):
+                self.selected_char = (self.selected_char + 1) % len(self.characters)
+            elif services.service_locator.game_input.key_pressed(pygame.K_UP):
+                self.selected_char = self.selected_char -1 if self.selected_char > 0 else len(self.characters) - 1
+            # change cursor position
+            elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
+                self.name_cursor = max(0, self.name_cursor - 1)
+                self.selected_char = self.characters.find(old_name[self.name_cursor])
+            elif services.service_locator.game_input.key_pressed(pygame.K_RIGHT):
+                self.name_cursor = min(2, self.name_cursor + 1)
+                self.selected_char = self.characters.find(old_name[self.name_cursor])
+            # confirm name
+            elif services.service_locator.game_input.key_pressed(pygame.K_RETURN):
+                self.editing = False
+            
+            # update name
+            old_name = self.scoreboard[str(self.player_index)][0]
+            old_name = old_name[:self.name_cursor] + self.characters[self.selected_char] + old_name[self.name_cursor + 1:]
+            self.scoreboard[str(self.player_index)][0] = old_name
+
+        return True
+    
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+        self.title.draw(surface)
+
+        ix = 0
+        half_len = len(self.scoreboard) / 2
+        for rank, stats in self.scoreboard.items():
+            self.record.set_text(stats[0] + ": " + str(stats[1]), self.column1 if ix < half_len else self.column2, self.yoffset + self.y_step * (ix % half_len))
+            if ix == self.player_index and self.editing:
+                rect = self.new_entry_panel.get_rect()
+                rect.center = self.record.rect.center
+                surface.blit(self.new_entry_panel, rect)
+
+                rect = self.cursor_texture.get_rect()
+                rect.top = self.record.rect.top + 16
+                rect.left = self.record.rect.left + (24 * self.name_cursor)
+                surface.blit(self.cursor_texture, rect)
+
+                self.footnote.draw(surface)
+            self.record.draw(surface)
+            ix += 1
 
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
@@ -389,6 +464,10 @@ class GameStateMachine:
         self.states = states
 
         services.service_locator.event_handler.subscribe(self, Events.NEW_GAME_STATE)
+    
+    # perform any necessary clean-up, mainly, call the exit method on current state
+    def close(self):
+        self.current_state.exit()
     
     def on_notify(self, event, arg):
         if event == Events.NEW_GAME_STATE:

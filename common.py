@@ -45,6 +45,7 @@ class GameStates(Enum):
     LEVEL = 2
     END_RESULTS = 3
     GAME_OVER = 4
+    SCOREBOARD = 5
 
 # movement directions
 class Directions(Enum):

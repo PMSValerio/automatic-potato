@@ -1,6 +1,7 @@
 import random
 import pygame as pg
 from common import *
+import gui_utils
 import services
 import player_data
 import game_state
@@ -16,11 +17,10 @@ def main():
     services.service_locator = services.Services.get()
     services.service_locator.setup()
 
+    gui_utils.load_fonts()
+
     # set up player data
     player_data.player_data = player_data.PlayerData.get()
-
-    # TODO: REMOVE
-    player_data.player_data.select_player_type(player_types["Witch"])
 
     # game state machine initialisation
     states = {
@@ -29,10 +29,9 @@ def main():
         GameStates.LEVEL: game_state.LevelState(),
         GameStates.GAME_OVER: game_state.GameOverState(),
         GameStates.END_RESULTS: game_state.ResultsState(),
+        GameStates.SCOREBOARD: game_state.ScoreboardState(),
     }
 
-    
-    # game_machine = game_state.GameStateMachine(states, states[GameStates.CHARACTER_SELECT])
     game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
 
     # game loop
@@ -46,7 +45,9 @@ def main():
         game_machine.current_state.draw(screen)
 
         pg.display.update()
-    
+
+    game_machine.close()
+
     pg.quit()
 
 
