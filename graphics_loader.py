@@ -1,5 +1,7 @@
 import pygame
 
+from common import *
+
 class GraphicsLoader:
 
     def __init__(self):
@@ -41,6 +43,12 @@ class GraphicsLoader:
                 for x in range(image_count)]
         return self.images_at(filename, tups, colorkey)
     
+    def get_anim_strip(self, filename, anim_name, ix = -1):
+        strip = self.anim_strips[filename][anim_name].copy()
+        if ix >= 0 and ix < len(strip):
+            return strip[ix]
+        return strip
+    
     def add_anim_strip(self, filename, anim_name, row, wid, hei, nframes):
         if filename not in self.anim_strips:
             self.anim_strips[filename] = {}
@@ -51,33 +59,79 @@ class GraphicsLoader:
     
     # initialise all animation strips used in the game
     def init_anim_strips(self):
+        # --Misc--
+
+        filename = "assets/gfx/ui/background.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, WIDTH, HEIGHT, 4)
+
+        filename = "assets/gfx/ui/icons.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "potion", 0, 32, 32, 1)
+
         # --Entities--
 
-        filename = "assets/gfx/player.png"
+        filename = "assets/gfx/entities/witch.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "idle_right", 0, 32, 32, 1)
-        self.add_anim_strip(filename, "move_left", 1, 32, 32, 1)
-        self.add_anim_strip(filename, "move_right", 2, 32, 32, 1)
-        self.add_anim_strip(filename, "move_up", 3, 32, 32, 1)
-        self.add_anim_strip(filename, "move_down", 4, 32, 32, 1)
+        self.add_anim_strip(filename, "idle_left", 0, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_right", 1, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_up", 2, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_down", 3, 64, 64, 4)
+        self.add_anim_strip(filename, "move_left", 0, 64, 64, 5)
+        self.add_anim_strip(filename, "move_right", 1, 64, 64, 5)
+        self.add_anim_strip(filename, "move_up", 2, 64, 64, 5)
+        self.add_anim_strip(filename, "move_down", 3, 64, 64, 5)
 
-        filename = "assets/gfx/boss.png"
+        filename = "assets/gfx/entities/cat.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 160, 160, 1)
+        self.add_anim_strip(filename, "idle_left", 0, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_right", 1, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_up", 2, 64, 64, 4)
+        self.add_anim_strip(filename, "idle_down", 3, 64, 64, 4)
+        self.add_anim_strip(filename, "move_left", 4, 64, 64, 4)
+        self.add_anim_strip(filename, "move_right", 5, 64, 64, 4)
+        self.add_anim_strip(filename, "move_up", 6, 64, 64, 4)
+        self.add_anim_strip(filename, "move_down", 7, 64, 64, 4)
+
+        filename = "assets/gfx/entities/pumpkin.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "idle", 0, 64, 64, 4)
+        self.add_anim_strip(filename, "run", 1, 64, 64, 8)
+        self.add_anim_strip(filename, "flee", 2, 64, 64, 8)
+
+        filename = "assets/gfx/entities/skeleton.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "idle", 0, 64, 64, 4)
+        self.add_anim_strip(filename, "run", 1, 64, 64, 6)
+        self.add_anim_strip(filename, "flee", 2, 64, 64, 6)
+
+        filename = "assets/gfx/entities/ghost.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "run", 0, 64, 64, 4)
+        self.add_anim_strip(filename, "flee", 1, 64, 64, 4)
+
+        filename = "assets/gfx/entities/ogre.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "idle", 0, 96, 96, 4)
+        self.add_anim_strip(filename, "run", 1, 96, 96, 6)
+
+        filename = "assets/gfx/entities/auto_spud.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 128, 128, 1)
 
         # --Projectiles--
 
-        filename = "assets/gfx/spell.png"
-        self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 32, 32, 4)
-
-        filename = "assets/gfx/test.png"
+        filename = "assets/gfx/entities/spell.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4)
         
-        filename = "assets/gfx/boss_bullet.png"
+        filename = "assets/gfx/entities/potato.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 1)
+
+        filename = "assets/gfx/entities/bone.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4)
 
         # --Pickups--
 

@@ -140,8 +140,11 @@ class CharacterSelectState(GameState):
 class LevelState(GameState):
     def __init__(self):
         import hud
+        import animation
 
         self.hud = hud.HUD()
+
+        self.background = animation.Animation("assets/gfx/ui/background.png", True, 4)
 
         # win conditions
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
@@ -199,6 +202,9 @@ class LevelState(GameState):
     
     def draw(self, surface):
         surface.fill((220, 220, 220))
+        image = self.background.get_frame().copy()
+        surface.blit(image, image.get_rect())
+        self.background.update_frame()
         services.service_locator.entity_manager.draw_all(surface)
 
         self.hud.draw(surface)

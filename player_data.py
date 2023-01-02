@@ -18,7 +18,7 @@ class PlayerData:
         else:
             PlayerData.__instance = self
         
-        self.player_type : PlayerStats = player_types["Witch"]
+        self.player_type : PlayerStats = player_types["Cat"]
 
         self.key_map = {
             "move_left": pygame.K_a,

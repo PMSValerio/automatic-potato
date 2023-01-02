@@ -54,7 +54,7 @@ class Player(Entity):
             "move_down": Directions.DOWN,
         }
 
-        self.graphics = Animation("assets/gfx/player.png", True, 5) # animation object
+        self.graphics = Animation(self.stats.anim_filepath, True, 5) # animation object
     
     def update(self, delta):
         # update move action
@@ -115,8 +115,14 @@ class Player(Entity):
     
     def idle(self, new = False):
         if new:
-            if self.graphics.current_anim != "idle_right":
-                self.graphics.play("idle_right")
+            if self.dir.y < 0:
+                self.graphics.play("idle_up", 4)
+            elif self.dir.y > 0:
+                self.graphics.play("idle_down", 4)
+            elif self.dir.x < 0:
+                self.graphics.play("idle_left", 4)
+            elif self.dir.x > 0:
+                self.graphics.play("idle_right", 4)
 
         if self.move_force.length() != 0:
             self.fsm.change_state(States.MOVING)
@@ -129,10 +135,13 @@ class Player(Entity):
         self.pos.y = max(MAP_BORDER_UP, min(self.pos.y, MAP_BORDER_DOWN))
 
         if self.dir.y < 0:
-            self.graphics.play("move_up")
+            self.graphics.play("move_up", 3)
         elif self.dir.y > 0:
-            self.graphics.play("move_down")
+            self.graphics.play("move_down", 3)
         elif self.dir.x < 0:
-            self.graphics.play("move_left")
+            self.graphics.play("move_left", 3)
         elif self.dir.x > 0:
-            self.graphics.play("move_right")
+            self.graphics.play("move_right", 3)
+        
+        if self.move_force.length() == 0:
+            self.fsm.change_state(States.IDLE)

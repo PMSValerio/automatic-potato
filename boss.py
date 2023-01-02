@@ -25,7 +25,7 @@ class Boss(Entity):
         self.left_shield = BossShields(Vector2(self.pos.x - 80, self.pos.y))
         self.right_shield = BossShields(Vector2(self.pos.x + 80, self.pos.y))
 
-        self.graphics = Animation("assets/gfx/boss.png")
+        self.graphics = Animation("assets/gfx/entities/auto_spud.png", True, 4)
     
     def update(self, delta):
         self.pos.y -= SPEED * delta

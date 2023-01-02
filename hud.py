@@ -22,6 +22,8 @@ class HUD:
         self.healthbar_fore = service_locator.graphics_loader.image_at("assets/gfx/healthbar.png", (0, 32, 128, 32))
         self.health_wid = 0 # width of the healthbar in pixels
 
+
+        self.potion_icon = service_locator.graphics_loader.get_anim_strip("assets/gfx/ui/icons.png", "potion", 0)
         self.potions = TextLabel("x0", WIDTH * 0.5, HUD_OFFSET * 1.5, Align.CENTER, Align.CENTER, 16)
 
         self.score = TextLabel("SCORE: " + str(self.player_score), WIDTH * 0.7, HUD_OFFSET * 1.5, Align.BEGIN, Align.BEGIN, 16)
@@ -41,6 +43,10 @@ class HUD:
 
         self.potions.set_text("x" + str(self.potions_left))
         self.potions.draw(surface)
+        rect = self.potion_icon.get_rect()
+        rect.right = self.potions.rect.left
+        rect.centery = self.potions.rect.centery
+        surface.blit(self.potion_icon, rect)
 
         self.score.set_text("SCORE: " + str(self.player_score))
         self.score.draw(surface)

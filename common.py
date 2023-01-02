@@ -19,10 +19,10 @@ HEAL_RANGE = 48
 HEAL_RATE = 5
 
 # map border; player can only move inside these
-MAP_BORDER_LEFT = 128
-MAP_BORDER_RIGHT = WIDTH - 128
+MAP_BORDER_LEFT = 96
+MAP_BORDER_RIGHT = WIDTH - 96
 MAP_BORDER_UP = 128
-MAP_BORDER_DOWN = HEIGHT - 128
+MAP_BORDER_DOWN = HEIGHT - 96
 
 # all game events, some should be published along with an argument
 class Events(Enum):
@@ -69,15 +69,16 @@ class EntityLayers(Enum):
 
 # player stats to define multiple player types
 class PlayerStats:
-    def __init__(self, name, max_health, base_speed):
+    def __init__(self, name, max_health, base_speed, anim_filepath):
         self.name = name
         self.max_health = max_health # max hp
         self.speed = base_speed # pix/sec
+        self.anim_filepath = anim_filepath
 
 
 player_types = {
-    "Witch": PlayerStats("Witch", 10, 160),
-    "Cat": PlayerStats("Cat", 8, 200)
+    "Witch": PlayerStats("Witch", 10, 160, "assets/gfx/entities/witch.png"),
+    "Cat": PlayerStats("Cat", 8, 200, "assets/gfx/entities/cat.png")
 }
 
 
@@ -94,11 +95,11 @@ class ProjectileStats:
 
 
 projectile_types = {
-    "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png", "assets/gfx/vfx/spell_hit.png"),
-    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
-    "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/spell.png"),
+    "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png", "assets/gfx/vfx/spell_hit.png"),
+    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
+    "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
+    "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
 
-    "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
-    "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/boss_bullet.png")
+    "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/bone.png"),
+    "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/potato.png")
 }

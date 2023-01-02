@@ -14,7 +14,7 @@ class Skeleton(enemy.Enemy):
     def __init__(self):
         super().__init__(enemy.EnemyTypes.SKELETON)
         
-        self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
+        self.graphics = animation.Animation("assets/gfx/entities/skeleton.png", True, 4)
         self.wander_pos = super().get_wandering_position() 
         self.move_speed = self.wandering_speed
         self.shoot = False
