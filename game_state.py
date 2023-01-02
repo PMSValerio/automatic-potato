@@ -33,6 +33,9 @@ class TitleState(GameState):
 
         self.can_click = False
     
+    def enter(self):
+        services.service_locator.sound_mixer.play_music(Music.TITLE)
+    
     def update(self, delta) -> bool:
         import pygame
         self.timer_count += delta
@@ -48,7 +51,7 @@ class TitleState(GameState):
         
         if self.can_click:
             if pygame.mouse.get_pressed()[0]:
-                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.CHARACTER_SELECT)
         
         return True
     
@@ -78,6 +81,9 @@ class CharacterSelectState(GameState):
 
         self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.CENTER, 16)
     
+    def enter(self):
+        services.service_locator.sound_mixer.play_music(Music.TITLE)
+    
     def update(self, delta) -> bool:
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
@@ -105,7 +111,6 @@ class CharacterSelectState(GameState):
         return True
 
     def draw(self, surface):
-        # TODO: improve code
         surface.fill((40, 40, 40))
         yline = HEIGHT * 0.25
         skin_cursor_x = (self.selected_skin+1) * WIDTH/(self.skin_count+1)
@@ -165,7 +170,8 @@ class LevelState(GameState):
         import player
         import boss
         import player_data
-        # initialise player and set player type
+
+        services.service_locator.sound_mixer.play_music(Music.LEVEL)
         
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
@@ -211,8 +217,13 @@ class LevelState(GameState):
     
     def finish_game(self, delta):
         import player_data
-        if not self.ending and self.end_game > 0: # if win, add win bonus
-            player_data.player_data.win = True
+        if not self.ending: # if win, add win bonus
+            services.service_locator.sound_mixer.stop_music()
+            if self.end_game > 0:
+                player_data.player_data.win = True
+                services.service_locator.sound_mixer.play_music(Music.WIN)
+            else:
+                services.service_locator.sound_mixer.play_music(Music.GAME_OVER)
         self.end_timer -= delta
         self.ending = True
 
@@ -264,6 +275,8 @@ class GameOverState(GameState):
             else:
                 self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
                 self.title.set_text(self.written)
+                if self.to_write == "":
+                    self.title.set_colour((200, 0, 0))
         
         if self.can_click:
             if services.service_locator.game_input.any_pressed():
@@ -293,6 +306,13 @@ class ResultsState(GameState):
 
         self.title = TextLabel("FINAL RESULTS", self.xoffset1, self.xoffset1, Align.BEGIN, Align.BEGIN, 24)
 
+        self.measures_value = []
+        self.measures = []
+        self.weights = []
+
+        self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
+    
+    def enter(self):
         # measures to be accounted to score
         self.measures_value = [
             player_data.player_data.potions_left,
@@ -311,8 +331,6 @@ class ResultsState(GameState):
             100 if player_data.player_data.win else -100
         ]
 
-        self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
-        
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
@@ -414,7 +432,7 @@ class ScoreboardState(GameState):
         if not self.editing and services.service_locator.game_input.any_pressed():
             return False
         
-        if self.player_index > 0 and self.editing: # select name
+        if self.player_index >= 0 and self.editing: # select name
             old_name = self.scoreboard[str(self.player_index)][0]
 
             # select letter
