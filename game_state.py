@@ -51,7 +51,7 @@ class TitleState(GameState):
         
         if self.can_click:
             if pygame.mouse.get_pressed()[0]:
-                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.CHARACTER_SELECT)
         
         return True
     
@@ -167,7 +167,8 @@ class LevelState(GameState):
         import player
         import boss
         import player_data
-        # initialise player and set player type
+
+        services.service_locator.sound_mixer.play_music(Music.LEVEL)
         
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
@@ -176,8 +177,6 @@ class LevelState(GameState):
         services.service_locator.enemy_handler.iron_league()
 
         player_data.player_data.update_potions(100)
-
-        services.service_locator.sound_mixer.play_music(Music.LEVEL)
     
     def update(self, delta) -> bool:
         import random
@@ -212,8 +211,13 @@ class LevelState(GameState):
     
     def finish_game(self, delta):
         import player_data
-        if not self.ending and self.end_game > 0: # if win, add win bonus
-            player_data.player_data.win = True
+        if not self.ending: # if win, add win bonus
+            services.service_locator.sound_mixer.stop_music()
+            if self.end_game > 0:
+                player_data.player_data.win = True
+                services.service_locator.sound_mixer.play_music(Music.WIN)
+            else:
+                services.service_locator.sound_mixer.play_music(Music.GAME_OVER)
         self.end_timer -= delta
         self.ending = True
 
@@ -256,9 +260,6 @@ class GameOverState(GameState):
 
         self.can_click = False
     
-    def enter(self):
-        services.service_locator.sound_mixer.stop_music()
-    
     def update(self, delta) -> bool:
         self.timer_count += delta
         if self.timer_count >= self.timer:
@@ -268,6 +269,8 @@ class GameOverState(GameState):
             else:
                 self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
                 self.title.set_text(self.written)
+                if self.to_write == "":
+                    self.title.set_colour((200, 0, 0))
         
         if self.can_click:
             if services.service_locator.game_input.any_pressed():
@@ -320,10 +323,6 @@ class ResultsState(GameState):
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
-
-
-    def enter(self):
-        services.service_locator.sound_mixer.stop_music()
 
     def update(self, delta):
         if self.timer_count >= self.timer and self.timer > 0:
@@ -412,8 +411,6 @@ class ScoreboardState(GameState):
                     player_in_table = True
                     self.player_index = i
                     self.editing = True
-        
-        services.service_locator.sound_mixer.stop_music()
     
     def exit(self):
         import json

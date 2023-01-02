@@ -105,6 +105,8 @@ projectile_types = {
 
 
 class Music(Enum):
-    TITLE = ""
-    LEVEL = ""
-    BOSS = ""
+    TITLE = "assets/sfx/title_theme.ogg"
+    LEVEL = "assets/sfx/waves_theme.ogg"
+    BOSS = "assets/sfx/boss_battle.ogg"
+    WIN = "assets/sfx/win_game.ogg"
+    GAME_OVER = "assets/sfx/game_over.ogg"
