@@ -19,7 +19,6 @@ class Entity(Sprite):
 
         self.dir = Vector2(1, 0) # movement direction
         self.rot = Vector2(1, 0) # sprite rotation, NOT the same as dir
-        self.scl = 1.5 # sprite scale
 
         self.rect = Rect(0, 0, BLOCK, BLOCK) # bounding box
         self.update_bbox()
@@ -61,15 +60,12 @@ class Entity(Sprite):
     # draw animation
     def draw(self, surface):
         if self.graphics is not None:
-            #if self._to_blit is None:
-            self._to_blit = self.graphics.get_frame().copy()
-            # else:
-            #     self._to_blit.fill((0, 0, 0, 0))
-            #     im = self.graphics.get_frame()
-            #     self._to_blit.blit(im, im.get_rect())
-            if self.scl != 1:
-                wid, hei = self._to_blit.get_rect().size
-                self._to_blit = transform.scale(self._to_blit, (wid * self.scl, hei * self.scl))
+            if self._to_blit is None:
+                self._to_blit = self.graphics.get_frame().copy()
+            else:
+                self._to_blit.fill((0, 0, 0, 0))
+                im = self.graphics.get_frame()
+                self._to_blit.blit(im, im.get_rect())
             if self.rot.xy != (1, 0):
                 self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
 
