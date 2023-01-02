@@ -23,41 +23,56 @@ class GameState:
 class TitleState(GameState):
     def __init__(self):
         import pygame
+        import animation
+
         self.timer_count = 0
-        self.timer = 0.04
+        self.timer = 0.2
         self.to_write = "Automatic Potato"
         self.written = ""
 
-        self.click_text = TextLabel("Click to Start", WIDTH * 0.5, HEIGHT * 0.8, Align.CENTER, Align.CENTER, 16)
-        self.title_text = TextLabel("", WIDTH * 0.5, HEIGHT * 0.3, Align.CENTER, Align.CENTER, 48)
+        self.click_text = TextLabel("Click to Start", WIDTH * 0.5, HEIGHT * 0.85, Align.CENTER, Align.CENTER, 16)
+        self.title_text = TextLabel("Automatic Potato", WIDTH * 0.5, HEIGHT * 0.25, Align.CENTER, Align.CENTER, 48)
 
         self.can_click = False
+
+        self.cauldron = animation.Animation("assets/gfx/ui/title_cauldron.png", True, 6)
+        self.fade_panel = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA).convert_alpha()
+        self.fade_panel.fill((20, 20, 20))
+        self.fade_alpha = 255
     
     def enter(self):
         services.service_locator.sound_mixer.play_music(Music.TITLE)
     
     def update(self, delta) -> bool:
         import pygame
-        self.timer_count += delta
-        if self.timer_count >= self.timer:
-            self.timer_count = 0
-            if self.to_write == "":
+
+        self.cauldron.update_frame()
+
+        if self.fade_alpha > 0:
+            self.fade_alpha = max(0, self.fade_alpha - 1)
+            self.fade_panel.set_alpha(self.fade_alpha)
+        else:
+            if self.timer_count >= self.timer:
                 self.can_click = True
             else:
-                self.to_write, self.written = self.to_write[1:], self.written + self.to_write[0]
-                self.title_text.set_text(self.written)
-                if self.to_write == "":
-                    self.timer = 0.7
+                self.timer_count += delta
         
-        if self.can_click:
-            if pygame.mouse.get_pressed()[0]:
+        if services.service_locator.game_input.any_pressed():
+            if self.can_click:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.CHARACTER_SELECT)
+            else:
+                self.fade_alpha = 0
         
         return True
     
     def draw(self, surface):
-        surface.fill((40, 40, 40))
+        surface.fill((40, 40, 45))
         self.title_text.draw(surface)
+        im = self.cauldron.get_frame()
+        rect = im.get_rect(center = (WIDTH * 0.5, HEIGHT * 0.55))
+        surface.blit(im, rect)
+        if self.fade_alpha > 0:
+            surface.blit(self.fade_panel, self.fade_panel.get_rect())
         if self.can_click:
             self.click_text.draw(surface)
 

@@ -71,6 +71,10 @@ class GraphicsLoader:
         self.load_image(filename)
         self.add_anim_strip(filename, "potion", 0, 32, 32, 1)
 
+        filename = "assets/gfx/ui/title_cauldron.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 128, 128, 4, (3, 3))
+
         # --Entities--
 
         filename = "assets/gfx/entities/witch.png"
