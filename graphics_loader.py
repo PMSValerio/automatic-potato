@@ -119,8 +119,9 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/ogre.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "idle", 0, 96, 96, 4, (1.5, 1.5))
-        self.add_anim_strip(filename, "run", 1, 96, 96, 6, (1.5, 1.5))
+        self.add_anim_strip(filename, "run", 1, 192, 96, 6, (1.5, 1.5))
+        self.add_anim_strip(filename, "idle", 0, 192, 96, 4, (1.5, 1.5))
+        self.add_anim_strip(filename, "attack", 2, 192, 96, 8, (1.5, 1.5))
 
         filename = "assets/gfx/entities/auto_spud.png"
         self.load_image(filename)
