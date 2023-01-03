@@ -62,12 +62,7 @@ class Entity(Sprite):
     # draw animation
     def draw(self, surface):
         if self.graphics is not None:
-            if self._to_blit is None:
-                self._to_blit = self.graphics.get_frame().copy()
-            else:
-                self._to_blit.fill((0, 0, 0, 0))
-                im = self.graphics.get_frame()
-                self._to_blit.blit(im, im.get_rect())
+            self._to_blit = self.graphics.get_frame().copy()
             if self.rot.xy != (1, 0):
                 self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
 
