@@ -101,14 +101,14 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/pumpkin.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "idle", 0, 64, 64, 4), (1.5, 1.5)
         self.add_anim_strip(filename, "run", 1, 64, 64, 8, (1.5, 1.5))
+        self.add_anim_strip(filename, "idle", 0, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "flee", 2, 64, 64, 8, (1.5, 1.5))
 
         filename = "assets/gfx/entities/skeleton.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "idle", 0, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "run", 1, 64, 64, 6, (1.5, 1.5))
+        self.add_anim_strip(filename, "idle", 0, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "flee", 2, 64, 64, 6, (1.5, 1.5))
 
         filename = "assets/gfx/entities/ghost.png"
@@ -123,7 +123,7 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/auto_spud.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 128, 128, 1, (1.5, 1.5))
+        self.add_anim_strip(filename, "default", 0, 128, 128, 8, (1.5, 1.5))
 
         # --Projectiles--
 

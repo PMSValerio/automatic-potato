@@ -1,4 +1,5 @@
 from common import *
+from pygame import Vector2
 import enemy
 import animation
 import player_data
@@ -15,13 +16,16 @@ class Skeleton(enemy.Enemy):
         super().__init__(enemy.EnemyTypes.SKELETON, EntityLayers.ENEMY)
         
         self.graphics = animation.Animation("assets/gfx/entities/skeleton.png", True, 4)
-        self.wander_pos = super().get_wandering_position() 
-        self.flee_pos = super().get_flee_position()
         self.move_speed = self.wandering_speed
+        self.wander_pos = super().get_wandering_position() 
+
+        self.flee_pos = super().get_flee_position()
+        self.shoot_dir = Vector2(1, 0)
+        self.shoot_timer = 0
         self.shoot = False
 
-
     def update(self, delta):
+        # update position
         super().update(delta)
 
         # update shoot timer 
@@ -33,16 +37,14 @@ class Skeleton(enemy.Enemy):
             SkeletonProjectile().shoot(self)
             self.shoot_timer = self.projectile_type.cooldown
         
-        # update position
-        self.pos += self.move_speed * self.move_dir * delta
 
-
-    def wandering(self, new = False):
+    def wandering(self, new):
         self.move_speed = self.wandering_speed
-        self.player_pos = player_data.player_data.get_player_pos()
 
-        # get direction to wandering position
+        # change direction to wandering position
         super().update_move_dir(self.wander_pos)
+        
+        self.player_pos = player_data.player_data.get_player_pos()
         
         # reached wandering position, recalculate
         if self.pos.distance_to(self.wander_pos) < 1: 
@@ -57,14 +59,16 @@ class Skeleton(enemy.Enemy):
             self.fsm.change_state(enemy.EnemyStates.ATTACKING)
 
 
-    def seeking(self, new = False):
-        # change move speed to seek: go faster 
-        self.move_speed = self.seek_speed
+    def seeking(self, new):
+        if new:
+            # change move speed to seek: go faster 
+            self.move_speed = self.seek_speed
+
+            # change direction to the center of the map 
+            super().update_move_dir(self.target_pos)
+
         self.player_pos = player_data.player_data.get_player_pos()
-
-        # get direction to the center of the map 
-        super().update_move_dir(self.target_pos)
-
+        
         # if the player is close, change to attack 
         if self.pos.distance_to(self.player_pos) < self.pos.distance_to(self.target_pos):
             self.fsm.change_state(enemy.EnemyStates.ATTACKING)
@@ -74,9 +78,11 @@ class Skeleton(enemy.Enemy):
             self.fsm.change_state(enemy.EnemyStates.FLEEING)
 
 
-    def attacking(self, new = False):
-        # change to attack speed 
-        self.move_speed = self.attack_speed 
+    def attacking(self, new):
+        if new:
+            # change to attack speed 
+            self.move_speed = self.attack_speed 
+        
         self.player_pos = player_data.player_data.get_player_pos()
 
         # check distance to player
@@ -97,10 +103,11 @@ class Skeleton(enemy.Enemy):
             super().update_move_dir(self.player_pos)
 
 
-    def fleeing(self, new = False):
-        # change to attack speed 
-        self.move_speed = self.flee_speed 
-        super().update_move_dir(self.flee_pos)
+    def fleeing(self, new):
+        if new:
+            # change to attack speed 
+            self.move_speed = self.flee_speed 
+            super().update_move_dir(self.flee_pos)
 
         # a random feeling goal position was assigned when the instance was created
         # move towards that position and ignore everything else
@@ -121,6 +128,7 @@ class Skeleton(enemy.Enemy):
         if self.effect_end:
             player_data.player_data.update_score(self.score_value)  
             self.die()
+            super().dying()
 
 
     def collide(self, other):

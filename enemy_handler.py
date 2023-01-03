@@ -3,6 +3,7 @@ import enum
 import enemy
 import enemy_skeleton
 import enemy_ghost
+import enemy_pumpkin
 import services 
 import random
 
@@ -43,8 +44,8 @@ class EnemyHandler:
         
         self._skeleton_instance = enemy_skeleton.Skeleton()
         self._ghost_instance = enemy_ghost.Ghost()
-        # self._pumpkin_instance = Pumpkin()
-        # self._skeleton_instance = Skeleton()
+        self._pumpkin_instance = enemy_pumpkin.Pumpkin()
+        # self._troll_instance = enemy_troll.Troll()
 
         services.service_locator.event_handler.subscribe(self, Events.KILL_ENTITY)
         self.spawning = True
@@ -54,14 +55,15 @@ class EnemyHandler:
     def on_notify(self, event, entity = None):
         if event == Events.KILL_ENTITY and (entity.col_layer == EntityLayers.ENEMY or entity.col_layer == EntityLayers.ENEMY_MELEE):
             self.wave_enemies -= 1
-        
             if self.wave_enemies == 0: 
                 self.iron_league()
 
     def iron_league(self, new = False):
         # league = EnemyWaves.IRON
         # enemy.Spawner.spawn_monster(self._skeleton_instance)
+        # enemy.Spawner.spawn_monster(self._pumpkin_instance)
         enemy.Spawner.spawn_monster(self._ghost_instance)
+
         self.wave_enemies = 1
         # trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
         # self.wave_enemies += len(trolls)

@@ -5,7 +5,7 @@ import fsm
 import random
 import enemy_data
 import numpy 
-import player_data
+import services
 
 # spawner singleton class that receives a prototype and calls said prototype's clone method
 class Spawner():
@@ -34,16 +34,15 @@ class Enemy(entity.Entity):
         self.type_id = type
         
         self.load_stats(type)
-
+        
         self.move_dir : Vector2 = Vector2(0, 0)
         self.target_pos = (TARGET_X, TARGET_Y)
-
-        self.shoot_dir = Vector2(1, 0)
-        self.shoot_timer = 0
+        self.move_speed = 0
 
         # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
+        self.fsm.add_state(EnemyStates.IDLE, self.idle)
         self.fsm.add_state(EnemyStates.SEEKING, self.seeking)
         self.fsm.add_state(EnemyStates.ATTACKING, self.attacking)
         self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
@@ -134,10 +133,10 @@ class Enemy(entity.Entity):
                 return True
         return False
     
-    
+
     def update_move_dir(self, target_position):
         direction = (target_position - self.pos)
-        norm = numpy.linalg.norm(direction) 
+        norm = numpy.linalg.norm(direction)
 
         # sanity check 
         if norm != 0:
@@ -154,7 +153,13 @@ class Enemy(entity.Entity):
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
+        self.pos += self.move_speed * self.move_dir * delta
 
+        if self.move_dir.x > 0:
+            self.flip_h = False
+
+        elif self.move_dir.x < 0:
+            self.flip_h = True
 
     def collide(self, other):
         # there are different types of players, which means that the damage is not always equal
@@ -185,7 +190,10 @@ class Enemy(entity.Entity):
     def wandering(self): 
         raise NotImplementedError
 
-    def dying(self, new):
+    def dying(self):
+        services.service_locator.event_handler.publish(Events.ENEMY_KILLED, self.type_id)
+
+    def idle(self):
         raise NotImplementedError
 
     def clone(self):

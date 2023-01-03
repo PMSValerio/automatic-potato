@@ -25,7 +25,7 @@
         "armor": 0,
         "strength": 20,
         "score_value": 10,
-        "projectile_type": "Pumpkin Bomb"
+        "projectile_type": "None"
     },
     "2": {
         "wandering_speed": 30,
@@ -43,16 +43,16 @@
     },
     "3": {
         "wandering_speed": 80,
-        "seek_speed": 50,
+        "seek_speed": 0,
         "attack_speed": 500,
         "flee_speed": 50,
-        "seek_distance": 350,
-        "attack_distance": 150,
+        "seek_distance": 0,
+        "attack_distance": 165,  
         "attack_range": 40,
-        "health": 30,
+        "health": 20,
         "armor": 0,
-        "strength": 5,
-        "score_value": 10, 
+        "strength": 0.1,
+        "score_value": 15, 
         "projectile_type": "None"
     }, 
     "type": {

@@ -8,17 +8,13 @@ import player_data
 class Ghost(enemy.Enemy):
     def __init__(self):
         super().__init__(enemy.EnemyTypes.GHOST, EntityLayers.ENEMY_MELEE)
-
         self.graphics = animation.Animation("assets/gfx/entities/ghost.png", True, 4)
-        self.wander_pos = super().get_wandering_position() 
-        self.move_speed = self.wandering_speed
+        self.wander_pos = super().get_wandering_position(100, 150) 
 
 
     def update(self, delta):
-        super().update(delta)
-
         # update position
-        self.pos += self.move_speed * self.move_dir * delta
+        super().update(delta)
 
 
     def wandering(self, new = False):
@@ -33,7 +29,7 @@ class Ghost(enemy.Enemy):
 
         # reached wandering position, recalculate
         if self.pos.distance_to(self.wander_pos) < 2: 
-            self.wander_pos = super().get_wandering_position(100, 150) 
+            self.wander_pos = super().get_wandering_position(150, 200) 
 
 
     def attacking(self, new):
@@ -58,8 +54,8 @@ class Ghost(enemy.Enemy):
         if new:
             self.graphics.play("flee")
         
-        # just change the move speed, exit in the same direction as the dash 
-        self.move_speed = self.flee_speed 
+            # just change the move speed, exit in the same direction as the dash 
+            self.move_speed = self.flee_speed 
 
         # reached flee position
         # deduct from potions left and from the player's score, disappear 
@@ -78,6 +74,7 @@ class Ghost(enemy.Enemy):
         if self.effect_end:
             player_data.player_data.update_score(self.score_value)  
             self.die()
+            super().dying()
 
 
     def clone(self):
