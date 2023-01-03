@@ -34,5 +34,6 @@ class Services:
     def setup(self):
         self.entity_manager.setup()
         self.enemy_handler.setup()
+        self.sound_mixer.setup()
     
 service_locator : Services = None
