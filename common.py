@@ -90,6 +90,7 @@ class EnemyStates(Enum):
     ATTACKING = 3
     DYING = 4
     IDLE = 5
+    SHOOTING = 6
 
 # player stats to define multiple player types
 class PlayerStats:

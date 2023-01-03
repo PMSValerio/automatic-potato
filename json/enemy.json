@@ -28,12 +28,12 @@
         "projectile_type": "None"
     },
     "2": {
-        "wandering_speed": 30,
-        "seek_speed": 50,
-        "attack_speed": 70,
+        "wandering_speed": 50,
+        "seek_speed": 70,
+        "attack_speed": 80,
         "flee_speed": 90,
-        "seek_distance": 350,
-        "attack_distance": 150,
+        "seek_distance": 320,
+        "attack_distance": 200,
         "attack_range": 150,
         "health": 20,
         "armor": 0,

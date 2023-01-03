@@ -47,6 +47,7 @@ class Enemy(entity.Entity):
         self.fsm.add_state(EnemyStates.ATTACKING, self.attacking)
         self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
         self.fsm.add_state(EnemyStates.DYING, self.dying)
+        self.fsm.add_state(EnemyStates.SHOOTING, self.shooting)
 
 
     def _random_spawn_pos(self):
@@ -177,6 +178,8 @@ class Enemy(entity.Entity):
         if self.health == 0:
             self.fsm.change_state(EnemyStates.DYING)
 
+    def shooting(self):
+        raise NotImplementedError
 
     def attacking(self): 
         raise NotImplementedError
