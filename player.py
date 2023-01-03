@@ -18,11 +18,6 @@ class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
 
-        # weapon data
-        self.projectile_type = projectile_types["Spell"]
-        self.shoot_dir = Vector2(1, 0)
-        self.shoot_timer = 0
-
         # upgrade data
         self.speed_modifier = 1 # multiplied to movement speed
         self.invincible_timer = 0 # if > 0, player is invulnerable to enemy attacks
@@ -32,6 +27,11 @@ class Player(Entity):
 
         self.stats = player_data.player_type
         self.data = player_data
+
+        # weapon data
+        self.projectile_type = projectile_types["Spell"] if self.stats.name == "Witch" else projectile_types["Fish"]
+        self.shoot_dir = Vector2(1, 0)
+        self.shoot_timer = 0
 
         self.health = 0
         self.change_health(self.stats.max_health)

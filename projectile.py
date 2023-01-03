@@ -25,7 +25,10 @@ class Projectile(Entity):
     def collide(self, other):
         self.die()
         if self.stats.hit_effect is not None:
-            VisualEffect(self.pos.copy(), self.stats.hit_effect)
+            if other.col_layer == EntityLayers.OBSTACLE:
+                VisualEffect(self.pos.copy(), "assets/gfx/vfx/null_hit.png")
+            else:
+                VisualEffect(self.pos.copy(), self.stats.hit_effect)
     
 
 class Spell(Projectile):
@@ -33,6 +36,58 @@ class Spell(Projectile):
         Projectile.__init__(self, pos, direction, projectile_types["Spell"])
 
         self.rot = self.dir.copy()
+
+class PBomb(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Pumpkin Bomb"])
+
+        self.graphics.loop = False
+
+    def update(self, delta):
+        super().update(delta)
+        if self.graphics.end:
+            self.explode()
+    
+    def explode(self):
+        self.die()
+        PBombExplode(self.pos.copy())
+
+    def collide(self, other):
+        self.explode()
+
+class PBombExplode(Projectile):
+    def __init__(self, pos):
+        Projectile.__init__(self, pos, Vector2(1, 0), projectile_types["Bomb Explosion"])
+
+        self.graphics.loop = False
+    
+    def update(self, delta):
+        if self.graphics.end:
+            self.die()
+    
+    def collide(self, other):
+        pass
+
+class Fish(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Fish"])
+
+class Shark(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Shark"])
+
+        self.rect.size = (48, 48)
+
+        self.rot = self.dir.copy()
+        # self.flip = direction.x < 0
+    
+    def collide(self, other):
+        if self.stats.hit_effect is not None:
+            if other.col_layer == EntityLayers.OBSTACLE:
+                VisualEffect(self.pos.copy(), "assets/gfx/vfx/null_hit.png")
+                self.die()
+            else:
+                VisualEffect(self.pos.copy(), self.stats.hit_effect)
 
 class Spud(Projectile):
     def __init__(self, pos, direction):

@@ -123,13 +123,25 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/auto_spud.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 128, 128, 8, (1.5, 1.5))
+        self.add_anim_strip(filename, "default", 0, 128, 128, 8, (2, 2))
 
         # --Projectiles--
 
         filename = "assets/gfx/entities/spell.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/pbomb.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 8, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/fish.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/shark.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 64, 64, 2, (1.5, 1.5))
         
         filename = "assets/gfx/entities/potato.png"
         self.load_image(filename)
@@ -139,14 +151,29 @@ class GraphicsLoader:
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
 
+        filename = "assets/gfx/vfx/explosion.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 96, 96, 4, (1.5, 1.5))
+
         # --Pickups--
 
-        filename = "assets/gfx/speed_pickup.png"
+        filename = "assets/gfx/entities/pickups.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 32, 32, 1, (1.5, 1.5))
+        self.add_anim_strip(filename, "invuln", 0, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "speed", 1, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "pbomb", 2, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "shark", 3, 32, 32, 2, (1.5, 1.5))
 
         # --VFX--
 
         filename = "assets/gfx/vfx/spell_hit.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
+
+        filename = "assets/gfx/vfx/normal_hit.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
+
+        filename = "assets/gfx/vfx/null_hit.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
