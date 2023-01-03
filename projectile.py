@@ -14,7 +14,7 @@ class Projectile(Entity):
 
         self.dir = direction
 
-        self.graphics = Animation(self.stats.anim_filepath, True)
+        self.graphics = Animation(self.stats.anim_filepath, True, 2)
 
     def update(self, delta):
         self.pos += self.dir * (self.stats.speed * delta)
@@ -26,7 +26,13 @@ class Projectile(Entity):
         self.die()
         if self.stats.hit_effect is not None:
             VisualEffect(self.pos.copy(), self.stats.hit_effect)
+    
 
+class Spell(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Spell"])
+
+        self.rot = self.dir.copy()
 
 class Spud(Projectile):
     def __init__(self, pos, direction):
