@@ -18,7 +18,7 @@ class PumpkinHitbox(entity.Entity):
     def update(self, delta):
         pass
 
-    def draw(self):
+    def draw(self, surface):
         pass
 
     def collide(self, other):
@@ -126,6 +126,7 @@ class Pumpkin(enemy.Enemy):
         
         else:
             if self.pos.distance_to(self.player_pos) < 2 and self.bomb_timer <= 0: 
+                self.graphics.play("attack", 4)
                 self.fsm.change_state(EnemyStates.SHOOTING)
                 self.bomb_timer = self.bomb_cooldown
 
@@ -138,12 +139,14 @@ class Pumpkin(enemy.Enemy):
         if new: 
             self.start_bomb_timer = True
             self.move_speed = 0
-            self.graphics.play("idle", 4)
-            PumpkinHitbox(self.strength, self.pos, self.projectile_type)
 
         else:
             # check if animation finished and switch back to seeking
-            self.fsm.change_state(EnemyStates.SEEKING)
+            if self.graphics.ix == 7:
+                PumpkinHitbox(self.strength, self.pos, self.projectile_type)
+
+            if self.graphics.end:
+                self.fsm.change_state(EnemyStates.SEEKING)
         
 
     def fleeing(self, new):

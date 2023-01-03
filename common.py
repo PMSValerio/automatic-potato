@@ -128,7 +128,7 @@ projectile_types = {
 
     "Bone": ProjectileStats("Bone", 260, 2, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/bone.png", "assets/gfx/vfx/normal_hit.png"),
     "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/potato.png", "assets/gfx/vfx/normal_hit.png"),
-    "Pumpkin Hitbox": ProjectileStats("Pumpkin Hitbox", 0, 0.1, 1, EntityLayers.ENEMY_ATTACK, hit_filepath= "assets/gfx/vfx/normal_hit.png")
+    "Pumpkin Hitbox": ProjectileStats("Pumpkin Hitbox", 0, 1, 1, EntityLayers.ENEMY_ATTACK, hit_filepath= "assets/gfx/vfx/normal_hit.png")
 }
 
 
