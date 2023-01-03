@@ -119,7 +119,7 @@ class ProjectileStats:
 
 projectile_types = {
     "Spell": ProjectileStats("Spell", 260, 5, 0.3, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png", "assets/gfx/vfx/spell_hit.png"),
-    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 200, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
+    "Pumpkin Bomb": ProjectileStats("Pumpkin Bomb", 280, 8, 0.45, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/pbomb.png"),
     "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/spell.png"),
 

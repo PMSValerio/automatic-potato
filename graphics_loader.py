@@ -130,6 +130,10 @@ class GraphicsLoader:
         filename = "assets/gfx/entities/spell.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/pbomb.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 8, (1.5, 1.5))
         
         filename = "assets/gfx/entities/potato.png"
         self.load_image(filename)

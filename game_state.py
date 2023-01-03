@@ -195,6 +195,8 @@ class LevelState(GameState):
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
+        import pickups
+        pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
         # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
         services.service_locator.enemy_handler.iron_league()
 

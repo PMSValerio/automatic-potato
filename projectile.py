@@ -34,6 +34,25 @@ class Spell(Projectile):
 
         self.rot = self.dir.copy()
 
+class PBomb(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Pumpkin Bomb"])
+
+        self.graphics.loop = False
+
+    def update(self, delta):
+        super().update(delta)
+        if self.graphics.end:
+            self.explode()
+    
+    def explode(self):
+        self.die()
+        # TODO: spawn explosion
+        print("boom")
+
+    def collide(self, other):
+        self.explode()
+
 class Spud(Projectile):
     def __init__(self, pos, direction):
         Projectile.__init__(self, pos, direction, projectile_types["Spud"])

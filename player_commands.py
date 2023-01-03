@@ -1,5 +1,5 @@
 from common import *
-from projectile import Spell, Projectile
+from projectile import *
 
 class MoveLeft:
     def execute(self, player):
@@ -22,4 +22,4 @@ class Shoot:
         if player.projectile_type.name == "Spell":
             Spell(player.pos.copy(), player.shoot_dir.copy())
         else:
-            Projectile(player.pos.copy(), player.shoot_dir.copy(), player.projectile_type)
+            PBomb(player.pos.copy(), player.shoot_dir.copy())

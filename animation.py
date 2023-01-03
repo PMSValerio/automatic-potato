@@ -3,6 +3,7 @@ import services
 # simple animation class, plays a series of subimages in a spritesheet in a loop
 class Animation:
     def __init__(self, filename, loop = False, delay_ticks=0):
+        self.filename = filename
         self.loop = loop
         self.delay_ticks = delay_ticks
 
@@ -35,6 +36,8 @@ class Animation:
                 self.tick_cnt = 0
                 if self.ix + 1 >= len(self.animations[self.current_anim]): # if last frame
                     if self.loop:
+                        if self.filename == "assets/gfx/entities/pbomb.png":
+                            print("hi")
                         self.ix = 0
                 else: # only increment if not last frame
                     self.ix += 1
