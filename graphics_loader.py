@@ -104,6 +104,7 @@ class GraphicsLoader:
         self.add_anim_strip(filename, "run", 1, 64, 64, 8, (1.5, 1.5))
         self.add_anim_strip(filename, "idle", 0, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "flee", 2, 64, 64, 8, (1.5, 1.5))
+        self.add_anim_strip(filename, "attack", 3, 96, 96, 14, (1.5, 1.5))
 
         filename = "assets/gfx/entities/skeleton.png"
         self.load_image(filename)
