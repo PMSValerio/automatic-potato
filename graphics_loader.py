@@ -123,7 +123,7 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/auto_spud.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 128, 128, 1, (1.5, 1.5))
+        self.add_anim_strip(filename, "default", 0, 128, 128, 8, (2, 2))
 
         # --Projectiles--
 
@@ -141,9 +141,12 @@ class GraphicsLoader:
 
         # --Pickups--
 
-        filename = "assets/gfx/speed_pickup.png"
+        filename = "assets/gfx/entities/pickups.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "default", 0, 32, 32, 1, (1.5, 1.5))
+        self.add_anim_strip(filename, "invuln", 0, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "speed", 1, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "pbomb", 2, 32, 32, 2, (1.5, 1.5))
+        self.add_anim_strip(filename, "shark", 3, 32, 32, 2, (1.5, 1.5))
 
         # --VFX--
 

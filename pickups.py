@@ -29,7 +29,9 @@ class Pickup(Entity):
 
 class SpeedPickup(Pickup):
     def __init__(self, pos):
-        Pickup.__init__(self, pos, "assets/gfx/speed_pickup.png")
+        Pickup.__init__(self, pos, "assets/gfx/entities/pickups.png")
+
+        self.graphics.play("speed")
 
     def handle_player(self, player):
         print("speed+")
@@ -37,7 +39,9 @@ class SpeedPickup(Pickup):
 
 class InvulnPickup(Pickup):
     def __init__(self, pos):
-        Pickup.__init__(self, pos, "assets/gfx/speed_pickup.png")
+        Pickup.__init__(self, pos, "assets/gfx/entities/pickups.png")
+
+        self.graphics.play("invuln")
 
     def handle_player(self, player):
         print("invincible")
@@ -45,7 +49,12 @@ class InvulnPickup(Pickup):
 
 class WeaponPickup(Pickup):
     def __init__(self, pos):
-        Pickup.__init__(self, pos, "assets/gfx/speed_pickup.png")
+        Pickup.__init__(self, pos, "assets/gfx/entities/pickups.png")
+
+        if player_data.player_type.name == "Witch":
+            self.graphics.play("pbomb")
+        elif player_data.player_type.name == "Cat":
+            self.graphics.play("shark")
     
     def handle_player(self, player):
         print("weapon upgrade")

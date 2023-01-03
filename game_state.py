@@ -30,18 +30,18 @@ class TitleState(GameState):
         self.to_write = "Automatic Potato"
         self.written = ""
 
-        self.click_text = TextLabel("Click to Start", WIDTH * 0.5, HEIGHT * 0.85, Align.CENTER, Align.CENTER, 16)
+        self.click_text = TextLabel("Press ENTER: Start Game", WIDTH * 0.5, HEIGHT * 0.85, Align.CENTER, Align.CENTER, 16)
+        self.click_text2 = TextLabel("Press SPACE: Achievements", WIDTH * 0.5, HEIGHT * 0.9, Align.CENTER, Align.CENTER, 16)
         self.title_text = TextLabel("Automatic Potato", WIDTH * 0.5, HEIGHT * 0.25, Align.CENTER, Align.CENTER, 48)
-
-        self.can_click = False
 
         self.cauldron = animation.Animation("assets/gfx/ui/title_cauldron.png", True, 6)
         self.fade_panel = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA).convert_alpha()
         self.fade_panel.fill((20, 20, 20))
-        self.fade_alpha = 255
     
     def enter(self):
         services.service_locator.sound_mixer.play_music(Music.TITLE)
+        self.can_click = False
+        self.fade_alpha = 255
     
     def update(self, delta) -> bool:
         import pygame
@@ -57,10 +57,13 @@ class TitleState(GameState):
             else:
                 self.timer_count += delta
         
-        if services.service_locator.game_input.any_pressed():
-            if self.can_click:
+        if self.can_click:
+            if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.CHARACTER_SELECT)
-            else:
+            elif services.service_locator.game_input.key_pressed(pygame.K_SPACE):
+                services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.ACHIEVEMENTS)
+        else:
+            if services.service_locator.game_input.any_pressed():
                 self.fade_alpha = 0
         
         return True
@@ -75,6 +78,7 @@ class TitleState(GameState):
             surface.blit(self.fade_panel, self.fade_panel.get_rect())
         if self.can_click:
             self.click_text.draw(surface)
+            self.click_text2.draw(surface)
 
 # --- || Character Select Screen State || ---
 
