@@ -5,6 +5,7 @@ import fsm
 import random
 import enemy_data
 import numpy 
+import services
 
 # spawner singleton class that receives a prototype and calls said prototype's clone method
 class Spawner():
@@ -33,20 +34,20 @@ class Enemy(entity.Entity):
         self.type_id = type
         
         self.load_stats(type)
-
+        
         self.move_dir : Vector2 = Vector2(0, 0)
         self.target_pos = (TARGET_X, TARGET_Y)
-
-        self.shoot_dir = Vector2(1, 0)
-        self.shoot_timer = 0
+        self.move_speed = 0
 
         # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
+        self.fsm.add_state(EnemyStates.IDLE, self.idle)
         self.fsm.add_state(EnemyStates.SEEKING, self.seeking)
         self.fsm.add_state(EnemyStates.ATTACKING, self.attacking)
         self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
         self.fsm.add_state(EnemyStates.DYING, self.dying)
+        self.fsm.add_state(EnemyStates.SHOOTING, self.shooting)
 
 
     def _random_spawn_pos(self):
@@ -105,7 +106,7 @@ class Enemy(entity.Entity):
             self.score_value = data["score_value"]
 
             # projectile 
-            self.projectile_type = projectile_types[data["projectile_type"]]
+            self.projectile_type = None if data["projectile_type"] == "None" else projectile_types[data["projectile_type"]]
 
         else: 
             raise KeyError("Type {} of enemy does not exist.".format(type))
@@ -116,23 +117,27 @@ class Enemy(entity.Entity):
 
 
     # calculate a random roaming position relatively close to the current position
-    def get_wandering_position(self):
-        new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
+    def get_wandering_position(self, min_range = 20, max_range = 60):
+        new_pos = self.pos + self.get_random_direction() * random.randint(min_range, max_range)
 
         # guarantee that new position is within map boundaries 
-        while new_pos == self.pos or \
-              new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
-                new_pos.y >= max(new_pos.y, HEIGHT) or new_pos.y <= min(new_pos.y, 0):
-
+        while new_pos == self.pos or self.check_outside_map(new_pos):
             # while it's not, generate a new one
-            new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
+            new_pos = self.pos + self.get_random_direction() * random.randint(min_range, max_range)
 
         return new_pos
     
+
+    def check_outside_map(self, new_pos):
+        if new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
+                new_pos.y >= max(new_pos.y, HEIGHT) or new_pos.y <= min(new_pos.y, 0):
+                return True
+        return False
     
+
     def update_move_dir(self, target_position):
         direction = (target_position - self.pos)
-        norm = numpy.linalg.norm(direction) 
+        norm = numpy.linalg.norm(direction)
 
         # sanity check 
         if norm != 0:
@@ -149,7 +154,13 @@ class Enemy(entity.Entity):
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
+        self.pos += self.move_speed * self.move_dir * delta
 
+        if self.move_dir.x > 0:
+            self.flip_h = False
+
+        elif self.move_dir.x < 0:
+            self.flip_h = True
 
     def collide(self, other):
         # there are different types of players, which means that the damage is not always equal
@@ -167,6 +178,8 @@ class Enemy(entity.Entity):
         if self.health == 0:
             self.fsm.change_state(EnemyStates.DYING)
 
+    def shooting(self):
+        raise NotImplementedError
 
     def attacking(self): 
         raise NotImplementedError
@@ -181,6 +194,9 @@ class Enemy(entity.Entity):
         raise NotImplementedError
 
     def dying(self):
+        services.service_locator.event_handler.publish(Events.ENEMY_KILLED, self.type_id)
+
+    def idle(self):
         raise NotImplementedError
 
     def clone(self):

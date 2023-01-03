@@ -89,6 +89,8 @@ class EnemyStates(Enum):
     FLEEING = 2
     ATTACKING = 3
     DYING = 4
+    IDLE = 5
+    SHOOTING = 6
 
 # player stats to define multiple player types
 class PlayerStats:
@@ -124,7 +126,7 @@ projectile_types = {
     "Fish": ProjectileStats("Fish", 300, 2, 0.15, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/fish.png", "assets/gfx/vfx/normal_hit.png"),
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/shark.png", "assets/gfx/vfx/normal_hit.png"),
 
-    "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/bone.png", "assets/gfx/vfx/normal_hit.png"),
+    "Bone": ProjectileStats("Bone", 260, 2, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/bone.png", "assets/gfx/vfx/normal_hit.png"),
     "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/potato.png", "assets/gfx/vfx/normal_hit.png")
 }
 

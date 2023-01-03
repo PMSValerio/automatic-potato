@@ -23,10 +23,10 @@ class Entity(Sprite):
 
         self.rect = Rect(0, 0, BLOCK, BLOCK) # bounding box
         self.update_bbox()
+        self.flip_h = False
 
         self.graphics = None
         self._to_blit = None # the actual surface to be blitted after all image effects
-
         self.col_layer = layer # layer used by physics engine
         self.collision_on = True # if false, physics manager will not consider this entity in collisions
 
@@ -67,6 +67,12 @@ class Entity(Sprite):
                 self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
 
             rect = self._to_blit.get_rect(center=self.pos.xy)
+
+            if self.flip_h: 
+                self._to_blit = transform.flip(self._to_blit, True, False)
+            else: 
+                self._to_blit = transform.flip(self._to_blit, False, False)
+
             # image tinting
             if self.tint_strength > 0:
                 col = (self.tint_colour.r * self.tint_strength, self.tint_colour.g * self.tint_strength, self.tint_colour.b * self.tint_strength)
