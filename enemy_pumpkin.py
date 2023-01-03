@@ -141,10 +141,11 @@ class Pumpkin(enemy.Enemy):
             self.move_speed = 0
 
         else:
-            # check if animation finished and switch back to seeking
+            # when the pumpkin drops on the floor, init hitbox
             if self.graphics.ix == 7:
                 PumpkinHitbox(self.strength, self.pos, self.projectile_type)
 
+            # change state when animation ended
             if self.graphics.end:
                 self.fsm.change_state(EnemyStates.SEEKING)
         

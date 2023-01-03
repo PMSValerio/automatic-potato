@@ -4,8 +4,8 @@ import enemy
 import enemy_skeleton
 import enemy_ghost
 import enemy_pumpkin
+import enemy_troll
 import services 
-import random
 
 TOTAL = "total"
 TROLL = "troll"
@@ -45,7 +45,7 @@ class EnemyHandler:
         self._skeleton_instance = enemy_skeleton.Skeleton()
         self._ghost_instance = enemy_ghost.Ghost()
         self._pumpkin_instance = enemy_pumpkin.Pumpkin()
-        # self._troll_instance = enemy_troll.Troll()
+        self._troll_instance = enemy_troll.Troll()
 
         services.service_locator.event_handler.subscribe(self, Events.KILL_ENTITY)
         self.spawning = True
@@ -62,7 +62,7 @@ class EnemyHandler:
         # league = EnemyWaves.IRON
         # enemy.Spawner.spawn_monster(self._skeleton_instance)
         # enemy.Spawner.spawn_monster(self._pumpkin_instance)
-        enemy.Spawner.spawn_monster(self._pumpkin_instance)
+        enemy.Spawner.spawn_monster(self._troll_instance)
         self.wave_enemies = 1
         # trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
         # self.wave_enemies += len(trolls)
