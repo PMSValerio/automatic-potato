@@ -1,5 +1,5 @@
 from enum import Enum
-from pygame import Rect, Vector2, Color, Surface, BLEND_ADD, BLEND_RGBA_MULT
+from pygame import Rect, Vector2, Color, Surface, BLEND_ADD, BLEND_RGBA_MULT, transform
 from pygame.sprite import Sprite
 
 from common import *
@@ -19,6 +19,7 @@ class Entity(Sprite):
         self.pos = pos # position in space
 
         self.dir = Vector2(1, 0) # movement direction
+        self.rot = Vector2(1, 0) # sprite rotation, NOT the same as dir
 
         self.rect = Rect(0, 0, BLOCK, BLOCK) # bounding box
         self.update_bbox()
@@ -67,6 +68,8 @@ class Entity(Sprite):
                 self._to_blit.fill((0, 0, 0, 0))
                 im = self.graphics.get_frame()
                 self._to_blit.blit(im, im.get_rect())
+            if self.rot.xy != (1, 0):
+                self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
 
             rect = self._to_blit.get_rect(center=self.pos.xy)
             # image tinting

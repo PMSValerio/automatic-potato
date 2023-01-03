@@ -32,7 +32,7 @@ def main():
         GameStates.SCOREBOARD: game_state.ScoreboardState(),
     }
 
-    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.TITLE_SCREEN])
 
     # game loop
     clock = pg.time.Clock()
