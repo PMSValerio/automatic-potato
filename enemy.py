@@ -43,6 +43,8 @@ class Enemy(entity.Entity):
     def __init__(self, type : EnemyTypes):
         entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
         
+        self.type_id = type
+        
         self.load_stats(type)
 
         self.move_dir : Vector2 = Vector2(0, 0)

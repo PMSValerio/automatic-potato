@@ -1,0 +1,26 @@
+{
+    "0": {
+        "name": "From the most sincere pumpkin patch!",
+        "text": "Kill 10 pumpkins in one run"
+    },
+    "1": {
+        "name": "I got a bone to pick with you",
+        "text": "Kill 10 skeletons in one run"
+    },
+    "2": {
+        "name": "Who you gonna call",
+        "text": "Kill 10 ghosts in one run"
+    },
+    "3": {
+        "name": "Layers! Just like onions",
+        "text": "Kill 10 ogres in one run"
+    },
+    "4": {
+        "name": "How are YOU holding up?",
+        "text": "Face the Automatic Potato"
+    },
+    "5": {
+        "name": "Boil it, mash it, stick it in a stew!",
+        "text": "Destroy the Automatic Potato"
+    }
+}

@@ -1,6 +1,8 @@
 from enum import Enum
 import pygame
 
+from common import *
+
 class Align(Enum):
     BEGIN = 0
     CENTER = 1
@@ -60,3 +62,28 @@ class TextLabel:
     
     def draw(self, surface):
         surface.blit(self.render, self.rect)
+
+
+class AchievementNotification:
+    def __init__(self):
+        self.on_dur = 2.5 # sec; time during which panel is visible
+        self.on_timer = 0
+
+        self.label = TextLabel("ACHIEVEMENT", WIDTH * 0.55, HEIGHT - BLOCK * 2.5, Align.BEGIN, Align.BEGIN, 24)
+        self.name = TextLabel("", WIDTH * 0.55, HEIGHT - BLOCK * 1.5, Align.BEGIN, Align.BEGIN, 16)
+        tl = self.label.rect.left - BLOCK / 2, self.label.rect.top - BLOCK / 2
+        self.rect = pygame.Rect(tl[0], tl[1], WIDTH - tl[0], HEIGHT - tl[1])
+    
+    def turn_on(self, name):
+        self.on_timer = self.on_dur
+        self.name.set_text(name)
+    
+    def update(self, delta):
+        if self.on_timer > 0:
+            self.on_timer -= delta
+    
+    def draw(self, surface):
+        if self.on_timer > 0:
+            pygame.draw.rect(surface, (40, 40, 40), self.rect)
+            self.label.draw(surface)
+            self.name.draw(surface)

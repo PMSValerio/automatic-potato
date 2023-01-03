@@ -38,6 +38,11 @@ class Events(Enum):
 
     PAUSE_UNPAUSE = 9 # receives new pause state
 
+    ENEMY_KILLED = 10 # receives the enemy type id
+    BOSS_SPAWNED = 11
+
+    ACHIEVEMENT = 12 # receives id of achievement unlocked
+
 # game scenes
 class GameStates(Enum):
     TITLE_SCREEN = 0
@@ -110,3 +115,11 @@ class Music(Enum):
     BOSS = "assets/sfx/boss_battle.ogg"
     WIN = "assets/sfx/win_game.ogg"
     GAME_OVER = "assets/sfx/game_over.ogg"
+
+class Achievements(Enum):
+    PWN_PUMPKIN = 0
+    PWN_SKELLY = 1
+    PWN_GHOST = 2
+    PWN_OGRE = 3
+    MET_BOSS = 4
+    PWN_BOSS = 5

@@ -173,7 +173,7 @@ class LevelState(GameState):
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+        boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
         services.service_locator.enemy_handler.iron_league()
 
         player_data.player_data.update_potions(100)
@@ -197,6 +197,8 @@ class LevelState(GameState):
 
         if not self.paused and not self.ending:
             services.service_locator.entity_manager.update_all(delta)
+        
+        self.hud.update(delta)
 
         return True
 
