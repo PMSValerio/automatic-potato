@@ -12,21 +12,18 @@ class AchievementTracker:
 
         self.killed_enemies = {k: 0 for k in EnemyTypes}
 
+        self.progress = {}
+        with open("data/achievement_tracker.json") as fin:
+            self.progress = json.load(fin)
+
     def setup(self):
         services.service_locator.event_handler.subscribe(self, Events.ENEMY_KILLED)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_SPAWNED)
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
     
-    # event callback
-    def on_notify(self, event, arg):
-        if event == Events.ENEMY_KILLED:
-            self.killed_enemies[arg] += 1
-            if self.killed_enemies[arg] == 10:
-                self.complete_pwn_achievement(arg)
-        elif event == Events.BOSS_SPAWNED:
-            self.complete_achievement(Achievements.MET_BOSS)
-        elif event == Events.BOSS_DEFEATED:
-            self.complete_achievement(Achievements.PWN_BOSS)
+    def save(self):
+        with open("data/achievement_tracker.json", "w") as fout:
+            json.dump(self.progress, fout)
     
     def complete_pwn_achievement(self, enemy_type):
         ach = None
@@ -43,4 +40,16 @@ class AchievementTracker:
             self.complete_achievement(ach)
     
     def complete_achievement(self, ach):
+        self.progress[str(ach.value)] = True
         services.service_locator.event_handler.publish(Events.ACHIEVEMENT, ach)
+    
+    # event callback
+    def on_notify(self, event, arg):
+        if event == Events.ENEMY_KILLED:
+            self.killed_enemies[arg] += 1
+            if self.killed_enemies[arg] == 10:
+                self.complete_pwn_achievement(arg)
+        elif event == Events.BOSS_SPAWNED:
+            self.complete_achievement(Achievements.MET_BOSS)
+        elif event == Events.BOSS_DEFEATED:
+            self.complete_achievement(Achievements.PWN_BOSS)

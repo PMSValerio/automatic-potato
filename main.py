@@ -46,6 +46,7 @@ def main():
 
         pg.display.update()
 
+    services.service_locator.achievements_tracker.save()
     game_machine.close()
 
     pg.quit()

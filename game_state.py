@@ -173,7 +173,7 @@ class LevelState(GameState):
         services.service_locator.entity_manager.clear()
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
         services.service_locator.enemy_handler.iron_league()
 
         player_data.player_data.update_potions(100)
