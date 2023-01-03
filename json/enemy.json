@@ -14,18 +14,18 @@
         "projectile_type": "None"
     },
     "1": {
-        "wandering_speed": 30,
-        "seek_speed": 50,
-        "attack_speed": 70,
+        "wandering_speed": 50,
+        "seek_speed": 70,
+        "attack_speed": 100,
         "flee_speed": 90,
-        "seek_distance": 350,
-        "attack_distance": 150,
-        "attack_range": 0,
+        "seek_distance": 320,
+        "attack_distance": 200,
+        "attack_range": 100,
         "health": 30,
         "armor": 0,
-        "strength": 20,
+        "strength": 0.5,
         "score_value": 10,
-        "projectile_type": "None"
+        "projectile_type": "Pumpkin Hitbox"
     },
     "2": {
         "wandering_speed": 50,

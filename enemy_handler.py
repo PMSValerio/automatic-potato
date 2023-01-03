@@ -62,8 +62,7 @@ class EnemyHandler:
         # league = EnemyWaves.IRON
         # enemy.Spawner.spawn_monster(self._skeleton_instance)
         # enemy.Spawner.spawn_monster(self._pumpkin_instance)
-        enemy.Spawner.spawn_monster(self._skeleton_instance)
-
+        enemy.Spawner.spawn_monster(self._pumpkin_instance)
         self.wave_enemies = 1
         # trolls = [enemy.Spawner.spawn_monster(self._troll_instance) for i in range(self.wave_info[league][TROLL])]
         # self.wave_enemies += len(trolls)
