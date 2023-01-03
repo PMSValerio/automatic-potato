@@ -476,6 +476,42 @@ class ScoreboardState(GameState):
             self.record.draw(surface)
             ix += 1
 
+# --- || Achievements Screen State || ---
+
+class AchievementsState(GameState):
+    def __init__(self):
+        self.column1 = WIDTH * 0.03
+        self.column2 = WIDTH * 0.53
+        self.yoffset = HEIGHT * 0.4
+        self.y_step = 64
+
+        self.title = TextLabel("ACHIEVEMENTS", WIDTH * 0.5, BLOCK, Align.CENTER, Align.CENTER, 32)
+        self.footnote = TextLabel("Press any key to return to title", WIDTH * 0.5, HEIGHT - BLOCK, Align.CENTER, Align.CENTER, 16)
+
+        self.name_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
+        self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16, (180, 180, 180))
+    
+    def update(self, delta):
+        if services.service_locator.game_input.any_pressed():
+            services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.TITLE_SCREEN)
+        return True
+
+    def draw(self, surface):
+        surface.fill((40, 40, 40))
+
+        self.title.draw(surface)
+        self.footnote.draw(surface)
+
+        ix = 0
+        l = len(services.service_locator.achievements_tracker.achievements_data) / 2
+        for key, ach_data in services.service_locator.achievements_tracker.achievements_data.items():
+            complete = services.service_locator.achievements_tracker.progress[key]
+            self.name_label.set_text(ach_data["name"] if complete else "???", self.column1 if ix < l else self.column2, self.yoffset + self.y_step * (ix % l), (255, 255, 255) if complete else (180, 180, 180))
+            self.name_label.draw(surface)
+            self.text_label.set_text(ach_data["text"], self.column1 if ix < l else self.column2, self.yoffset + self.y_step * (ix % l) + 24)
+            self.text_label.draw(surface)
+            ix += 1
+
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
         self.current_state : GameState = init_state

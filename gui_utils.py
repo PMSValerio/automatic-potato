@@ -33,9 +33,11 @@ class TextLabel:
 
         self.set_colour(self.colour)
     
-    def set_text(self, text, x = None, y = None):
+    def set_text(self, text, x = None, y = None, colour = None):
         self.text = text
-        self.render = self.font.render(self.text, True, self.colour)
+        self.render = self.font.render(self.text, True, self.colour if colour is None else colour)
+        if colour is not None:
+            self.colour = colour
         self.rect = self.render.get_rect()
         
         self.set_position(self.position.x if x is None else x, self.position.y if y is None else y)

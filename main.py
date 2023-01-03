@@ -30,9 +30,10 @@ def main():
         GameStates.GAME_OVER: game_state.GameOverState(),
         GameStates.END_RESULTS: game_state.ResultsState(),
         GameStates.SCOREBOARD: game_state.ScoreboardState(),
+        GameStates.ACHIEVEMENTS: game_state.AchievementsState(),
     }
 
-    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.ACHIEVEMENTS])
 
     # game loop
     clock = pg.time.Clock()
