@@ -25,7 +25,10 @@ class Projectile(Entity):
     def collide(self, other):
         self.die()
         if self.stats.hit_effect is not None:
-            VisualEffect(self.pos.copy(), self.stats.hit_effect)
+            if other.col_layer == EntityLayers.OBSTACLE:
+                VisualEffect(self.pos.copy(), "assets/gfx/vfx/null_hit.png")
+            else:
+                VisualEffect(self.pos.copy(), self.stats.hit_effect)
     
 
 class Spell(Projectile):
@@ -47,11 +50,23 @@ class PBomb(Projectile):
     
     def explode(self):
         self.die()
-        # TODO: spawn explosion
-        print("boom")
+        PBombExplode(self.pos.copy())
 
     def collide(self, other):
         self.explode()
+
+class PBombExplode(Projectile):
+    def __init__(self, pos):
+        Projectile.__init__(self, pos, Vector2(1, 0), projectile_types["Bomb Explosion"])
+
+        self.graphics.loop = False
+    
+    def update(self, delta):
+        if self.graphics.end:
+            self.die()
+    
+    def collide(self, other):
+        pass
 
 class Spud(Projectile):
     def __init__(self, pos, direction):

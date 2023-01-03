@@ -143,6 +143,10 @@ class GraphicsLoader:
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 4, (1.5, 1.5))
 
+        filename = "assets/gfx/vfx/explosion.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 96, 96, 4, (1.5, 1.5))
+
         # --Pickups--
 
         filename = "assets/gfx/entities/pickups.png"

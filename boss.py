@@ -74,7 +74,7 @@ class BossShields(Entity):
         Entity.__init__(self, pos, EntityLayers.OBSTACLE)
 
         self.rect.height = 160
-        self.rect.width = 64
+        self.rect.width = 48
     
     def update(self, delta):
         pass
