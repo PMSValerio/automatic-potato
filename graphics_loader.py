@@ -134,6 +134,14 @@ class GraphicsLoader:
         filename = "assets/gfx/entities/pbomb.png"
         self.load_image(filename)
         self.add_anim_strip(filename, "default", 0, 32, 32, 8, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/fish.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 32, 32, 1, (1.5, 1.5))
+
+        filename = "assets/gfx/entities/shark.png"
+        self.load_image(filename)
+        self.add_anim_strip(filename, "default", 0, 64, 64, 2, (1.5, 1.5))
         
         filename = "assets/gfx/entities/potato.png"
         self.load_image(filename)

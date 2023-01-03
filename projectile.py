@@ -68,6 +68,27 @@ class PBombExplode(Projectile):
     def collide(self, other):
         pass
 
+class Fish(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Fish"])
+
+class Shark(Projectile):
+    def __init__(self, pos, direction):
+        Projectile.__init__(self, pos, direction, projectile_types["Shark"])
+
+        self.rect.size = (48, 48)
+
+        self.rot = self.dir.copy()
+        # self.flip = direction.x < 0
+    
+    def collide(self, other):
+        if self.stats.hit_effect is not None:
+            if other.col_layer == EntityLayers.OBSTACLE:
+                VisualEffect(self.pos.copy(), "assets/gfx/vfx/null_hit.png")
+                self.die()
+            else:
+                VisualEffect(self.pos.copy(), self.stats.hit_effect)
+
 class Spud(Projectile):
     def __init__(self, pos, direction):
         Projectile.__init__(self, pos, direction, projectile_types["Spud"])
