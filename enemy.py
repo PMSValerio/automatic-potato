@@ -5,6 +5,7 @@ import fsm
 import random
 import enemy_data
 import numpy 
+import player_data
 
 # spawner singleton class that receives a prototype and calls said prototype's clone method
 class Spawner():
@@ -105,7 +106,7 @@ class Enemy(entity.Entity):
             self.score_value = data["score_value"]
 
             # projectile 
-            self.projectile_type = projectile_types[data["projectile_type"]]
+            self.projectile_type = None if data["projectile_type"] == "None" else projectile_types[data["projectile_type"]]
 
         else: 
             raise KeyError("Type {} of enemy does not exist.".format(type))
@@ -116,18 +117,22 @@ class Enemy(entity.Entity):
 
 
     # calculate a random roaming position relatively close to the current position
-    def get_wandering_position(self):
-        new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
+    def get_wandering_position(self, min_range = 20, max_range = 60):
+        new_pos = self.pos + self.get_random_direction() * random.randint(min_range, max_range)
 
         # guarantee that new position is within map boundaries 
-        while new_pos == self.pos or \
-              new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
-                new_pos.y >= max(new_pos.y, HEIGHT) or new_pos.y <= min(new_pos.y, 0):
-
+        while new_pos == self.pos or self.check_outside_map(new_pos):
             # while it's not, generate a new one
-            new_pos = self.pos + self.get_random_direction() * random.randint(20, 60)
+            new_pos = self.pos + self.get_random_direction() * random.randint(min_range, max_range)
 
         return new_pos
+    
+
+    def check_outside_map(self, new_pos):
+        if new_pos.x >= max(new_pos.x, WIDTH) or new_pos.x <= min(new_pos.x, 0) or \
+                new_pos.y >= max(new_pos.y, HEIGHT) or new_pos.y <= min(new_pos.y, 0):
+                return True
+        return False
     
     
     def update_move_dir(self, target_position):
@@ -180,7 +185,7 @@ class Enemy(entity.Entity):
     def wandering(self): 
         raise NotImplementedError
 
-    def dying(self):
+    def dying(self, new):
         raise NotImplementedError
 
     def clone(self):

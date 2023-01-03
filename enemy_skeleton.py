@@ -100,8 +100,7 @@ class Skeleton(enemy.Enemy):
     def fleeing(self, new = False):
         # change to attack speed 
         self.move_speed = self.flee_speed 
-        direction = (self.flee_pos - self.pos)
-        self.move_dir = direction.normalize()
+        super().update_move_dir(self.flee_pos)
 
         # a random feeling goal position was assigned when the instance was created
         # move towards that position and ignore everything else
