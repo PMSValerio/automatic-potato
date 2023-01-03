@@ -21,6 +21,7 @@ def main():
 
     # set up player data
     player_data.player_data = player_data.PlayerData.get()
+    player_data.player_data.select_player_type(player_types["Cat"])
 
     # game state machine initialisation
     states = {
@@ -33,8 +34,9 @@ def main():
         GameStates.ACHIEVEMENTS: game_state.AchievementsState(),
     }
 
-    game_machine = game_state.GameStateMachine(states, states[GameStates.TITLE_SCREEN])
-
+    # game_machine = game_state.GameStateMachine(states, states[GameStates.TITLE_SCREEN])
+    game_machine = game_state.GameStateMachine(states, states[GameStates.LEVEL])
+    
     # game loop
     clock = pg.time.Clock()
     running = True
