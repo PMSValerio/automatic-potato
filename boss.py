@@ -26,6 +26,8 @@ class Boss(Entity):
         self.right_shield = BossShields(Vector2(self.pos.x + 80, self.pos.y))
 
         self.graphics = Animation("assets/gfx/boss.png")
+
+        service_locator.sound_mixer.play_music(Music.BOSS)
     
     def update(self, delta):
         self.pos.y -= SPEED * delta

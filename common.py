@@ -119,3 +119,11 @@ projectile_types = {
     "Bone": ProjectileStats("Bone", 260, 2, 3, EntityLayers.ENEMY_ATTACK, "assets/gfx/spell.png"),
     "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/boss_bullet.png")
 }
+
+
+class Music(Enum):
+    TITLE = "assets/sfx/title_theme.ogg"
+    LEVEL = "assets/sfx/waves_theme.ogg"
+    BOSS = "assets/sfx/boss_battle.ogg"
+    WIN = "assets/sfx/win_game.ogg"
+    GAME_OVER = "assets/sfx/game_over.ogg"
