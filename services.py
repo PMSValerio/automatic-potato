@@ -37,5 +37,6 @@ class Services:
         self.entity_manager.setup()
         self.achievements_tracker.setup()
         self.enemy_handler.setup()
+        self.sound_mixer.setup()
     
 service_locator : Services = None

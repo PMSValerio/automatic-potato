@@ -2,25 +2,11 @@ from pygame import Vector2
 from common import *
 import entity
 import fsm
-import enum
 import random
-import player_data
 import enemy_data
 import numpy 
 
-class EnemyTypes(enum.Enum):
-    TROLL = 0
-    PUMPKIN = 1
-    SKELETON = 2
-    GHOST = 3
-
-class EnemyStates(enum.Enum):
-    WANDERING = 0
-    SEEKING = 1
-    FLEEING = 2
-    ATTACKING = 3
-    DYING = 4
-
+# spawner singleton class that receives a prototype and calls said prototype's clone method
 class Spawner():
     __instance = None
 
@@ -39,9 +25,10 @@ class Spawner():
         return prototype.clone()
 
 
+# base enemy class 
 class Enemy(entity.Entity):
-    def __init__(self, type : EnemyTypes):
-        entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
+    def __init__(self, type : EnemyTypes, layer : EntityLayers):
+        entity.Entity.__init__(self, self._random_spawn_pos(), layer)
         
         self.type_id = type
         
@@ -61,20 +48,20 @@ class Enemy(entity.Entity):
         self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
         self.fsm.add_state(EnemyStates.DYING, self.dying)
 
+
     def _random_spawn_pos(self):
         # generate a random x and y 
         x = random.randint(0, WIDTH)
         y = random.randint(0, HEIGHT)
 
+        # choose a random side of the map
         side = random.choice(["MAP_BORDER_DOWN",
                               "MAP_BORDER_UP", 
                               "MAP_BORDER_RIGHT", 
                               "MAP_BORDER_LEFT"])
         
-        # choose a random side of the map
-        # and depending on the side, create a random initial position just slighty outside 
+        # depending on the side, create a random initial position just slighty outside 
         # so the player doesn't see the mobs spawning 
-
         if side == "MAP_BORDER_DOWN":
             self.init_pos = Vector2(x, HEIGHT + 2)
         
@@ -104,10 +91,12 @@ class Enemy(entity.Entity):
             self.wandering_speed = data["wandering_speed"]
             self.seek_speed = data["seek_speed"]
             self.attack_speed = data["attack_speed"]
+            self.flee_speed = data["flee_speed"]
 
             # distances needed to change states 
             self.seek_distance = data["seek_distance"]
             self.attack_distance = data["attack_distance"]
+            self.attack_range = data["attack_range"]
 
             # stats
             self.health = data["health"]
@@ -143,9 +132,16 @@ class Enemy(entity.Entity):
     
     def update_move_dir(self, target_position):
         direction = (target_position - self.pos)
-        self.move_dir = direction / numpy.linalg.norm(direction)
-    
+        norm = numpy.linalg.norm(direction) 
 
+        # sanity check 
+        if norm != 0:
+            self.move_dir = direction / norm
+        else: 
+            self.move_dir = 0
+
+    # an enemy enters fleeing state whilst on the center of the map, which means that any
+    # position on a border is good enough to escape, e.g a random spawn position 
     def get_flee_position(self):
         return self._random_spawn_pos()
 
