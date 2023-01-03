@@ -24,6 +24,10 @@ MAP_BORDER_RIGHT = WIDTH - 128
 MAP_BORDER_UP = 128
 MAP_BORDER_DOWN = HEIGHT - 128
 
+# colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
 # all game events, some should be published along with an argument
 class Events(Enum):
     NEW_GAME_STATE = 0 # receives game state id
@@ -66,6 +70,19 @@ class EntityLayers(Enum):
     OBSTACLE = 6
 
     VFX = 7 # special layer
+
+class EnemyTypes(Enum):
+    TROLL = 0
+    PUMPKIN = 1
+    SKELETON = 2
+    GHOST = 3
+
+class EnemyStates(Enum):
+    WANDERING = 0
+    SEEKING = 1
+    FLEEING = 2
+    ATTACKING = 3
+    DYING = 4
 
 # player stats to define multiple player types
 class PlayerStats:

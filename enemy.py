@@ -2,24 +2,11 @@ from pygame import Vector2
 from common import *
 import entity
 import fsm
-import enum
 import random
 import enemy_data
 import numpy 
 
-class EnemyTypes(enum.Enum):
-    TROLL = 0
-    PUMPKIN = 1
-    SKELETON = 2
-    GHOST = 3
-
-class EnemyStates(enum.Enum):
-    WANDERING = 0
-    SEEKING = 1
-    FLEEING = 2
-    ATTACKING = 3
-    DYING = 4
-
+# spawner singleton class that receives a prototype and calls said prototype's clone method
 class Spawner():
     __instance = None
 
@@ -38,9 +25,10 @@ class Spawner():
         return prototype.clone()
 
 
+# base enemy class 
 class Enemy(entity.Entity):
-    def __init__(self, type : EnemyTypes):
-        entity.Entity.__init__(self, self._random_spawn_pos(), EntityLayers.ENEMY)
+    def __init__(self, type : EnemyTypes, layer : EntityLayers):
+        entity.Entity.__init__(self, self._random_spawn_pos(), layer)
         
         self.load_stats(type)
 
@@ -58,20 +46,20 @@ class Enemy(entity.Entity):
         self.fsm.add_state(EnemyStates.FLEEING, self.fleeing)
         self.fsm.add_state(EnemyStates.DYING, self.dying)
 
+
     def _random_spawn_pos(self):
         # generate a random x and y 
         x = random.randint(0, WIDTH)
         y = random.randint(0, HEIGHT)
 
+        # choose a random side of the map
         side = random.choice(["MAP_BORDER_DOWN",
                               "MAP_BORDER_UP", 
                               "MAP_BORDER_RIGHT", 
                               "MAP_BORDER_LEFT"])
         
-        # choose a random side of the map
-        # and depending on the side, create a random initial position just slighty outside 
+        # depending on the side, create a random initial position just slighty outside 
         # so the player doesn't see the mobs spawning 
-
         if side == "MAP_BORDER_DOWN":
             self.init_pos = Vector2(x, HEIGHT + 2)
         
@@ -150,6 +138,8 @@ class Enemy(entity.Entity):
         else: 
             self.move_dir = 0
 
+    # an enemy enters fleeing state whilst on the center of the map, which means that any
+    # position on a border is good enough to escape, e.g a random spawn position 
     def get_flee_position(self):
         return self._random_spawn_pos()
 

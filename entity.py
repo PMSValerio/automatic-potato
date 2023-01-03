@@ -10,6 +10,7 @@ class Effects(Enum):
     NONE = 0
     FLASH = 1
     FADE = 2
+    CRITICAL = 3
 
 class Entity(Sprite):
     def __init__(self, pos : Vector2, layer = EntityLayers.NULL):
@@ -36,6 +37,7 @@ class Entity(Sprite):
         self.image_effect_fsm.add_state(Effects.NONE, None, True)
         self.image_effect_fsm.add_state(Effects.FLASH, self.flash_effect)
         self.image_effect_fsm.add_state(Effects.FADE, self.fade_effect)
+        self.image_effect_fsm.add_state(Effects.CRITICAL, self.flash_red_effect)
         self.effect_end = False # flag signalling the end of an effect
 
         services.service_locator.event_handler.publish(Events.NEW_ENTITY, self)
@@ -108,7 +110,7 @@ class Entity(Sprite):
     # collisions and processing do not occur; calls self.die() when self.effect_end becomes True
     def fade_effect(self, transition = False):
         if transition:
-            self.tint_colour.update(255, 255, 255)
+            self.tint_colour.update(WHITE)
             self.tint_strength = 0
             self.alpha = 255
         
@@ -124,7 +126,21 @@ class Entity(Sprite):
     # entity flashes white for a moment
     def flash_effect(self, transition = False):
         if transition:
-            self.tint_colour.update(255, 255, 255)
+            self.tint_colour.update(WHITE)
+            self.tint_strength = 1
+            self.alpha = 255
+        
+        self.tint_strength -= 0.2
+        if self.tint_strength <= 0:
+            self.tint_strength = 0
+            self.image_effect_fsm.change_state(Effects.NONE)
+            self.effect_end = True
+
+
+    # entity flashes white for a moment
+    def flash_red_effect(self, transition = False):
+        if transition:
+            self.tint_colour.update(RED)
             self.tint_strength = 1
             self.alpha = 255
         

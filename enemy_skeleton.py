@@ -1,9 +1,8 @@
-from pygame import Vector2
+from common import *
 import enemy
 import animation
 import player_data
 import projectile
-from common import *
 import entity
 
 class SkeletonProjectile():
@@ -13,7 +12,7 @@ class SkeletonProjectile():
 
 class Skeleton(enemy.Enemy):
     def __init__(self):
-        super().__init__(enemy.EnemyTypes.SKELETON)
+        super().__init__(enemy.EnemyTypes.SKELETON, EntityLayers.ENEMY)
         
         self.graphics = animation.Animation("assets/gfx/test.png", True, 5)
         self.wander_pos = super().get_wandering_position() 
