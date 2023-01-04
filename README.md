@@ -106,8 +106,8 @@ All graphical assets are original creations.
 
 ## Sound
 
-Title Screen: Frog's Theme (Chrono Trigger)
-Level: Boss Theme (Cave Story)
-Boss Theme: Battle on the Big Bridge (Final Fantasy V)
-Game Over: Player Score (Touhou series)
-Victory: Victory Fanfare (Final Fantasy series)
+- Title Screen: Frog's Theme (Chrono Trigger)
+- Level: Boss Theme (Cave Story)
+- Boss Theme: Battle on the Big Bridge (Final Fantasy V)
+- Game Over: Player Score (Touhou series)
+- Victory: Victory Fanfare (Final Fantasy series)
