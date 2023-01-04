@@ -5,18 +5,23 @@ HEIGHT = 640
 
 BLOCK = 32 # "cell" unit size
 
+
 # refresh rate
 FPS = 30
+
 
 # coordinates of enemy target/healing area
 TARGET_X = WIDTH / 2
 TARGET_Y = HEIGHT / 2
 
+
 # range of the healing are positioned on map center
 HEAL_RANGE = 48
 
+
 # when in healing zone, player heals 5 hp per sec
 HEAL_RATE = 5
+
 
 # map border; player can only move inside these
 MAP_BORDER_LEFT = 96
@@ -24,9 +29,11 @@ MAP_BORDER_RIGHT = WIDTH - 96
 MAP_BORDER_UP = 128
 MAP_BORDER_DOWN = HEIGHT - 96
 
+
 # colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+
 
 # all game events, some should be published along with an argument
 class Events(Enum):
@@ -47,6 +54,7 @@ class Events(Enum):
 
     ACHIEVEMENT = 12 # receives id of achievement unlocked
 
+
 # game scenes
 class GameStates(Enum):
     TITLE_SCREEN = 0
@@ -57,12 +65,14 @@ class GameStates(Enum):
     SCOREBOARD = 5
     ACHIEVEMENTS = 6
 
+
 # movement directions
 class Directions(Enum):
     LEFT = (-1, 0)
     RIGHT = (1, 0)
     UP = (0, -1)
     DOWN = (0, 1)
+
 
 # collision layers
 class EntityLayers(Enum):
@@ -77,12 +87,16 @@ class EntityLayers(Enum):
 
     VFX = 7 # special layer
 
+
+# the different types of enemies available
 class EnemyTypes(Enum):
     TROLL = 0
     PUMPKIN = 1
     SKELETON = 2
     GHOST = 3
 
+
+# the several states that all enemies might have
 class EnemyStates(Enum):
     WANDERING = 0
     SEEKING = 1
@@ -91,6 +105,7 @@ class EnemyStates(Enum):
     DYING = 4
     IDLE = 5
     SHOOTING = 6
+
 
 # player stats to define multiple player types
 class PlayerStats:
@@ -101,6 +116,7 @@ class PlayerStats:
         self.anim_filepath = anim_filepath
 
 
+# the stats of each type of player
 player_types = {
     "Witch": PlayerStats("Witch", 10, 160, "assets/gfx/entities/witch.png"),
     "Cat": PlayerStats("Cat", 8, 200, "assets/gfx/entities/cat.png")
@@ -132,6 +148,7 @@ projectile_types = {
 }
 
 
+# path files for music
 class Music(Enum):
     TITLE = "assets/sfx/title_theme.ogg"
     LEVEL = "assets/sfx/waves_theme.ogg"
@@ -139,6 +156,8 @@ class Music(Enum):
     WIN = "assets/sfx/win_game.ogg"
     GAME_OVER = "assets/sfx/game_over.ogg"
 
+
+# the achievements that the player can earn during a game's run
 class Achievements(Enum):
     PWN_PUMPKIN = 0
     PWN_SKELLY = 1
@@ -146,3 +165,11 @@ class Achievements(Enum):
     PWN_OGRE = 3
     MET_BOSS = 4
     PWN_BOSS = 5
+
+
+# entity effects
+class Effects(Enum):
+    NONE = 0
+    FLASH = 1
+    FADE = 2
+    CRITICAL = 3

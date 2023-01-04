@@ -25,6 +25,7 @@ class Skeleton(enemy.Enemy):
         self.shoot_timer = 0
         self.shoot = False
 
+
     def update(self, delta):
         # update position
         super().update(delta)

@@ -6,12 +6,7 @@ from common import *
 import services
 from fsm import FSM
 
-class Effects(Enum):
-    NONE = 0
-    FLASH = 1
-    FADE = 2
-    CRITICAL = 3
-
+# base entity class
 class Entity(Sprite):
     def __init__(self, pos : Vector2, layer = EntityLayers.NULL):
         Sprite.__init__(self)
@@ -43,6 +38,7 @@ class Entity(Sprite):
 
         services.service_locator.event_handler.publish(Events.NEW_ENTITY, self)
     
+
     # this function is to be called by the entity manager ONLY, custom code should go in update()
     def _update(self, delta):
         self.update(delta)
@@ -56,9 +52,11 @@ class Entity(Sprite):
         
         self.image_effect_fsm.update()
 
+
     def update(self, delta):
         raise NotImplementedError
     
+
     # draw animation
     def draw(self, surface):
         if self.graphics is not None:
@@ -86,28 +84,35 @@ class Entity(Sprite):
     def die(self):
         services.service_locator.event_handler.publish(Events.KILL_ENTITY, self)
     
+
     # called by physics engine if collision
     def collide(self, other):
         pass
+
 
     # update self.rect to match position on screen
     def update_bbox(self):
         self.rect.center = self.pos.xy
     
+
     # change to a different animation
     def set_animation(self, anim_name):
         self.graphics.play(anim_name)
     
+
     # toggle collision detection on or off
     def enable_collision(self, en = True):
         self.collision_on = en
     
+
     def play_effect(self, effect):
         self.tint_colour.update(255, 255, 255)
         self.tint_strength = 0
         self.alpha = 255
         self.image_effect_fsm.change_state(effect)
     
+
+
     # --- || Image effects || ---
 
     # entity turns to white and fades out, when used in an enemy death animation, the best thing to do is probably include a new DYING state in which
@@ -126,6 +131,7 @@ class Entity(Sprite):
             self.alpha = 0
             self.image_effect_fsm.change_state(Effects.NONE)
             self.effect_end = True
+    
     
     # entity flashes white for a moment
     def flash_effect(self, transition = False):

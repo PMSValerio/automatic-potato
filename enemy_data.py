@@ -15,6 +15,7 @@ class EnemyData():
             EnemyData.__instance = self
             self.load_data()
         
+        
     # read enemy.json and put the data on a dictionary that will be readily available
     # be readily available in other classes 
 

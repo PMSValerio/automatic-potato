@@ -21,6 +21,9 @@ class EnemyWaves(enum.Enum):
     PLAT = 3
     EMERALD = 4
 
+# this singleton will handle all the logic of the enemy waves 
+# time the spawns and pick the enemies based on probability 
+
 class EnemyHandler: 
     __instance = None
     

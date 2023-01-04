@@ -56,11 +56,11 @@ class Boss(Entity):
 
     def shoot(self):
         delta_x = 64
-        random = random.random()
+        r = random.random()
 
-        if random < 0.33:
+        if r < 0.33:
             delta_x = -64
-        elif random < 0.67:
+        elif r < 0.67:
             delta_x = 0
 
         # slighty init the projectiles more to the left or right

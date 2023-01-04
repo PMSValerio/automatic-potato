@@ -18,8 +18,9 @@ class GameState:
     def draw(self, surface):
         raise NotImplementedError
 
-# --- || Title Screen State || ---
 
+
+# --- || Title Screen State || ---
 class TitleState(GameState):
     def __init__(self):
         import pygame
@@ -42,11 +43,13 @@ class TitleState(GameState):
         self.fade_panel = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA).convert_alpha()
         self.fade_panel.fill((20, 20, 20))
     
+
     def enter(self):
         services.service_locator.sound_mixer.play_music(Music.TITLE)
         self.can_click = False
         self.fade_alpha = 255
     
+
     def update(self, delta) -> bool:
         import pygame
 
@@ -56,6 +59,7 @@ class TitleState(GameState):
         if self.fade_alpha > 0:
             self.fade_alpha = max(0, self.fade_alpha - 1)
             self.fade_panel.set_alpha(self.fade_alpha)
+        
         # slight delay before text appears
         else:
             if self.timer_count >= self.timer:
@@ -68,13 +72,14 @@ class TitleState(GameState):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.CHARACTER_SELECT)
             elif services.service_locator.game_input.key_pressed(pygame.K_SPACE):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.ACHIEVEMENTS)
+        # skip animation
         else:
-            # skip animation
             if services.service_locator.game_input.any_pressed():
                 self.fade_alpha = 0
         
         return True
     
+
     def draw(self, surface):
         surface.fill((40, 40, 45))
         self.title_text.draw(surface)
@@ -87,8 +92,8 @@ class TitleState(GameState):
             self.click_text.draw(surface)
             self.click_text2.draw(surface)
 
-# --- || Character Select Screen State || ---
 
+# --- || Character Select Screen State || ---
 class CharacterSelectState(GameState):
     def __init__(self):
         self.state = -1 # -1: select character; 0 - n: select control keybind
@@ -107,9 +112,11 @@ class CharacterSelectState(GameState):
 
         self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.CENTER, 16)
     
+
     def enter(self):
         services.service_locator.sound_mixer.play_music(Music.TITLE)
     
+
     def update(self, delta) -> bool:
         if self.state <= -1:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
@@ -122,6 +129,7 @@ class CharacterSelectState(GameState):
                 elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
                     move = -1
                 self.selected_skin = max(0, min(self.selected_skin + move, self.skin_count - 1))
+        
         elif self.state < len(player_data.player_data.key_map):
             pressed = services.service_locator.game_input.get_last_pressed()
             if pressed is not None:
@@ -130,11 +138,13 @@ class CharacterSelectState(GameState):
                 self.key_binds_labels[self.state] = action + ": " + str(pygame.key.name(pressed))
 
                 self.state += 1
+        
         else:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
         
         return True
+
 
     def draw(self, surface):
         surface.fill((40, 40, 40))
@@ -152,22 +162,24 @@ class CharacterSelectState(GameState):
             surface.blit(self.chosen_skin_panel, (skin_cursor_x-48, yline-48, 96, 96))
             self.draw_text(surface, "Press ENTER to start", WIDTH * 0.5, HEIGHT * 0.9)
 
+
         # Text drawing
         for i, text in enumerate(self.skin_labels):
             self.draw_text(surface, text, (i+1) * WIDTH/(self.skin_count+1), yline)
-        
         yline = HEIGHT * 0.6
+
         for keybind in self.key_binds_labels:
             self.draw_text(surface, keybind, WIDTH * 0.5, yline)
             yline += 32
+
 
     # draw text centered on position
     def draw_text(self, surface, text_string, centerx, centery):
         self.text_label.set_text(text_string, centerx, centery)
         self.text_label.draw(surface)
 
-# --- || Game Level State || ---
 
+# --- || Game Level State || ---
 class LevelState(GameState):
     def __init__(self):
         import hud
@@ -191,33 +203,28 @@ class LevelState(GameState):
 
         self.end_game = 0 # 0: game still running; -1: lose; 1: win
 
+
     def enter(self):
         from pygame import Vector2
         import player
-        import boss
         import player_data
+        import pickups
 
         services.service_locator.sound_mixer.play_music(Music.LEVEL)
-        
         services.service_locator.entity_manager.clear()
+
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        import pickups
         pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
-        # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
 
         player_data.player_data.update_potions(100)
     
+
     def update(self, delta) -> bool:
         import random
-        from pygame import Vector2
 
         if self.end_game != 0:
             self.finish_game(delta)
-
-        if random.random() < 0.01:
-            xx = random.randrange(0, WIDTH)
-            yy = random.randrange(0, HEIGHT)
 
         if not self.ending and services.service_locator.game_input.key_pressed(pygame.K_ESCAPE):
             self.paused = not self.paused
@@ -231,9 +238,11 @@ class LevelState(GameState):
 
         return True
 
+
     def exit(self):
         services.service_locator.entity_manager.clear()
     
+
     def draw(self, surface):
         surface.fill((220, 220, 220))
         image = self.background.get_frame().copy()
@@ -243,6 +252,7 @@ class LevelState(GameState):
 
         self.hud.draw(surface)
     
+
     def finish_game(self, delta):
         import player_data
         if not self.ending: # if win, add win bonus
@@ -255,17 +265,20 @@ class LevelState(GameState):
         self.end_timer -= delta
         self.ending = True
 
+
         if self.end_timer <= 0:
             if self.end_game < 0:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.GAME_OVER)
             else:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.END_RESULTS)
     
+
     def on_notify(self, event, arg = None):
         # win conditions
         if event == Events.BOSS_DEFEATED:
             self.end_game = 1
             print("boss was defeated")
+        
         # lose conditions
         elif event == Events.NEW_HEALTH:
             if arg <= 0:
@@ -279,8 +292,9 @@ class LevelState(GameState):
             self.end_game = -1
             print("boss destroyed target")
 
-# --- || Game Over State || ---
 
+
+# --- || Game Over State || ---
 class GameOverState(GameState):
     def __init__(self):
         import pygame
@@ -294,6 +308,7 @@ class GameOverState(GameState):
 
         self.can_click = False
     
+
     def update(self, delta) -> bool:
         self.timer_count += delta
         if self.timer_count >= self.timer:
@@ -312,16 +327,16 @@ class GameOverState(GameState):
         
         return True
     
+
     def draw(self, surface):
         surface.fill((40, 40, 40))
         self.title.draw(surface)
 
-# --- || Results Screen || ---
 
+
+# --- || Results Screen || ---
 class ResultsState(GameState):
     def __init__(self):
-        import player_data
-
         self.timer_count = 0
         self.timer = 0.4
 
@@ -331,7 +346,6 @@ class ResultsState(GameState):
         self.y_step = 32
 
         self.state = -1
-
         self.title = TextLabel("FINAL RESULTS", self.xoffset1, self.xoffset1, Align.BEGIN, Align.BEGIN, 24)
 
         self.measures_value = []
@@ -340,6 +354,7 @@ class ResultsState(GameState):
 
         self.list_item = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
     
+
     def enter(self):
         # measures to be accounted to score
         self.measures_value = [
@@ -347,11 +362,13 @@ class ResultsState(GameState):
             player_data.player_data.score,
             1
         ]
+
         self.measures = [
             "Potions Remaining: " + str(player_data.player_data.potions_left),
             "Score: " + str(player_data.player_data.score),
             "WIN BONUS" if player_data.player_data.win else "LOSE PENALTY"
         ]
+
         # these values are multiplied to their corresponding measures
         self.weights = [
             5,
@@ -363,6 +380,7 @@ class ResultsState(GameState):
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
 
+
     def update(self, delta):
         if self.timer_count >= self.timer and self.timer > 0:
             self.timer_count = 0
@@ -372,8 +390,10 @@ class ResultsState(GameState):
             elif self.state == len(self.measures) + 1:
                 self.timer = 0.2
                 # TODO: animation?
+        
         else:
             self.timer_count += delta
+        
         
         if self.state >= len(self.measures) + 2:
             if services.service_locator.game_input.any_pressed():
@@ -381,6 +401,7 @@ class ResultsState(GameState):
         
         return True
     
+
     def draw(self, surface):
         surface.fill((40, 40, 40))
 
@@ -404,8 +425,9 @@ class ResultsState(GameState):
         if self.state > len(self.measures):
             self.total.draw(surface)
 
-# --- || Scoreboard State || ---
 
+
+# --- || Scoreboard State || ---
 class ScoreboardState(GameState):
     def __init__(self):
         self.scoreboard = {}
@@ -430,6 +452,7 @@ class ScoreboardState(GameState):
         self.new_entry_panel = services.service_locator.graphics_loader.load_image("assets/gfx/score_panel.png")
         self.cursor_texture = services.service_locator.graphics_loader.load_image("assets/gfx/cursor.png")
 
+
     def enter(self):
         import json
         with open("data/scoreboard.json") as fin:
@@ -451,11 +474,13 @@ class ScoreboardState(GameState):
                     self.player_index = i
                     self.editing = True
     
+
     def exit(self):
         import json
         with open("data/scoreboard.json", mode = "w") as fout:
             json.dump(self.scoreboard, fout)
     
+
     def update(self, delta):
         if not self.editing and services.service_locator.game_input.any_pressed():
             return False
@@ -486,6 +511,7 @@ class ScoreboardState(GameState):
 
         return True
     
+
     def draw(self, surface):
         surface.fill((40, 40, 40))
         self.title.draw(surface)
@@ -508,8 +534,9 @@ class ScoreboardState(GameState):
             self.record.draw(surface)
             ix += 1
 
-# --- || Achievements Screen State || ---
 
+
+# --- || Achievements Screen State || ---
 class AchievementsState(GameState):
     def __init__(self):
         self.column1 = WIDTH * 0.03
@@ -523,10 +550,12 @@ class AchievementsState(GameState):
         self.name_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
         self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16, (180, 180, 180))
     
+
     def update(self, delta):
         if services.service_locator.game_input.any_pressed():
             services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.TITLE_SCREEN)
         return True
+
 
     def draw(self, surface):
         surface.fill((40, 40, 40))
@@ -544,6 +573,8 @@ class AchievementsState(GameState):
             self.text_label.draw(surface)
             ix += 1
 
+
+
 class GameStateMachine:
     def __init__(self, states : dict, init_state : GameState):
         self.current_state : GameState = init_state
@@ -553,9 +584,11 @@ class GameStateMachine:
 
         services.service_locator.event_handler.subscribe(self, Events.NEW_GAME_STATE)
     
+
     # perform any necessary clean-up, mainly, call the exit method on current state
     def close(self):
         self.current_state.exit()
+    
     
     def on_notify(self, event, arg):
         if event == Events.NEW_GAME_STATE:

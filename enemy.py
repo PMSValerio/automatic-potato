@@ -145,6 +145,7 @@ class Enemy(entity.Entity):
         else: 
             self.move_dir = Vector2(0, 0)
 
+
     # an enemy enters fleeing state whilst on the center of the map, which means that any
     # position on a border is good enough to escape, e.g a random spawn position 
     def get_flee_position(self):
@@ -154,6 +155,7 @@ class Enemy(entity.Entity):
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
+
         self.last_pos = self.pos 
         self.pos += self.move_speed * self.move_dir * delta
 
@@ -163,9 +165,10 @@ class Enemy(entity.Entity):
         elif self.move_dir.x < 0:
             self.flip_h = True
 
-        # sanity check 
+        # sanity check, if the enemy leaves the map after being inside just kill it 
         if self.check_outside_map(self.last_pos) and not self.check_outside_map(self.pos):
             self.die()
+
 
     def collide(self, other):
         # there are different types of players, which means that the damage is not always equal
@@ -183,6 +186,8 @@ class Enemy(entity.Entity):
         if self.health == 0:
             self.fsm.change_state(EnemyStates.DYING)
 
+
+    # states to be implemented by each enemy type
     def shooting(self):
         raise NotImplementedError
 
