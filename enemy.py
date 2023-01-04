@@ -158,7 +158,6 @@ class Enemy(entity.Entity):
         self.fsm.update()
         self.update_bbox()
 
-        self.last_pos = self.pos 
         self.pos += self.move_speed * self.move_dir * delta
 
         if self.move_dir.x > 0:
@@ -168,8 +167,9 @@ class Enemy(entity.Entity):
             self.flip_h = True
 
         # sanity check, if the enemy leaves the map after being inside just kill it 
-        if self.check_outside_map(self.last_pos) and not self.check_outside_map(self.pos):
-            self.die()
+        if self.pos.distance_to(self.target_pos) > Vector2(TARGET_X + 2, TARGET_Y + 2).length():
+            self.die()  
+
 
 
     def collide(self, other):
