@@ -105,15 +105,18 @@ class Skeleton(enemy.Enemy):
 
 
     def shooting(self, new):
+        # stop moving and play idle
         if new:
             self.graphics.play("idle", 4)
             self.move_speed = 0
             self.shoot = True   
 
+        # shoot in the direction of the player
         super().update_move_dir(self.player_pos)
         self.player_pos = player_data.player_data.get_player_pos()
         self.shoot_dir = self.move_dir
         
+        # if the player is out of range, change back to attack for new chase or seek
         if self.pos.distance_to(self.player_pos) > self.attack_range:
             self.shoot = False
             self.fsm.change_state(EnemyStates.ATTACKING)

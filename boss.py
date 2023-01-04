@@ -2,7 +2,7 @@ import random
 from pygame import Vector2
 
 from common import *
-from services import service_locator
+import services
 from entity import Entity
 from animation import Animation
 from projectile import Spud
@@ -27,9 +27,9 @@ class Boss(Entity):
 
         self.graphics = Animation("assets/gfx/entities/auto_spud.png", True, 4)
 
-        service_locator.sound_mixer.play_music(Music.BOSS)
+        services.service_locator.sound_mixer.play_music(Music.BOSS)
 
-        service_locator.event_handler.publish(Events.BOSS_SPAWNED)
+        services.service_locator.event_handler.publish(Events.BOSS_SPAWNED)
     
     def update(self, delta):
         self.pos.y -= SPEED * delta
@@ -63,10 +63,10 @@ class Boss(Entity):
     def damage(self, value):
         self.health = max(0, self.health - value)
         if self.health == 0:
-            service_locator.event_handler.publish(Events.BOSS_DEFEATED)
+            services.service_locator.event_handler.publish(Events.BOSS_DEFEATED)
     
     def on_target_reached(self):
-        service_locator.event_handler.publish(Events.BOSS_REACH_TARGET)
+        services.service_locator.event_handler.publish(Events.BOSS_REACH_TARGET)
 
 
 class BossShields(Entity):

@@ -8,7 +8,7 @@ class GraphicsLoader:
         self.images = {} # image file repository organised by filename
         self.anim_strips = {} # repository of animation strips (dict of dicts) ordered by animation name in file
         self.init_anim_strips()
-    
+     
     # adapted from https://www.pygame.org/wiki/Spritesheet
     def load_image(self, filename):
         if not filename in self.images:
