@@ -43,7 +43,7 @@ class Events(Enum):
     PAUSE_UNPAUSE = 9 # receives new pause state
 
     ENEMY_KILLED = 10 # receives the enemy type id
-    BOSS_SPAWNED = 11
+    PLAYER_CAMP = 11 # receives the time delta that was spent camping
 
     ACHIEVEMENT = 12 # receives id of achievement unlocked
 
@@ -144,5 +144,5 @@ class Achievements(Enum):
     PWN_SKELLY = 1
     PWN_GHOST = 2
     PWN_OGRE = 3
-    MET_BOSS = 4
+    CAMPER = 4
     PWN_BOSS = 5

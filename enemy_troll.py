@@ -31,7 +31,7 @@ class Troll(enemy.Enemy):
 
     def attacking(self, new):
         if new: 
-            # self.graphics.play("attack")
+            self.graphics.play("attack", 4)
             self.move_speed = self.attack_speed
             self.start_timer = True
         

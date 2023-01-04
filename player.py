@@ -55,6 +55,9 @@ class Player(Entity):
             "move_down": Directions.DOWN,
         }
 
+        self.camp_timer = 0
+        self.camping = False
+
         self.graphics = Animation(self.stats.anim_filepath, True, 5) # animation object
     
     def update(self, delta):
@@ -85,6 +88,12 @@ class Player(Entity):
         # check if in healing zone
         if self.pos.distance_to(Vector2(TARGET_X, TARGET_Y)) <= HEAL_RANGE:
             self.change_health(HEAL_RATE * delta)
+            self.camp_timer += delta
+            if self.camp_timer >= 1:
+                service_locator.event_handler.publish(Events.PLAYER_CAMP, 1)
+                self.camp_timer = 0
+        else:
+            self.camp_timer = 0
         
         # update invincibility counter
         self.invincible_timer = max(0, self.invincible_timer - delta)
