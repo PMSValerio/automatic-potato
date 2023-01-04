@@ -205,7 +205,6 @@ class LevelState(GameState):
         import pickups
         pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
         # boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
-        services.service_locator.enemy_handler.iron_league()
 
         player_data.player_data.update_potions(100)
     
@@ -230,6 +229,7 @@ class LevelState(GameState):
             services.service_locator.entity_manager.update_all(delta)
         
         self.hud.update(delta)
+        services.service_locator.enemy_handler.update(delta)
 
         return True
 

@@ -8,7 +8,7 @@ class GraphicsLoader:
         self.images = {} # image file repository organised by filename
         self.anim_strips = {} # repository of animation strips (dict of dicts) ordered by animation name in file
         self.init_anim_strips()
-    
+     
     # adapted from https://www.pygame.org/wiki/Spritesheet
     def load_image(self, filename):
         if not filename in self.images:
@@ -101,9 +101,9 @@ class GraphicsLoader:
 
         filename = "assets/gfx/entities/pumpkin.png"
         self.load_image(filename)
-        self.add_anim_strip(filename, "run", 1, 64, 64, 8, (1.5, 1.5))
-        self.add_anim_strip(filename, "idle", 0, 64, 64, 4, (1.5, 1.5))
-        self.add_anim_strip(filename, "flee", 2, 64, 64, 8, (1.5, 1.5))
+        self.add_anim_strip(filename, "run", 1, 96, 96, 8, (1.5, 1.5))
+        self.add_anim_strip(filename, "idle", 0, 96, 96, 4, (1.5, 1.5))
+        self.add_anim_strip(filename, "flee", 2, 96, 96, 8, (1.5, 1.5))
         self.add_anim_strip(filename, "attack", 3, 96, 96, 14, (1.5, 1.5))
 
         filename = "assets/gfx/entities/skeleton.png"
