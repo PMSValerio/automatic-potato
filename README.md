@@ -1,5 +1,14 @@
 tiny witch against big potato
 
+## Patterns Summary
+
+Main Loop: the game's main loop
+State: Used in game state machine for each scene
+Service Locator: Services class provides access to all services and instantiates them. Different service classes could replace the current ones if implemented.
+Observer: Implemented by EventHandler and used in various contexts
+Flyweight: Used in loading process of texture files
+Prototype: Enemy spawning is done by cloning prototype instances
+Commands: Player actions use this pattern
 
 # Game States
 
@@ -50,11 +59,11 @@ Located in achievements_tracker.py. Making heavy use of events, this services li
 
 ## EnemyHandler
 
-<!-- TODO -->
+Located in enemy_handler.py. This service spawns and manages the different enemy waves used in the game. In each wave, it periodically randomly spawns one of the enemies set in the wave data. To continuously spawn enemies, it holds a Prototype of each enemy which it clones accordingly when necessary.
 
 ## EnemyData
 
-<!-- TODO -->
+Located in enemy_data.py. This service loads all enemy stats from a configuration file. Since enemies, although they differ in behaviour, share the same group of stats and data, this information is stored in a file, making use of Bytecode.
 
 ## PlayerData
 
@@ -76,15 +85,13 @@ The game allows for one of two skins to be selected for the player character. Th
 
 To handle player input, the class uses Commands for each of the available actions (move in four directions and shoot). The actual key used for each action is defined in PlayerData.
 
-### Enemy Stats ?
+### Enemies
 
-<!-- TODO? -->
-
+The game features four types of enemies and a final boss, each with different behaviours. Each enemy extends from a base Enemy class (enemy.py) and alters its stats according to those defined in the configuration files.
 
 ## Remaining Entities
 
-For other entities not as complex as the player or entities, 
-
+For other entities not as complex as the player or enemies, a state machine is not required. These include projectiles, pickups and visual effects.
 
 # GUI
 
