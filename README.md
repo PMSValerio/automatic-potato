@@ -1,5 +1,7 @@
 tiny witch against big potato
 
+repo link: https://github.com/detiuaveiro/projecto-mini-jogo-automatic-potato
+
 ## Patterns Summary
 
 - Main Loop: the game's main loop
