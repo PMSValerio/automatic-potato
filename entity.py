@@ -63,15 +63,16 @@ class Entity(Sprite):
     def draw(self, surface):
         if self.graphics is not None:
             self._to_blit = self.graphics.get_frame().copy()
-            if self.rot.xy != (1, 0):
-                self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
-
-            rect = self._to_blit.get_rect(center=self.pos.xy)
 
             if self.flip_h: 
                 self._to_blit = transform.flip(self._to_blit, True, False)
             else: 
                 self._to_blit = transform.flip(self._to_blit, False, False)
+
+            if self.rot.xy != (1, 0):
+                self._to_blit = transform.rotate(self._to_blit, self.rot.angle_to((1, 0)))
+
+            rect = self._to_blit.get_rect(center=self.pos.xy)
 
             # image tinting
             if self.tint_strength > 0:

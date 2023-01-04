@@ -28,6 +28,9 @@ MAP_BORDER_DOWN = HEIGHT - 96
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
+# chance to spawn pickup
+PICKUP_CHANCE = 50
+
 # all game events, some should be published along with an argument
 class Events(Enum):
     NEW_GAME_STATE = 0 # receives game state id

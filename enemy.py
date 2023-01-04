@@ -39,6 +39,8 @@ class Enemy(entity.Entity):
         self.target_pos = (TARGET_X, TARGET_Y)
         self.move_speed = 0
 
+        self.spawned = False
+
         # all enemies will follow this state machine 
         self.fsm = fsm.FSM()
         self.fsm.add_state(EnemyStates.WANDERING, self.wandering, True)
@@ -181,7 +183,22 @@ class Enemy(entity.Entity):
         self.health = max(0, self.health - value)
         
         if self.health == 0:
+            if not self.spawned:
+                if random.random() * 100 < PICKUP_CHANCE:
+                    self.spawn_pickup()
+                    self.spawned = True
             self.fsm.change_state(EnemyStates.DYING)
+    
+    # spawn a random pickup
+    def spawn_pickup(self):
+        import pickups
+        r = random.choice([0,1,2])
+        if r == 0:
+            pickups.SpeedPickup(self.pos.copy())
+        elif r == 1:
+            pickups.InvulnPickup(self.pos.copy())
+        elif r == 2:
+            pickups.WeaponPickup(self.pos.copy())
 
     def shooting(self):
         raise NotImplementedError

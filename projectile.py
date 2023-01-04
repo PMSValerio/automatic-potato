@@ -79,7 +79,7 @@ class Shark(Projectile):
         self.rect.size = (48, 48)
 
         self.rot = self.dir.copy()
-        # self.flip = direction.x < 0
+        # self.flip_h = direction.x < 0
     
     def collide(self, other):
         if self.stats.hit_effect is not None:
