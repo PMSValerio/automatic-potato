@@ -30,11 +30,15 @@ class TitleState(GameState):
         self.to_write = "Automatic Potato"
         self.written = ""
 
+        # in-game text labels
         self.click_text = TextLabel("Press ENTER: Start Game", WIDTH * 0.5, HEIGHT * 0.85, Align.CENTER, Align.CENTER, 16)
         self.click_text2 = TextLabel("Press SPACE: Achievements", WIDTH * 0.5, HEIGHT * 0.9, Align.CENTER, Align.CENTER, 16)
         self.title_text = TextLabel("Automatic Potato", WIDTH * 0.5, HEIGHT * 0.25, Align.CENTER, Align.CENTER, 48)
 
+        # background animation
         self.cauldron = animation.Animation("assets/gfx/ui/title_cauldron.png", True, 6)
+
+        # fade effect
         self.fade_panel = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA).convert_alpha()
         self.fade_panel.fill((20, 20, 20))
     
@@ -48,9 +52,11 @@ class TitleState(GameState):
 
         self.cauldron.update_frame()
 
+        # gradually fade in by reducing panel alpha
         if self.fade_alpha > 0:
             self.fade_alpha = max(0, self.fade_alpha - 1)
             self.fade_panel.set_alpha(self.fade_alpha)
+        # slight delay before text appears
         else:
             if self.timer_count >= self.timer:
                 self.can_click = True
@@ -63,6 +69,7 @@ class TitleState(GameState):
             elif services.service_locator.game_input.key_pressed(pygame.K_SPACE):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.ACHIEVEMENTS)
         else:
+            # skip animation
             if services.service_locator.game_input.any_pressed():
                 self.fade_alpha = 0
         

@@ -24,7 +24,6 @@ class Player(Entity):
 
         self.move_force : Vector2 = Vector2(0, 0) # different from dir, only controls movement dir
 
-
         self.stats = player_data.player_type
         self.data = player_data
 
@@ -40,6 +39,7 @@ class Player(Entity):
         self.fsm.add_state(States.IDLE, self.idle, True)
         self.fsm.add_state(States.MOVING, self.moving)
 
+        # map Command objects to actions
         self.command_map = {
             "move_left": MoveLeft(),
             "move_right": MoveRight(),
@@ -47,6 +47,7 @@ class Player(Entity):
             "move_down": MoveDown(),
             "shoot": Shoot(),
         }
+        # map directions to actions
         self.dir_map = {
             "move_left": Directions.LEFT,
             "move_right": Directions.RIGHT,
@@ -91,9 +92,11 @@ class Player(Entity):
         self.fsm.update()
     
     def collide(self, other):
+        # collides with and enemy melee attack
         if other.col_layer == EntityLayers.ENEMY_MELEE:
             self.change_health(-other.strength)
-            
+        
+        # collides with enemy projectile
         if other.col_layer == EntityLayers.ENEMY_ATTACK:
             self.change_health(-other.stats.power)
             self.play_effect(Effects.FLASH)
@@ -103,10 +106,12 @@ class Player(Entity):
             return service_locator.game_input.key_pressed(player_data.key_map[action])
         return service_locator.game_input.key_down(player_data.key_map[action])
     
+    # adds to the movement direction
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]
         self.move_force.y += new_dir.value[1]
     
+    # update health and send signal
     def change_health(self, amount):
         self.health = max(0, min(self.health + amount, self.stats.max_health))
         service_locator.event_handler.publish(Events.NEW_HEALTH, self.health)
@@ -124,6 +129,7 @@ class Player(Entity):
             elif self.dir.x > 0:
                 self.graphics.play("idle_right", 4)
 
+        # state change if moving
         if self.move_force.length() != 0:
             self.fsm.change_state(States.MOVING)
 
@@ -134,6 +140,7 @@ class Player(Entity):
         self.pos.x = max(MAP_BORDER_LEFT, min(self.pos.x, MAP_BORDER_RIGHT))
         self.pos.y = max(MAP_BORDER_UP, min(self.pos.y, MAP_BORDER_DOWN))
 
+        # set correct animation
         if self.dir.y < 0:
             self.graphics.play("move_up", 3)
         elif self.dir.y > 0:
@@ -143,5 +150,6 @@ class Player(Entity):
         elif self.dir.x > 0:
             self.graphics.play("move_right", 3)
         
+        # state change if no longer moving
         if self.move_force.length() == 0:
             self.fsm.change_state(States.IDLE)
