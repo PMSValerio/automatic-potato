@@ -34,7 +34,6 @@ class SpeedPickup(Pickup):
         self.graphics.play("speed")
 
     def handle_player(self, player):
-        print("speed+")
         player.speed_modifier = 1.2
 
 class InvulnPickup(Pickup):
@@ -44,7 +43,6 @@ class InvulnPickup(Pickup):
         self.graphics.play("invuln")
 
     def handle_player(self, player):
-        print("invincible")
         player.invincible_timer = 3
 
 class WeaponPickup(Pickup):
@@ -57,8 +55,6 @@ class WeaponPickup(Pickup):
             self.graphics.play("shark")
     
     def handle_player(self, player):
-        print("weapon upgrade")
-        # TODO: change this to a pool of weapon upgrades per player type
         if player_data.player_type.name == "Witch":
             player.projectile_type = projectile_types["Pumpkin Bomb"]
         elif player_data.player_type.name == "Cat":

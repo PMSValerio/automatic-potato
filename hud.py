@@ -14,24 +14,23 @@ class HUD:
         self.player_score = 0
         self.potions_left = 0
 
-        # TODO:
-        # self.current_wave = 0
-        # self.enemies_left = 0
-
+        # healthbar elements
         self.healthbar_back = service_locator.graphics_loader.image_at("assets/gfx/healthbar.png", (0, 0, 128, 32))
         self.healthbar_fore = service_locator.graphics_loader.image_at("assets/gfx/healthbar.png", (0, 32, 128, 32))
         self.health_wid = 0 # width of the healthbar in pixels
 
-
+        # potions indicator
         self.potion_icon = service_locator.graphics_loader.get_anim_strip("assets/gfx/ui/icons.png", "potion", 0)
         self.potions = TextLabel("x0", WIDTH * 0.5, HUD_OFFSET * 1.5, Align.CENTER, Align.CENTER, 16)
 
+        # score indicator
         self.score = TextLabel("SCORE: " + str(self.player_score), WIDTH * 0.7, HUD_OFFSET * 1.5, Align.BEGIN, Align.BEGIN, 16)
 
+        # paused indicator
         self.paused = False
         self.pause_label = TextLabel("--GAME PAUSED--", WIDTH * 0.5, HEIGHT * 0.9, Align.CENTER, Align.CENTER, 16)
 
-
+        # achievement panel is shown when achievement is unlocked
         self.achievement_panel = AchievementNotification()
 
         service_locator.event_handler.subscribe(self, Events.NEW_HEALTH)
@@ -44,20 +43,25 @@ class HUD:
         self.achievement_panel.update(delta)
 
     def draw(self, surface):
+        # healthbar
         surface.blit(self.healthbar_back, (HUD_OFFSET, HUD_OFFSET, 128, 32))
         scaled = pygame.transform.scale(self.healthbar_fore, (self.health_wid, 32))
         surface.blit(scaled, (HUD_OFFSET, HUD_OFFSET, self.health_wid, 32))
-
+        
+        # potions
         self.potions.set_text("x" + str(self.potions_left))
         self.potions.draw(surface)
+        # potions icon
         rect = self.potion_icon.get_rect()
         rect.right = self.potions.rect.left
         rect.centery = self.potions.rect.centery
         surface.blit(self.potion_icon, rect)
 
+        # score
         self.score.set_text("SCORE: " + str(self.player_score))
         self.score.draw(surface)
 
+        # paused
         if self.paused:
             self.pause_label.draw(surface)
         
@@ -74,5 +78,6 @@ class HUD:
         elif event == Events.PAUSE_UNPAUSE:
             self.paused = arg
         elif event == Events.ACHIEVEMENT:
+            # display achievement on event
             self.achievement_panel.turn_on(service_locator.achievements_tracker.achievements_data[str(arg.value)]["name"])
             

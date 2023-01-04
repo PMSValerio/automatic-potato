@@ -22,7 +22,8 @@ class Services:
             raise Exception("Singleton class already initialised")
         else:
             Services.__instance = self
-    
+
+        # instantiate all services
         self.event_handler : event_handler.EventHandler = event_handler.EventHandler()
         self.entity_manager : entity_manager.EntityManager = entity_manager.EntityManager()
         self.physics_engine : group_space.GroupSpace = group_space.GroupSpace()
@@ -33,6 +34,7 @@ class Services:
         self.enemy_handler : enemy_handler.EnemyHandler = enemy_handler.EnemyHandler()
         self.enemy_data : enemy_data.EnemyData = enemy_data.EnemyData()
 
+    # set up all services that require it
     def setup(self):
         self.entity_manager.setup()
         self.achievements_tracker.setup()

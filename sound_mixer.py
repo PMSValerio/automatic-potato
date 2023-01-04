@@ -11,6 +11,7 @@ class SoundMixer:
     def setup(self):
         services.service_locator.event_handler.subscribe(self, Events.PAUSE_UNPAUSE)
 
+    # play music if not already playing
     def play_music(self, music_id):
         if self.now_playing == music_id:
             return

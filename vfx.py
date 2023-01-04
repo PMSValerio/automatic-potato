@@ -8,6 +8,7 @@ class VisualEffect(Entity):
 
         self.graphics = Animation(anim_path, False)
 
+    # visual effects exist only to die
     def update(self, delta):
         if self.graphics.end:
             self.die()

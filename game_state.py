@@ -47,7 +47,7 @@ class TitleState(GameState):
     def enter(self):
         services.service_locator.sound_mixer.play_music(Music.TITLE)
         self.can_click = False
-        self.fade_alpha = 255
+        self.fade_alpha = 255 # make panel fully opaque
     
 
     def update(self, delta) -> bool:
@@ -82,11 +82,14 @@ class TitleState(GameState):
 
     def draw(self, surface):
         surface.fill((40, 40, 45))
+
+        # draw title and animation
         self.title_text.draw(surface)
         im = self.cauldron.get_frame()
         rect = im.get_rect(center = (WIDTH * 0.5, HEIGHT * 0.55))
         surface.blit(im, rect)
-        if self.fade_alpha > 0:
+
+        if self.fade_alpha > 0: # only draw panel if not totally invisible
             surface.blit(self.fade_panel, self.fade_panel.get_rect())
         if self.can_click:
             self.click_text.draw(surface)
@@ -98,15 +101,17 @@ class CharacterSelectState(GameState):
     def __init__(self):
         self.state = -1 # -1: select character; 0 - n: select control keybind
 
-        self.selected_skin = 0 # 0 if witch, 1 if cat
+        self.selected_skin = 0 # 0 if witch; 1 if cat
         self.skin_count = 2
 
-        self.skin_labels = list(player_types.keys())
+        self.skin_labels = list(player_types.keys()) # skin names
 
+        # player set controls
         self.key_binds_labels = []
         for action in player_data.player_data.key_map.keys():
             self.key_binds_labels.append(action + ": <Press any key>")
         
+        # ui panels
         self.selected_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_selected.png")
         self.chosen_skin_panel = services.service_locator.graphics_loader.load_image("assets/gfx/skin_chosen.png")
 
@@ -118,27 +123,31 @@ class CharacterSelectState(GameState):
     
 
     def update(self, delta) -> bool:
+
+        # selecting skin
         if self.state <= -1:
-            if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
+            if services.service_locator.game_input.key_pressed(pygame.K_RETURN): # confirm skin
                 player_data.player_data.select_player_type(player_types[self.skin_labels[self.selected_skin]])
                 self.state = 0
-            else:
+            else: # navigate skins
                 move = 0
                 if services.service_locator.game_input.key_pressed(pygame.K_RIGHT):
                     move = 1
                 elif services.service_locator.game_input.key_pressed(pygame.K_LEFT):
                     move = -1
                 self.selected_skin = max(0, min(self.selected_skin + move, self.skin_count - 1))
-        
+
+        # selecting controls
         elif self.state < len(player_data.player_data.key_map):
-            pressed = services.service_locator.game_input.get_last_pressed()
+            pressed = services.service_locator.game_input.get_last_pressed() # sequentially assign first key pressed key to current action
             if pressed is not None:
                 action = list(player_data.player_data.key_map.keys())[self.state]
                 player_data.player_data.key_map[action] = pressed
                 self.key_binds_labels[self.state] = action + ": " + str(pygame.key.name(pressed))
 
                 self.state += 1
-        
+
+        # awaiting player input to start
         else:
             if services.service_locator.game_input.key_pressed(pygame.K_RETURN):
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.LEVEL)
@@ -151,7 +160,7 @@ class CharacterSelectState(GameState):
         yline = HEIGHT * 0.25
         skin_cursor_x = (self.selected_skin+1) * WIDTH/(self.skin_count+1)
 
-        # State specific drawing
+        # State specific instructions drawing
         if self.state <= -1:
             surface.blit(self.selected_skin_panel, (skin_cursor_x-48, yline-48, 96, 96))
             self.draw_text(surface, "Select with < > - Choose with ENTER", WIDTH * 0.5, HEIGHT * 0.1)
@@ -198,9 +207,10 @@ class LevelState(GameState):
         services.service_locator.event_handler.subscribe(self, Events.BOSS_REACH_TARGET)
 
         self.end_timer = 1.5 # sec; used when game finishes
-        self.ending = False
+        self.ending = False # waiting for lose delay to end
         self.paused = False
 
+        # game running status
         self.end_game = 0 # 0: game still running; -1: lose; 1: win
 
 
@@ -213,23 +223,28 @@ class LevelState(GameState):
         services.service_locator.sound_mixer.play_music(Music.LEVEL)
         services.service_locator.entity_manager.clear()
 
+        # manually spawn player
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
         pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
 
-        player_data.player_data.update_potions(100)
+        # set initial potions
+        player_data.player_data.update_potions(20)
     
 
     def update(self, delta) -> bool:
         import random
 
+        # if game end condition is met, enter finish routine
         if self.end_game != 0:
             self.finish_game(delta)
 
+        # pause/unpause
         if not self.ending and services.service_locator.game_input.key_pressed(pygame.K_ESCAPE):
             self.paused = not self.paused
             services.service_locator.event_handler.publish(Events.PAUSE_UNPAUSE, self.paused)
 
+        # update entities only if not paused
         if not self.paused and not self.ending:
             services.service_locator.entity_manager.update_all(delta)
         
@@ -244,20 +259,23 @@ class LevelState(GameState):
     
 
     def draw(self, surface):
+        # background animation
         surface.fill((220, 220, 220))
         image = self.background.get_frame().copy()
         surface.blit(image, image.get_rect())
         self.background.update_frame()
+
+        # draw all entities regardless of pause
         services.service_locator.entity_manager.draw_all(surface)
 
         self.hud.draw(surface)
     
-
+    # freeze game for a while before ending
     def finish_game(self, delta):
         import player_data
-        if not self.ending: # if win, add win bonus
+        if not self.ending:
             services.service_locator.sound_mixer.stop_music()
-            if self.end_game > 0:
+            if self.end_game > 0:  # if win, add win bonus
                 player_data.player_data.win = True
                 services.service_locator.sound_mixer.play_music(Music.WIN)
             else:
@@ -266,6 +284,7 @@ class LevelState(GameState):
         self.ending = True
 
 
+        # decide next state based on whether the player beat the game or died
         if self.end_timer <= 0:
             if self.end_game < 0:
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.GAME_OVER)
@@ -309,6 +328,7 @@ class GameOverState(GameState):
         self.can_click = False
     
 
+    # gradually write more letters
     def update(self, delta) -> bool:
         self.timer_count += delta
         if self.timer_count >= self.timer:
@@ -356,13 +376,14 @@ class ResultsState(GameState):
     
 
     def enter(self):
-        # measures to be accounted to score
+        # measures values to be accounted to score
         self.measures_value = [
             player_data.player_data.potions_left,
             player_data.player_data.score,
             1
         ]
 
+        # measures labels to be displayed
         self.measures = [
             "Potions Remaining: " + str(player_data.player_data.potions_left),
             "Score: " + str(player_data.player_data.score),
@@ -376,12 +397,14 @@ class ResultsState(GameState):
             100 if player_data.player_data.win else -100
         ]
 
+        # final score calculations
         total = sum([z[0] * z[1] for z in zip(self.measures_value, self.weights)])
         self.total = TextLabel("TOTAL: " + str(total), self.xoffset1, self.yoffset + self.y_step * (len(self.measures) + 2), Align.CENTER, Align.BEGIN, 24)
         player_data.player_data.score = total # update score with final result
 
 
     def update(self, delta):
+        # delays between each metric shows
         if self.timer_count >= self.timer and self.timer > 0:
             self.timer_count = 0
             self.state += 1
@@ -389,12 +412,10 @@ class ResultsState(GameState):
                 self.timer = 0.6
             elif self.state == len(self.measures) + 1:
                 self.timer = 0.2
-                # TODO: animation?
-        
         else:
             self.timer_count += delta
         
-        
+        # at the end, await player input
         if self.state >= len(self.measures) + 2:
             if services.service_locator.game_input.any_pressed():
                 services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.SCOREBOARD)
@@ -409,7 +430,7 @@ class ResultsState(GameState):
 
         current_y = self.yoffset
 
-        # vv cursed code vv
+        # cycle through and draw all measures and weights in appropriate positions
         for i in range(len(self.measures)):
             if i > self.state:
                 break
@@ -436,28 +457,34 @@ class ScoreboardState(GameState):
         self.player_index = -1
         self.editing = False
 
+        # ui elements
         self.title = TextLabel("SCOREBOARD", WIDTH * 0.5, BLOCK, Align.BEGIN, Align.CENTER, 48)
         self.record = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 24)
         self.footnote = TextLabel("Edit name with arrow keys, confirm with ENTER", WIDTH * 0.5, HEIGHT - BLOCK, Align.CENTER, Align.CENTER, 16)
 
+        # positions for ui
         self.column1 = WIDTH * 0.2
         self.column2 = WIDTH * 0.6
         self.yoffset = BLOCK * 6
         self.y_step = 80
 
+        # available name symbols and cursors
         self.characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!?- "
         self.selected_char = 0 # selected symbol
         self.name_cursor = 0 # position in the three letter name
 
+        # ui elements for name inputting
         self.new_entry_panel = services.service_locator.graphics_loader.load_image("assets/gfx/score_panel.png")
         self.cursor_texture = services.service_locator.graphics_loader.load_image("assets/gfx/cursor.png")
 
 
     def enter(self):
+        # load scoreboard data
         import json
         with open("data/scoreboard.json") as fin:
             self.scoreboard = json.load(fin, parse_int=int)
         
+        # check if player is in top ten and update table if so
         score = player_data.player_data.score
         player_in_table = False
         entry = ["xxx", -1] # default, should never need to be used
@@ -468,7 +495,7 @@ class ScoreboardState(GameState):
                 entry = new_entry
             else:
                 entry = self.scoreboard[str(i)]
-                if score > entry[1]: # player beat this score
+                if score > entry[1]: # player beat this score, takes its place
                     self.scoreboard[str(i)] = ["---", score]
                     player_in_table = True
                     self.player_index = i
@@ -476,6 +503,7 @@ class ScoreboardState(GameState):
     
 
     def exit(self):
+        # save scoreboard data
         import json
         with open("data/scoreboard.json", mode = "w") as fout:
             json.dump(self.scoreboard, fout)
@@ -518,8 +546,11 @@ class ScoreboardState(GameState):
 
         ix = 0
         half_len = len(self.scoreboard) / 2
+        # draw all scores
         for rank, stats in self.scoreboard.items():
             self.record.set_text(stats[0] + ": " + str(stats[1]), self.column1 if ix < half_len else self.column2, self.yoffset + self.y_step * (ix % half_len))
+            
+            # if this is player position and still editing name, draw cursors
             if ix == self.player_index and self.editing:
                 rect = self.new_entry_panel.get_rect()
                 rect.center = self.record.rect.center
@@ -539,19 +570,24 @@ class ScoreboardState(GameState):
 # --- || Achievements Screen State || ---
 class AchievementsState(GameState):
     def __init__(self):
+
+        # ui positions
         self.column1 = WIDTH * 0.03
         self.column2 = WIDTH * 0.53
         self.yoffset = HEIGHT * 0.4
         self.y_step = 64
 
+        # ui elements
         self.title = TextLabel("ACHIEVEMENTS", WIDTH * 0.5, BLOCK, Align.CENTER, Align.CENTER, 32)
         self.footnote = TextLabel("Press any key to return to title", WIDTH * 0.5, HEIGHT - BLOCK, Align.CENTER, Align.CENTER, 16)
 
+        # name and text for each achievement
         self.name_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16)
         self.text_label = TextLabel("", 0, 0, Align.CENTER, Align.BEGIN, 16, (180, 180, 180))
     
 
     def update(self, delta):
+        # if input return to title
         if services.service_locator.game_input.any_pressed():
             services.service_locator.event_handler.publish(Events.NEW_GAME_STATE, GameStates.TITLE_SCREEN)
         return True
@@ -565,6 +601,7 @@ class AchievementsState(GameState):
 
         ix = 0
         l = len(services.service_locator.achievements_tracker.achievements_data) / 2
+        # draw all achievements (if not unlocked, draw ???)
         for key, ach_data in services.service_locator.achievements_tracker.achievements_data.items():
             complete = services.service_locator.achievements_tracker.progress[key]
             self.name_label.set_text(ach_data["name"] if complete else "???", self.column1 if ix < l else self.column2, self.yoffset + self.y_step * (ix % l), (255, 255, 255) if complete else (180, 180, 180))

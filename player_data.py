@@ -18,8 +18,10 @@ class PlayerData:
         else:
             PlayerData.__instance = self
         
+        # player skin stats
         self.player_type : PlayerStats = player_types["Cat"]
 
+        # map keys to actions
         self.key_map = {
             "move_left": pygame.K_a,
             "move_right": pygame.K_d,
@@ -32,10 +34,6 @@ class PlayerData:
         self.potions_left = 0
 
         self.win = False
-        # TODO: if there's time
-        # statistics that contribute to final score
-        # self.shots_fired = 0 # number of shots fired is discounted from score
-        # self.health_healed = 0 # amount of health player had to heal is discounted from score
     
     def select_player_type(self, ptype : PlayerStats):
         self.player_type = ptype
@@ -51,6 +49,7 @@ class PlayerData:
         self.score += delta
         services.service_locator.event_handler.publish(Events.NEW_SCORE, self.score)
     
+    # update player potions and notify all subscribed entities (ex: UI)
     def update_potions(self, delta):
         self.potions_left += delta
         services.service_locator.event_handler.publish(Events.NEW_POTIONS_LEFT, self.potions_left)
