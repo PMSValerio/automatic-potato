@@ -143,7 +143,7 @@ class Enemy(entity.Entity):
         if norm != 0:
             self.move_dir = direction / norm
         else: 
-            self.move_dir = 0
+            self.move_dir = Vector2(0, 0)
 
     # an enemy enters fleeing state whilst on the center of the map, which means that any
     # position on a border is good enough to escape, e.g a random spawn position 
@@ -154,6 +154,7 @@ class Enemy(entity.Entity):
     def update(self, delta): 
         self.fsm.update()
         self.update_bbox()
+        self.last_pos = self.pos 
         self.pos += self.move_speed * self.move_dir * delta
 
         if self.move_dir.x > 0:
@@ -161,6 +162,10 @@ class Enemy(entity.Entity):
 
         elif self.move_dir.x < 0:
             self.flip_h = True
+
+        # sanity check 
+        if self.check_outside_map(self.last_pos) and not self.check_outside_map(self.pos):
+            self.die()
 
     def collide(self, other):
         # there are different types of players, which means that the damage is not always equal

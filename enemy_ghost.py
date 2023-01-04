@@ -77,5 +77,13 @@ class Ghost(enemy.Enemy):
             super().dying()
 
 
+    def collide(self, other):
+        super().collide(other)
+
+
+    def damage(self, value):
+        super().damage(value)
+
+
     def clone(self):
         return Ghost()

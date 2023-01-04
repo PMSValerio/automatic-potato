@@ -109,7 +109,7 @@ player_types = {
 
 # projectiles' types and stats
 class ProjectileStats:
-    def __init__(self, name, speed, power, cooldown, col_layer, anim_filepath, hit_filepath = None):
+    def __init__(self, name, speed, power, cooldown, col_layer, anim_filepath = None, hit_filepath = None):
         self.name = name
         self.speed = speed # pix/sec
         self.power = power
@@ -127,7 +127,8 @@ projectile_types = {
     "Shark": ProjectileStats("Shark", 180, 15, 0.5, EntityLayers.PLAYER_ATTACK, "assets/gfx/entities/shark.png", "assets/gfx/vfx/normal_hit.png"),
 
     "Bone": ProjectileStats("Bone", 260, 2, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/bone.png", "assets/gfx/vfx/normal_hit.png"),
-    "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/potato.png", "assets/gfx/vfx/normal_hit.png")
+    "Spud": ProjectileStats("Spud", 140, 3, 0.8, EntityLayers.ENEMY_ATTACK, "assets/gfx/entities/potato.png", "assets/gfx/vfx/normal_hit.png"),
+    "Pumpkin Hitbox": ProjectileStats("Pumpkin Hitbox", 0, 1, 1, EntityLayers.ENEMY_ATTACK, hit_filepath= "assets/gfx/vfx/normal_hit.png")
 }
 
 
