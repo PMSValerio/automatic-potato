@@ -27,7 +27,6 @@ class Boss(Entity):
         self.graphics = Animation("assets/gfx/entities/auto_spud.png", True, 4)
 
         services.service_locator.sound_mixer.play_music(Music.BOSS)
-        services.service_locator.event_handler.publish(Events.BOSS_SPAWNED)
     
     def update(self, delta):
         self.pos.y -= SPEED * delta
