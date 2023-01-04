@@ -16,12 +16,14 @@ class Troll(enemy.Enemy):
         self.steal_cooldown = 3
         self.steal_timer = self.steal_cooldown
 
+
     def update(self, delta):
         # update position
         super().update(delta)
 
         if self.start_timer and self.steal_cooldown > 0:
             self.steal_timer -= delta
+
 
     def seeking(self, new):
         super().update_move_dir(self.target_pos)

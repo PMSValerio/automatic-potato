@@ -18,23 +18,28 @@ class GroupSpace:
         self.add_collision(EntityLayers.PLAYER_ATTACK, EntityLayers.OBSTACLE)
         self.add_collision(EntityLayers.ENEMY_ATTACK, EntityLayers.OBSTACLE)
     
+    
     # add entity to space
     def add_entity(self, entity):
         if entity.col_layer in self.layers:
             self.layers[entity.col_layer].add(entity)
     
+
     # update entity in space
     def update_entity(self, entity, last_pos):
         pass # not needed with groups
     
+
     # remove entity from space
     def remove_entity(self, entity):
         self.layers[entity.col_layer].remove(entity)
+
 
     # add collision event between layer1 and layer2
     def add_collision(self, layer1, layer2):
         self.collisions.append((layer1, layer2))
     
+
     # check for collisions
     def update_collisions(self):
         for pair in self.collisions:
@@ -45,10 +50,12 @@ class GroupSpace:
                         e1.collide(e2)
                         e2.collide(e1)
     
+
     # clear all entities
     def clear(self):
         for group in self.layers.values():
             group.clear()
+
 
     # test collisions for a specific sprite
     def sprite_is_collision(self, spr, layer_mask : list):

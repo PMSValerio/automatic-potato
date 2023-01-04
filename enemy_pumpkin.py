@@ -43,6 +43,7 @@ class Pumpkin(enemy.Enemy):
         self.bomb_cooldown = 3
         self.bomb_timer = 0
 
+
     def update(self, delta):
         # update position
         super().update(delta)
@@ -52,6 +53,7 @@ class Pumpkin(enemy.Enemy):
 
         if self.start_bomb_timer and self.bomb_cooldown > 0:
             self.bomb_timer -= delta
+
 
     def wandering(self, new):
         if new: 
