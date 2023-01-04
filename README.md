@@ -2,13 +2,13 @@ tiny witch against big potato
 
 ## Patterns Summary
 
-Main Loop: the game's main loop
-State: Used in game state machine for each scene
-Service Locator: Services class provides access to all services and instantiates them. Different service classes could replace the current ones if implemented.
-Observer: Implemented by EventHandler and used in various contexts
-Flyweight: Used in loading process of texture files
-Prototype: Enemy spawning is done by cloning prototype instances
-Commands: Player actions use this pattern
+- Main Loop: the game's main loop
+- State: Used in game state machine for each scene
+- Service Locator: Services class provides access to all services and instantiates them. Different service classes could replace the current ones if implemented.
+- Observer: Implemented by EventHandler and used in various contexts
+- Flyweight: Used in loading process of texture files
+- Prototype: Enemy spawning is done by cloning prototype instances
+- Commands: Player actions use this pattern
 
 # Game States
 
