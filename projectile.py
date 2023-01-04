@@ -16,11 +16,13 @@ class Projectile(Entity):
 
         self.graphics = Animation(self.stats.anim_filepath, True, 2)
 
+
     def update(self, delta):
         self.pos += self.dir * (self.stats.speed * delta)
 
         if self.pos.x < 0 or self.pos.x >= WIDTH or self.pos.y < 0 or self.pos.y >= HEIGHT:
             self.die()
+
 
     def collide(self, other):
         self.die()
@@ -32,12 +34,15 @@ class Projectile(Entity):
                 VisualEffect(self.pos.copy(), self.stats.hit_effect)
     
 
+
 class Spell(Projectile):
     def __init__(self, pos, direction):
         Projectile.__init__(self, pos, direction, projectile_types["Spell"])
 
         # only needs to rotate according to direction
         self.rot = self.dir.copy()
+
+
 
 class PBomb(Projectile):
     def __init__(self, pos, direction):
@@ -46,19 +51,24 @@ class PBomb(Projectile):
         # must not loop animation
         self.graphics.loop = False
 
+
     def update(self, delta):
         super().update(delta)
         # explodes on animation end regardless of collision
         if self.graphics.end:
             self.explode()
     
+
     # explode, spawning explosion entity
     def explode(self):
         self.die()
         PBombExplode(self.pos.copy())
 
+
     def collide(self, other):
         self.explode()
+
+
 
 class PBombExplode(Projectile):
     def __init__(self, pos):
@@ -74,9 +84,13 @@ class PBombExplode(Projectile):
     def collide(self, other):
         pass
 
+
+
 class Fish(Projectile):
     def __init__(self, pos, direction):
         Projectile.__init__(self, pos, direction, projectile_types["Fish"])
+
+
 
 class Shark(Projectile):
     def __init__(self, pos, direction):
@@ -86,6 +100,7 @@ class Shark(Projectile):
 
         self.rot = self.dir.copy()
     
+
     # does not die on collision
     def collide(self, other):
         if self.stats.hit_effect is not None:
@@ -95,9 +110,12 @@ class Shark(Projectile):
             else:
                 VisualEffect(self.pos.copy(), self.stats.hit_effect)
 
+
+
 class Spud(Projectile):
     def __init__(self, pos, direction):
         Projectile.__init__(self, pos, direction, projectile_types["Spud"])
+
 
     # only dies if collider was the player itself (not their bullets)
     def collide(self, other):

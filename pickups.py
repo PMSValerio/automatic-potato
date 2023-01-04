@@ -12,19 +12,23 @@ class Pickup(Entity):
 
         self.graphics = Animation(anim_filepath, True)
 
+
     def update(self, delta):
         self.age += delta
         if self.age >= self.lifespan:
             self.die()
+
 
     def collide(self, other):
         if other.col_layer == EntityLayers.PLAYER:
             self.handle_player(other)
             self.die()
     
+
     # this method must be extended by the different pickups
     def handle_player(self, player):
         raise NotImplementedError
+
 
 
 class SpeedPickup(Pickup):
@@ -33,8 +37,11 @@ class SpeedPickup(Pickup):
 
         self.graphics.play("speed")
 
+
     def handle_player(self, player):
         player.speed_modifier = 1.2
+
+
 
 class InvulnPickup(Pickup):
     def __init__(self, pos):
@@ -42,8 +49,11 @@ class InvulnPickup(Pickup):
 
         self.graphics.play("invuln")
 
+
     def handle_player(self, player):
         player.invincible_timer = 3
+
+
 
 class WeaponPickup(Pickup):
     def __init__(self, pos):
@@ -54,6 +64,7 @@ class WeaponPickup(Pickup):
         elif player_data.player_type.name == "Cat":
             self.graphics.play("shark")
     
+
     def handle_player(self, player):
         if player_data.player_type.name == "Witch":
             player.projectile_type = projectile_types["Pumpkin Bomb"]

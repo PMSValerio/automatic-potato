@@ -9,6 +9,7 @@ class GraphicsLoader:
         self.anim_strips = {} # repository of animation strips (dict of dicts) ordered by animation name in file
         self.init_anim_strips()
      
+
     # adapted from https://www.pygame.org/wiki/Spritesheet
     def load_image(self, filename):
         if not filename in self.images:
@@ -19,6 +20,7 @@ class GraphicsLoader:
                 raise SystemExit(message)
         return self.images[filename]
     
+
     # Load a specific image from a specific rectangle
     def image_at(self, filename, rectangle, colorkey = None, scale = (1, 1)):
         # Loads image from x,y,x+offset,y+offset
@@ -28,16 +30,19 @@ class GraphicsLoader:
             image.set_colorkey(self.load_image(filename).get_colorkey(), pygame.RLEACCEL)
         else:
             image.set_colorkey(colorkey, pygame.RLEACCEL)
+        
         image.blit(self.load_image(filename), (0, 0), rect)
         if scale != (1, 1):
             image = pygame.transform.scale(image, (rect.width * scale[0], rect.height * scale[1]))
         return image
     
+
     # Load a whole bunch of images and return them as a list
     def images_at(self, filename, rects, colorkey = None, scale = (1, 1)):
         # Loads multiple images, supply a list of coordinates
         return [self.image_at(filename, rect, colorkey = colorkey, scale = scale) for rect in rects]
     
+
     # Load a whole strip of images
     def load_strip(self, filename, rect, image_count, colorkey = None, scale = (1, 1)):
         # Loads a strip of images and returns them as a list
@@ -45,19 +50,23 @@ class GraphicsLoader:
                 for x in range(image_count)]
         return self.images_at(filename, tups, colorkey = colorkey, scale = scale)
     
+
     def get_anim_strip(self, filename, anim_name, ix = -1):
         strip = self.anim_strips[filename][anim_name].copy()
         if ix >= 0 and ix < len(strip):
             return strip[ix]
         return strip
     
+
     def add_anim_strip(self, filename, anim_name, row, wid, hei, nframes, scale = (1, 1)):
         if filename not in self.anim_strips:
             self.anim_strips[filename] = {}
         self.anim_strips[filename][anim_name] = self.load_strip(filename, (0, hei * row, wid, hei), nframes, scale = scale)
     
+
     def get_file_strips(self, filename):
         return self.anim_strips[filename]
+    
     
     # initialise all animation strips used in the game
     def init_anim_strips(self):

@@ -14,6 +14,7 @@ class States(Enum):
     IDLE = 0
     MOVING = 1
 
+
 class Player(Entity):
     def __init__(self, pos):
         Entity.__init__(self, pos, EntityLayers.PLAYER)
@@ -60,6 +61,7 @@ class Player(Entity):
 
         self.graphics = Animation(self.stats.anim_filepath, True, 5) # animation object
     
+
     def update(self, delta):
         # update move action
         self.move_force.xy = (0, 0)
@@ -100,6 +102,7 @@ class Player(Entity):
         
         self.fsm.update()
     
+
     def collide(self, other):
         # collides with and enemy melee attack
         if other.col_layer == EntityLayers.ENEMY_MELEE:
@@ -110,23 +113,27 @@ class Player(Entity):
             self.change_health(-other.stats.power)
             self.play_effect(Effects.FLASH)
     
+
     def check_action(self, action, just_pressed = False):
         if just_pressed:
             return service_locator.game_input.key_pressed(player_data.key_map[action])
         return service_locator.game_input.key_down(player_data.key_map[action])
     
+
     # adds to the movement direction
     def add_to_move_dir(self, new_dir):
         self.move_force.x += new_dir.value[0]
         self.move_force.y += new_dir.value[1]
     
+
     # update health and send signal
     def change_health(self, amount):
         self.health = max(0, min(self.health + amount, self.stats.max_health))
         service_locator.event_handler.publish(Events.NEW_HEALTH, self.health)
 
+
+
     # --- || State Callbacks || ---
-    
     def idle(self, new = False):
         if new:
             if self.dir.y < 0:
@@ -141,6 +148,7 @@ class Player(Entity):
         # state change if moving
         if self.move_force.length() != 0:
             self.fsm.change_state(States.MOVING)
+
 
     def moving(self, new = False):
 

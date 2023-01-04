@@ -39,8 +39,10 @@ class HUD:
         service_locator.event_handler.subscribe(self, Events.PAUSE_UNPAUSE)
         service_locator.event_handler.subscribe(self, Events.ACHIEVEMENT)
     
+
     def update(self, delta):
         self.achievement_panel.update(delta)
+
 
     def draw(self, surface):
         # healthbar
@@ -66,6 +68,7 @@ class HUD:
             self.pause_label.draw(surface)
         
         self.achievement_panel.draw(surface)
+
 
     def on_notify(self, event, arg):
         if event == Events.NEW_HEALTH:

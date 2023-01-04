@@ -17,6 +17,7 @@ class Services:
             Services()
         return Services.__instance
 
+
     def __init__(self):
         if Services.__instance is not None:
             raise Exception("Singleton class already initialised")
@@ -33,6 +34,7 @@ class Services:
         self.achievements_tracker : achievements_tracker.AchievementTracker = achievements_tracker.AchievementTracker()
         self.enemy_handler : enemy_handler.EnemyHandler = enemy_handler.EnemyHandler()
         self.enemy_data : enemy_data.EnemyData = enemy_data.EnemyData()
+
 
     # set up all services that require it
     def setup(self):
