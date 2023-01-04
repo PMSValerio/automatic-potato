@@ -18,7 +18,7 @@ class Boss(Entity):
         self.rect.height = 160
         self.rect.width = 160
 
-        self.health = 300
+        self.health = 1000
 
         self.shoot_timer = 0
 
