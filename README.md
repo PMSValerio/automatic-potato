@@ -4,9 +4,10 @@ tiny witch against big potato
 
 - Main Loop: the game's main loop
 - State: Used in game state machine for each scene
+- Singleton: Used in services
 - Service Locator: Services class provides access to all services and instantiates them. Different service classes could replace the current ones if implemented.
 - Observer: Implemented by EventHandler and used in various contexts
-- Flyweight: Used in loading process of texture files
+- Flyweight: Used in loading of texture files
 - Prototype: Enemy spawning is done by cloning prototype instances
 - Commands: Player actions use this pattern
 
@@ -16,10 +17,10 @@ The game is designed with a main State Machine, in which each state corresponds 
 Every game state is stored in game_state.py and manages its own transitions to other game states.
 - TitleState: simply shows the Title screen animation and can transition to either the Character Select screen or the Achievements screen, depending on player input.
 - AchievementsState: displays all achievements, obscuring the names of those not yet unlocked.
-- CharacterSelectState: in this state, the player chooses on of the two available skins to play with and maps controls to desired keys before advancing to the Level scene.
-- LevelState: the state where the actual game takes place, spawning the different waves of enemies and giving control of the character to the player. Once the game ends, either because the player clears all waves and beats the boss, or because the player meets one of the lose conditions, the game transitions to the End Results state, in case of the former, or the Game Over screen, in case of the latter.
+- CharacterSelectState: in this state, the player chooses one of the two available skins to play with and maps controls to desired keys before advancing to the Level scene.
+- LevelState: the state where the actual game takes place, spawning the different waves of enemies and giving control of the character to the player. Once the game ends, either because the player clears all waves and beats the boss, or because the player meets one of the lose conditions, the game transitions to the End Results screen, in case of the former, or the Game Over screen, in case of the latter.
 - GameOverState: simply displays the game over message and awaits player input before advancing to the End Results screen.
-- EndResultsState: shows how the player performed according to the measures collected during the Level state, mainly score and potions remaining. Advances to Scoreboard screen
+- EndResultsState: shows how the player performed according to the measures collected during the Level state, mainly score and potions remaining. Advances to Scoreboard screen.
 - ScoreboardState: displays the top ten saved scores. In case the player's score made it into the top ten, prompts the player to register their new entry with a 3-letter name, inputted in an arcade-like manner with the arrow keys. Once confirmed, the game ends and closes.
 
 In the Main Loop in main.py, an update() and draw() methods are constantly called on the current game state to perform that state's tasks, ensuring the main loop does not require knowledge about each individual state's behaviour.
@@ -96,3 +97,17 @@ For other entities not as complex as the player or enemies, a state machine is n
 # GUI
 
 A few GUI elements have been created to simplify drawing of text and panels in UI, located in gui_utils.py. These include the TextLabel which is a uniform object capable of drawing text in different font sizes, colours, and alignments in different positions and the Achievement notification which disappears a short while after being made visible.
+
+# Assets
+
+## Graphics
+
+All graphical assets are original creations.
+
+## Sound
+
+Title Screen: Frog's Theme (Chrono Trigger)
+Level: Boss Theme (Cave Story)
+Boss Theme: Battle on the Big Bridge (Final Fantasy V)
+Game Over: Player Score (Touhou series)
+Victory: Victory Fanfare (Final Fantasy series)
