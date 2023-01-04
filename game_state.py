@@ -211,7 +211,6 @@ class LevelState(GameState):
     def update(self, delta) -> bool:
         import random
         from pygame import Vector2
-        import test_entities
 
         if self.end_game != 0:
             self.finish_game(delta)
@@ -219,7 +218,6 @@ class LevelState(GameState):
         if random.random() < 0.01:
             xx = random.randrange(0, WIDTH)
             yy = random.randrange(0, HEIGHT)
-            # test_entities.Test2(Vector2(xx, yy))
 
         if not self.ending and services.service_locator.game_input.key_pressed(pygame.K_ESCAPE):
             self.paused = not self.paused
