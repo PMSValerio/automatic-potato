@@ -116,6 +116,7 @@ class EnemyHandler:
         self.curr = 0
         self.league = self.leagues[self.curr]
         self.spawn_boss = False
+        self.spawned_boss = False
 
 
     def on_notify(self, event, entity = None):
@@ -130,9 +131,11 @@ class EnemyHandler:
                 self.league = self.leagues[self.curr]
 
                 # its time to call the big guns 
-                if self.spawn_boss: 
+                if self.spawn_boss and not self.spawned_boss: 
                     boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+                    self.spawned_boss = True
 
                 # if the round ended and the boss wasn't spawned (it happens by chance)
-                if self.league == EnemyWaves.EMERALD and self.spawn_boss == False:
+                if self.league == EnemyWaves.EMERALD and self.spawn_boss == False  and not self.spawned_boss:
                     boss.Boss(Vector2(WIDTH * 0.5, HEIGHT))
+                    self.spawned_boss = True

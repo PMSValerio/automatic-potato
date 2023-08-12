@@ -17,7 +17,7 @@ class SoundMixer:
         if self.now_playing == music_id:
             return
         self.now_playing = music_id
-        pygame.mixer.music.load(music_id.value)
+        pygame.mixer.music.load(get_asset(music_id.value))
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.05)
     

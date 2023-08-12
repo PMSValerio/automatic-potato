@@ -226,7 +226,7 @@ class LevelState(GameState):
         # manually spawn player
         player.Player(Vector2(WIDTH / 2, HEIGHT * 0.6))
 
-        pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
+        #pickups.WeaponPickup(Vector2(WIDTH * 0.5, HEIGHT * 0.3))
 
         # set initial potions
         player_data.player_data.update_potions(20)
@@ -481,7 +481,11 @@ class ScoreboardState(GameState):
     def enter(self):
         # load scoreboard data
         import json
-        with open("data/scoreboard.json") as fin:
+        filepath = os.path.join(OG_PATH, "data/scoreboard.json")
+        if not os.path.exists(filepath):
+            filepath = get_asset("json/default_scoreboard.json")
+
+        with open(filepath) as fin:
             self.scoreboard = json.load(fin, parse_int=int)
         
         # check if player is in top ten and update table if so
@@ -505,7 +509,7 @@ class ScoreboardState(GameState):
     def exit(self):
         # save scoreboard data
         import json
-        with open("data/scoreboard.json", mode = "w") as fout:
+        with open(os.path.join(OG_PATH, "data/scoreboard.json"), mode = "w") as fout:
             json.dump(self.scoreboard, fout)
     
 

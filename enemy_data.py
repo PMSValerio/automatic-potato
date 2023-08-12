@@ -1,5 +1,7 @@
 import json
 
+from common import get_asset
+
 class EnemyData():
     __instance = None
 
@@ -25,6 +27,6 @@ class EnemyData():
     # parse values as ints as well, if that's the case
     def load_data(self): 
         self.data = {}
-        with open("./json/enemy.json") as f:         
+        with open(get_asset("./json/enemy.json")) as f:         
             self.data = json.load(f, object_pairs_hook=lambda pairs: {int(k) if k.isdigit() else k: v for k, v in pairs}, parse_int=int)
 

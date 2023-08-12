@@ -7,6 +7,12 @@ import player_data
 import game_state
 
 def main():
+    dirpath = os.path.join(OG_PATH, "data")
+    if not os.path.exists(dirpath):
+        os.mkdir(dirpath)
+
+    if getattr(sys, 'frozen', False):
+        os.chdir(sys._MEIPASS)
 
     # set up pygame
     pg.init()

@@ -14,7 +14,7 @@ class GraphicsLoader:
     def load_image(self, filename):
         if not filename in self.images:
             try:
-                self.images[filename] = pygame.image.load(filename).convert_alpha()
+                self.images[filename] = pygame.image.load(get_asset(filename)).convert_alpha()
             except pygame.error as message:
                 print('Unable to load spritesheet image:', filename)
                 raise SystemExit(message)

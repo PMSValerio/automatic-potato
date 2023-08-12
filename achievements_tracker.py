@@ -7,7 +7,7 @@ from enemy import EnemyTypes
 class AchievementTracker:
     def __init__(self):
         self.achievements_data = {}
-        with open("json/achievements.json") as fin:
+        with open(get_asset("json/achievements.json")) as fin:
             self.achievements_data = json.load(fin)
 
         self.killed_enemies = {k: 0 for k in EnemyTypes}
@@ -15,7 +15,11 @@ class AchievementTracker:
         self.camped = False
 
         self.progress = {}
-        with open("data/achievement_tracker.json") as fin:
+        filepath = os.path.join(OG_PATH, "data/achievement_tracker.json")
+        if not os.path.exists(filepath):
+            filepath = get_asset("json/default_cchievements.json")
+
+        with open(filepath) as fin:
             self.progress = json.load(fin)
 
     def setup(self):
@@ -24,7 +28,7 @@ class AchievementTracker:
         services.service_locator.event_handler.subscribe(self, Events.BOSS_DEFEATED)
     
     def save(self):
-        with open("data/achievement_tracker.json", "w") as fout:
+        with open(os.path.join(OG_PATH, "data/achievement_tracker.json"), "w") as fout:
             json.dump(self.progress, fout)
     
     def update_camp_timer(self, delta):
@@ -48,8 +52,9 @@ class AchievementTracker:
             self.complete_achievement(ach)
     
     def complete_achievement(self, ach):
-        self.progress[str(ach.value)] = True
-        services.service_locator.event_handler.publish(Events.ACHIEVEMENT, ach)
+        if not self.progress[str(ach.value)]:
+            self.progress[str(ach.value)] = True
+            services.service_locator.event_handler.publish(Events.ACHIEVEMENT, ach)
     
     # event callback
     def on_notify(self, event, arg):
