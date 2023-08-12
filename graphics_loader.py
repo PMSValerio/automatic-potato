@@ -92,10 +92,10 @@ class GraphicsLoader:
         self.add_anim_strip(filename, "idle_right", 1, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "idle_up", 2, 64, 64, 4, (1.5, 1.5))
         self.add_anim_strip(filename, "idle_down", 3, 64, 64, 4, (1.5, 1.5))
-        self.add_anim_strip(filename, "move_left", 0, 64, 64, 5, (1.5, 1.5))
-        self.add_anim_strip(filename, "move_right", 1, 64, 64, 5, (1.5, 1.5))
-        self.add_anim_strip(filename, "move_up", 2, 64, 64, 5, (1.5, 1.5))
-        self.add_anim_strip(filename, "move_down", 3, 64, 64, 5, (1.5, 1.5))
+        self.add_anim_strip(filename, "move_left", 0, 64, 64, 4, (1.5, 1.5))
+        self.add_anim_strip(filename, "move_right", 1, 64, 64, 4, (1.5, 1.5))
+        self.add_anim_strip(filename, "move_up", 2, 64, 64, 4, (1.5, 1.5))
+        self.add_anim_strip(filename, "move_down", 3, 64, 64, 4, (1.5, 1.5))
 
         filename = "assets/gfx/entities/cat.png"
         self.load_image(filename)
