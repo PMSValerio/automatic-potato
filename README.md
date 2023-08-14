@@ -4,4 +4,5 @@
 </p>
 
 **Play the game:** https://damp-squib.itch.io/automatic-potato 
+
 Original repo link: https://github.com/detiuaveiro/projecto-mini-jogo-automatic-potato
